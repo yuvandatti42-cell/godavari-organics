@@ -60,12 +60,12 @@ export default function HeroSlider() {
   const [isPlaying, setIsPlaying] = useState(true);
   const scrollContainerRef = useRef(null);
 
-  // Auto-slide effect
+  // Auto-slide effect (3 second span)
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 5000);
+    }, 3000);
     return () => clearInterval(interval);
   }, [isPlaying]);
 

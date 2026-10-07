@@ -168,31 +168,35 @@ export const INITIAL_PRODUCTS = [
 export const CATEGORIES = [
   { 
     id: 'c1', 
-    name: 'Organic Rice', 
-    subtext: 'Traditional grains', 
+    name: 'Fresh Vegetables', 
+    subtext: 'Farm fresh organic vegetables', 
     count: 12,
-    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=600'
+    bgTint: 'bg-[#edf4fe]',
+    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=600'
   },
   { 
     id: 'c2', 
-    name: 'Organic Spices', 
-    subtext: 'Aromatic & pure', 
+    name: 'Fresh Fruits', 
+    subtext: 'Seasonal fresh fruits', 
     count: 10,
-    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=600'
+    bgTint: 'bg-[#edf4fe]',
+    image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&q=80&w=600'
   },
   { 
     id: 'c3', 
-    name: 'Traditional Foods', 
-    subtext: 'Native pickles & sweets', 
+    name: 'Dairy, Bread and Eggs', 
+    subtext: 'Dairy, fresh bread & eggs', 
     count: 8,
-    image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&q=80&w=600'
+    bgTint: 'bg-[#edf4fe]',
+    image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&q=80&w=600'
   },
   { 
     id: 'c4', 
-    name: 'Natural Products', 
-    subtext: 'Healthy cold-pressed', 
+    name: 'Meat and Seafood', 
+    subtext: 'Clean fresh meat & seafood', 
     count: 9,
-    image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&q=80&w=600'
+    bgTint: 'bg-[#edf4fe]',
+    image: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&q=80&w=600'
   },
 ];
 

@@ -21,22 +21,22 @@ export default function Home() {
       {/* Main Page Body Container (Top Section) - Expanded to Full Desktop Width */}
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 pt-6 sm:pt-10 pb-2">
 
-        {/* 2. SHOP BY CATEGORY SECTION */}
+        {/* 2. FRESH ITEMS CATEGORY SECTION */}
         <section className="space-y-3 sm:space-y-5">
           <div className="flex items-center justify-between">
-            <h2 className="font-urbanist font-extrabold text-lg sm:text-2xl md:text-3xl text-slate-900 tracking-tight">
-              Shop by Category
+            <h2 className="font-urbanist font-extrabold text-lg sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight">
+              Fresh Items
             </h2>
             <button 
               onClick={() => setCurrentPage('shop')}
-              className="hidden md:inline-flex items-center space-x-1 font-urbanist font-extrabold text-xs sm:text-sm text-slate-900 hover:text-[#18542a] underline underline-offset-4 transition-colors cursor-pointer"
+              className="hidden md:inline-flex items-center space-x-1 font-urbanist font-extrabold text-xs sm:text-sm text-[#103b1d] hover:text-[#18542a] underline underline-offset-4 transition-colors cursor-pointer"
             >
-              <span>View All Categories</span>
+              <span>View All</span>
             </button>
           </div>
 
-          {/* 4-column side-by-side layout matching reference screenshot */}
-          <div className="grid grid-cols-4 gap-2.5 xs:gap-3 sm:gap-5 lg:gap-6">
+          {/* 4-column equal frame row matching reference screenshot */}
+          <div className="grid grid-cols-4 gap-3 xs:gap-4 sm:gap-6 items-stretch">
             {categories.slice(0, 4).map((cat) => (
               <CategoryCard key={cat.id} category={cat} />
             ))}
