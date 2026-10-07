@@ -21,22 +21,16 @@ export default function Home() {
       {/* Main Page Body Container (Top Section) - Expanded to Full Desktop Width */}
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 pt-6 sm:pt-10 pb-2">
 
-        {/* 2. FRESH ITEMS CATEGORY SECTION */}
-        <section className="space-y-3 sm:space-y-5">
+        {/* 2. FRESH ITEMS CATEGORY SECTION (Matches reference screenshot 1:1) */}
+        <section className="space-y-4 sm:space-y-6 pt-2 pb-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-urbanist font-extrabold text-lg sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight">
+            <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#232931] tracking-tight">
               Fresh Items
             </h2>
-            <button 
-              onClick={() => setCurrentPage('shop')}
-              className="hidden md:inline-flex items-center space-x-1 font-urbanist font-extrabold text-xs sm:text-sm text-[#103b1d] hover:text-[#18542a] underline underline-offset-4 transition-colors cursor-pointer"
-            >
-              <span>View All</span>
-            </button>
           </div>
 
           {/* 4-column equal frame row matching reference screenshot */}
-          <div className="grid grid-cols-4 gap-3 xs:gap-4 sm:gap-6 items-stretch">
+          <div className="grid grid-cols-4 gap-3 xs:gap-4 sm:gap-6 lg:gap-8 items-stretch">
             {categories.slice(0, 4).map((cat) => (
               <CategoryCard key={cat.id} category={cat} />
             ))}

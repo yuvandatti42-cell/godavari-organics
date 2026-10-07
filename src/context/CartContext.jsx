@@ -172,7 +172,7 @@ export const CATEGORIES = [
     subtext: 'Farm fresh organic vegetables', 
     count: 12,
     bgTint: 'bg-[#edf4fe]',
-    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=600'
+    image: '/categories/vegetables.jpg'
   },
   { 
     id: 'c2', 
@@ -180,7 +180,7 @@ export const CATEGORIES = [
     subtext: 'Seasonal fresh fruits', 
     count: 10,
     bgTint: 'bg-[#edf4fe]',
-    image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&q=80&w=600'
+    image: '/categories/fruits.jpg'
   },
   { 
     id: 'c3', 
@@ -188,7 +188,7 @@ export const CATEGORIES = [
     subtext: 'Dairy, fresh bread & eggs', 
     count: 8,
     bgTint: 'bg-[#edf4fe]',
-    image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&q=80&w=600'
+    image: '/categories/dairy_bread.jpg'
   },
   { 
     id: 'c4', 
@@ -196,7 +196,7 @@ export const CATEGORIES = [
     subtext: 'Clean fresh meat & seafood', 
     count: 9,
     bgTint: 'bg-[#edf4fe]',
-    image: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&q=80&w=600'
+    image: '/categories/meat_seafood.jpg'
   },
 ];
 
