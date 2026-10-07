@@ -54,39 +54,82 @@ export const HERO_SLIDES = [
   }
 ];
 
+// Extended slides array with clones at start and end for seamless infinite looping
+const EXTENDED_SLIDES = [
+  { ...HERO_SLIDES[HERO_SLIDES.length - 1], id: 'clone-start' },
+  ...HERO_SLIDES,
+  { ...HERO_SLIDES[0], id: 'clone-end' }
+];
+
 export default function HeroSlider() {
   const { setCurrentPage, navigateToProduct } = useCart();
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [virtualIndex, setVirtualIndex] = useState(1); // Starts at real slide 1 (index 1)
   const [isPlaying, setIsPlaying] = useState(true);
   const scrollContainerRef = useRef(null);
+  const isAutoScrollingRef = useRef(false);
 
-  // Auto-slide effect (3 second span)
+  // Auto-slide effect (3.5 second interval)
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 3000);
+      setVirtualIndex((prev) => prev + 1);
+    }, 3500);
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  // Sync scroll position for mobile/touch slider
+  // Initial scroll setup to position at index 1 without animation
   useEffect(() => {
     if (scrollContainerRef.current) {
       const container = scrollContainerRef.current;
-      const card = container.children[currentIndex];
+      const card = container.children[1];
       if (card) {
-        const left = card.offsetLeft - 16;
-        container.scrollTo({ left, behavior: 'smooth' });
+        container.scrollLeft = card.offsetLeft - 16;
       }
     }
-  }, [currentIndex]);
+  }, []);
+
+  // Sync scroll position for seamless infinite loop
+  useEffect(() => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    const card = container.children[virtualIndex];
+
+    if (card) {
+      isAutoScrollingRef.current = true;
+      const left = card.offsetLeft - 16;
+      container.scrollTo({ left, behavior: 'smooth' });
+
+      const timer = setTimeout(() => {
+        // If we scrolled forward into the clone-end at index 8, instantly jump to real slide 1 at index 1
+        if (virtualIndex === EXTENDED_SLIDES.length - 1) {
+          const realFirstCard = container.children[1];
+          if (realFirstCard) {
+            container.scrollTo({ left: realFirstCard.offsetLeft - 16, behavior: 'instant' });
+            setVirtualIndex(1);
+          }
+        }
+        // If we scrolled backward into the clone-start at index 0, instantly jump to real slide 7 at index 7
+        else if (virtualIndex === 0) {
+          const realLastCard = container.children[HERO_SLIDES.length];
+          if (realLastCard) {
+            container.scrollTo({ left: realLastCard.offsetLeft - 16, behavior: 'instant' });
+            setVirtualIndex(HERO_SLIDES.length);
+          }
+        }
+
+        isAutoScrollingRef.current = false;
+      }, 550);
+
+      return () => clearTimeout(timer);
+    }
+  }, [virtualIndex]);
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1));
+    setVirtualIndex((prev) => prev - 1);
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+    setVirtualIndex((prev) => prev + 1);
   };
 
   const handleSlideClick = (productId) => {
@@ -98,15 +141,18 @@ export default function HeroSlider() {
   };
 
   const handleScroll = () => {
-    if (!scrollContainerRef.current) return;
+    if (isAutoScrollingRef.current || !scrollContainerRef.current) return;
     const container = scrollContainerRef.current;
     const scrollLeft = container.scrollLeft;
     const cardWidth = container.children[0]?.clientWidth || 300;
     const index = Math.round(scrollLeft / (cardWidth + 12));
-    if (index >= 0 && index < HERO_SLIDES.length && index !== currentIndex) {
-      setCurrentIndex(index);
+    if (index >= 0 && index < EXTENDED_SLIDES.length && index !== virtualIndex) {
+      setVirtualIndex(index);
     }
   };
+
+  // Calculate active real slide index (0 to 6)
+  const realIndex = (virtualIndex - 1 + HERO_SLIDES.length) % HERO_SLIDES.length;
 
   return (
     <section 
@@ -119,35 +165,32 @@ export default function HeroSlider() {
         {/* Carousel Outer Wrapper */}
         <div className="relative group">
           
-          {/* Scrollable Container (Swipeable on Mobile, Peeking next card) */}
+          {/* Scrollable Container */}
           <div 
             ref={scrollContainerRef}
             onScroll={handleScroll}
             className="flex space-x-3 sm:space-x-5 overflow-x-auto snap-x snap-mandatory no-scrollbar py-1"
           >
-            {HERO_SLIDES.map((slide, index) => (
+            {EXTENDED_SLIDES.map((slide, index) => (
               <div 
-                key={slide.id}
+                key={`${slide.id}-${index}`}
                 onClick={() => handleSlideClick(slide.productId)}
-                className={`shrink-0 snap-start relative rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-sm hover:shadow-md border border-black/10 cursor-pointer transition-all duration-300 transform active:scale-[0.99]
+                className={`shrink-0 snap-start relative rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-sm hover:shadow-md border border-black/10 cursor-pointer transition-transform duration-300 transform active:scale-[0.99]
                   w-[85vw] max-w-[340px] h-[210px] xs:h-[235px] 
                   sm:w-[65vw] sm:max-w-[540px] sm:h-[300px]
                   md:w-[50vw] md:max-w-[700px] md:h-[360px]
                   lg:w-[42vw] lg:max-w-[800px] lg:h-[400px]
                 `}
               >
-                {/* 1. THE ENTIRE FRAME IS AN IMAGE (NO text, NO extra overlay images) */}
                 <img 
                   src={slide.bannerImage} 
                   alt={slide.title}
                   className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
-                  loading={index === 0 ? "eager" : "lazy"}
+                  loading="eager"
                 />
 
-                {/* Subtle bottom gradient vignette to ensure white button contrast */}
                 <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none" />
 
-                {/* 2. THE ONLY THING ON THE FRAME IS THE SHOP NOW BUTTON */}
                 <div className="absolute left-4 sm:left-6 bottom-4 sm:bottom-6 z-10">
                   <button 
                     onClick={(e) => {
@@ -163,7 +206,7 @@ export default function HeroSlider() {
             ))}
           </div>
 
-          {/* Side Navigation Arrow Buttons (Desktop >= sm) */}
+          {/* Side Navigation Arrow Buttons */}
           <button 
             onClick={handlePrev}
             aria-label="Previous Slide"
@@ -181,22 +224,20 @@ export default function HeroSlider() {
           </button>
         </div>
 
-        {/* 3. PAGINATION BAR: Dark Pill Badge Counter ("1/7") + Dots (• • • •) */}
+        {/* PAGINATION BAR */}
         <div className="flex items-center justify-center space-x-3 pt-4 sm:pt-5">
-          {/* Dark Pill Badge Counter */}
           <span className="px-3.5 py-1 rounded-full bg-[#33373d] text-white text-[11px] sm:text-xs font-bold font-mono tracking-wider shadow-xs">
-            {currentIndex + 1}/{HERO_SLIDES.length}
+            {realIndex + 1}/{HERO_SLIDES.length}
           </span>
 
-          {/* Dots Indicator */}
           <div className="flex items-center space-x-1.5 sm:space-x-2">
             {HERO_SLIDES.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => setVirtualIndex(index + 1)}
                 aria-label={`Go to slide ${index + 1}`}
                 className={`rounded-full transition-all duration-300 cursor-pointer ${
-                  currentIndex === index 
+                  realIndex === index 
                     ? 'w-3 h-3 bg-slate-800 scale-110 shadow-xs' 
                     : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
                 }`}
@@ -204,7 +245,6 @@ export default function HeroSlider() {
             ))}
           </div>
 
-          {/* Pause / Play Toggle Button */}
           <button 
             onClick={() => setIsPlaying(!isPlaying)}
             title={isPlaying ? "Pause Slideshow" : "Play Slideshow"}

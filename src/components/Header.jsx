@@ -62,10 +62,10 @@ export default function Header() {
 
       {/* Main Header Nav - Matches Wireframe Reference on Mobile & Editorial Desktop */}
       <div className="bg-[#f3e8cc] border-b border-[#e2d5b5] transition-all">
-        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 py-2.5 lg:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="w-full max-w-[1920px] mx-auto px-2.5 sm:px-8 lg:px-12 xl:px-16 py-2.5 lg:py-3.5 flex items-center justify-between gap-1.5 sm:gap-4">
           
-          {/* Left Side: Navigation Links on Desktop & Mobile Icon Group (Menu, Leaf, Location) */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          {/* Left Side: Navigation Links on Desktop & Mobile Menu Button */}
+          <div className="flex items-center space-x-2 sm:space-x-4 shrink-0">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-1.5 rounded-lg text-[#18542a] hover:bg-[#e8d9b5] transition-colors cursor-pointer"
@@ -73,16 +73,6 @@ export default function Header() {
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-
-            {/* Mobile Leaf & Location Pin Icons (As shown in wireframe reference) */}
-            <div className="flex lg:hidden items-center space-x-1 text-[#18542a]">
-              <button onClick={() => showToast('100% Native Eco Leaf Certified')} className="p-1 hover:text-[#9abc05] cursor-pointer">
-                <Leaf className="w-4 h-4 text-[#18542a]" />
-              </button>
-              <button onClick={() => showToast('Godavari River Basin — Rajahmundry, AP')} className="p-1 hover:text-[#9abc05] cursor-pointer">
-                <MapPin className="w-4 h-4 text-[#18542a]" />
-              </button>
-            </div>
 
             <nav className="hidden lg:flex items-center space-x-6 text-xs font-bold text-[#18542a] tracking-wider uppercase">
               <button 
@@ -122,23 +112,25 @@ export default function Header() {
             </nav>
           </div>
 
-          {/* Center: Brand Logo & Title */}
-          <button 
-            onClick={() => setCurrentPage('home')}
-            className="group flex items-center space-x-1.5 sm:space-x-2.5 text-center transition-transform active:scale-95 cursor-pointer py-0.5"
-          >
-            <img 
-              src="/logo.png" 
-              alt="Godavari Organic Symbol Logo" 
-              className="h-8 sm:h-12 w-auto object-contain transition-transform group-hover:scale-110 flex-shrink-0" 
-            />
-            <span className="font-urbanist font-black text-base sm:text-xl md:text-2xl text-[#18542a] tracking-tight group-hover:text-[#9abc05] transition-colors leading-none uppercase">
-              Godavari Organic
-            </span>
-          </button>
+          {/* Center: Brand Logo & Title (Flex-Centered, No Overlap) */}
+          <div className="flex-1 min-w-0 flex items-center justify-center px-1">
+            <button 
+              onClick={() => setCurrentPage('home')}
+              className="group flex items-center space-x-1 sm:space-x-2.5 text-center transition-transform active:scale-95 cursor-pointer py-0.5 min-w-0"
+            >
+              <img 
+                src="/logo.png" 
+                alt="Godavari Organic Symbol Logo" 
+                className="h-6 xs:h-7 sm:h-10 lg:h-12 w-auto object-contain transition-transform group-hover:scale-105 shrink-0" 
+              />
+              <span className="font-urbanist font-black text-xs xs:text-sm sm:text-lg md:text-xl lg:text-2xl text-[#18542a] tracking-tight group-hover:text-[#9abc05] transition-colors leading-none uppercase truncate">
+                Godavari Organic
+              </span>
+            </button>
+          </div>
 
           {/* Right Side: Search Input & Cart Count Badge */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center space-x-1.5 sm:space-x-4 shrink-0">
             {/* Mobile Search Button */}
             <button 
               onClick={() => setSearchModalOpen(true)}

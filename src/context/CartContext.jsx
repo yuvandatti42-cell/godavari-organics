@@ -171,7 +171,7 @@ export const CATEGORIES = [
     name: 'Fresh Vegetables', 
     subtext: 'Farm fresh organic vegetables', 
     count: 12,
-    bgTint: 'bg-[#edf4fe]',
+    bgTint: 'bg-[#f3e8cc]',
     image: '/categories/vegetables.jpg'
   },
   { 
@@ -179,7 +179,7 @@ export const CATEGORIES = [
     name: 'Fresh Fruits', 
     subtext: 'Seasonal fresh fruits', 
     count: 10,
-    bgTint: 'bg-[#edf4fe]',
+    bgTint: 'bg-[#f3e8cc]',
     image: '/categories/fruits.jpg'
   },
   { 
@@ -187,7 +187,7 @@ export const CATEGORIES = [
     name: 'Dairy, Bread and Eggs', 
     subtext: 'Dairy, fresh bread & eggs', 
     count: 8,
-    bgTint: 'bg-[#edf4fe]',
+    bgTint: 'bg-[#f3e8cc]',
     image: '/categories/dairy_bread.jpg'
   },
   { 
@@ -195,7 +195,7 @@ export const CATEGORIES = [
     name: 'Meat and Seafood', 
     subtext: 'Clean fresh meat & seafood', 
     count: 9,
-    bgTint: 'bg-[#edf4fe]',
+    bgTint: 'bg-[#f3e8cc]',
     image: '/categories/meat_seafood.jpg'
   },
 ];

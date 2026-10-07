@@ -4,6 +4,7 @@ import HeroSlider from '../components/HeroSlider';
 import SpecialOffers from '../components/SpecialOffers';
 import CategoryCard from '../components/CategoryCard';
 import ProductCard from '../components/ProductCard';
+import FeaturedHarvestProducts from '../components/FeaturedHarvestProducts';
 import CustomerReviews from '../components/CustomerReviews';
 import { ArrowRight, ArrowUpRight, ShieldCheck, Users, HeartHandshake, Sprout, CheckCircle2, Award, Leaf, Truck, Sparkles, MapPin, Gift, Image } from 'lucide-react';
 
@@ -21,10 +22,65 @@ export default function Home() {
       {/* Main Page Body Container (Top Section) - Expanded to Full Desktop Width */}
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 pt-6 sm:pt-10 pb-2">
 
+        {/* STANDALONE ENLARGED CERTIFIED QUALITY STANDARDS BADGES */}
+        {/* Desktop: One single horizontal line | Mobile: Continuous smooth right-to-left marquee scroll */}
+        <div className="mb-6 overflow-hidden">
+          {/* Mobile continuous right-to-left marquee scroll (< sm) */}
+          <div className="block sm:hidden w-full overflow-hidden relative">
+            <div className="animate-marquee whitespace-nowrap flex items-center space-x-3 py-1">
+              <div className="flex items-center space-x-3 shrink-0">
+                <div className="h-11 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl px-4 flex items-center justify-center font-urbanist font-black text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs cursor-default">
+                  USDA ORGANIC
+                </div>
+                <div className="h-11 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl px-4 flex items-center justify-center font-urbanist font-black text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs cursor-default">
+                  FSSAI CERTIFIED
+                </div>
+                <div className="h-11 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl px-4 flex items-center justify-center font-urbanist font-black text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs cursor-default">
+                  SGS BIO-VERIFIED
+                </div>
+                <div className="h-11 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl px-4 flex items-center justify-center font-urbanist font-black text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs cursor-default">
+                  APEDA PURE
+                </div>
+              </div>
+              {/* Duplicated set for seamless continuous right-to-left marquee loop on mobile */}
+              <div className="flex items-center space-x-3 shrink-0">
+                <div className="h-11 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl px-4 flex items-center justify-center font-urbanist font-black text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs cursor-default">
+                  USDA ORGANIC
+                </div>
+                <div className="h-11 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl px-4 flex items-center justify-center font-urbanist font-black text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs cursor-default">
+                  FSSAI CERTIFIED
+                </div>
+                <div className="h-11 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl px-4 flex items-center justify-center font-urbanist font-black text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs cursor-default">
+                  SGS BIO-VERIFIED
+                </div>
+                <div className="h-11 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl px-4 flex items-center justify-center font-urbanist font-black text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs cursor-default">
+                  APEDA PURE
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop single horizontal line (>= sm) */}
+          <div className="hidden sm:flex items-center justify-between sm:justify-center gap-3 sm:gap-4 lg:gap-6">
+            <div className="flex-1 max-w-[240px] h-12 sm:h-14 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl sm:rounded-2xl px-4 flex items-center justify-center font-urbanist font-black text-xs sm:text-sm text-[#103b1d] uppercase tracking-wider shadow-2xs hover:border-[#18542a] hover:bg-[#e6dec9] transition-all cursor-default text-center">
+              USDA ORGANIC
+            </div>
+            <div className="flex-1 max-w-[240px] h-12 sm:h-14 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl sm:rounded-2xl px-4 flex items-center justify-center font-urbanist font-black text-xs sm:text-sm text-[#103b1d] uppercase tracking-wider shadow-2xs hover:border-[#18542a] hover:bg-[#e6dec9] transition-all cursor-default text-center">
+              FSSAI CERTIFIED
+            </div>
+            <div className="flex-1 max-w-[240px] h-12 sm:h-14 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl sm:rounded-2xl px-4 flex items-center justify-center font-urbanist font-black text-xs sm:text-sm text-[#103b1d] uppercase tracking-wider shadow-2xs hover:border-[#18542a] hover:bg-[#e6dec9] transition-all cursor-default text-center">
+              SGS BIO-VERIFIED
+            </div>
+            <div className="flex-1 max-w-[240px] h-12 sm:h-14 bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl sm:rounded-2xl px-4 flex items-center justify-center font-urbanist font-black text-xs sm:text-sm text-[#103b1d] uppercase tracking-wider shadow-2xs hover:border-[#18542a] hover:bg-[#e6dec9] transition-all cursor-default text-center">
+              APEDA PURE
+            </div>
+          </div>
+        </div>
+
         {/* 2. FRESH ITEMS CATEGORY SECTION (Matches reference screenshot 1:1) */}
         <section className="space-y-4 sm:space-y-6 pt-2 pb-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#232931] tracking-tight">
+            <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight">
               Fresh Items
             </h2>
           </div>
@@ -85,6 +141,9 @@ export default function Home() {
           </h2>
           <div className="w-12 h-1 bg-[#9abc05] mx-auto rounded-full mt-4"></div>
         </section>
+
+        {/* FEATURED HARVEST PRODUCTS SECTION (Matches reference screenshot 1:1) */}
+        <FeaturedHarvestProducts />
 
         {/* 5. SPECIAL OFFERS — SLIDING MOBILE CAROUSEL & DESKTOP GRID */}
         <SpecialOffers />
@@ -224,29 +283,6 @@ export default function Home() {
             </div>
           </div>
 
-        </div>
-
-        {/* COMPACT HORIZONTAL BAR BELOW: CERTIFIED QUALITY STANDARDS IN BEIGE */}
-        <div className="bg-[#f3e8cc] border border-[#d9ca9d] rounded-xl p-3.5 sm:p-4 space-y-2.5 text-center shadow-xs">
-          <h4 className="font-urbanist font-extrabold text-[10px] sm:text-xs text-[#18542a] uppercase tracking-widest">
-            CERTIFIED TRADITIONAL AND ORGANIC QUALITY STANDARDS
-          </h4>
-
-          {/* Compact 4 Logo Badges Frame */}
-          <div className="flex items-center justify-between sm:justify-center gap-2.5 sm:gap-5 overflow-x-auto pb-0.5 scrollbar-none">
-            <div className="flex-1 sm:flex-none min-w-[70px] sm:w-32 h-10 bg-[#e6dec9] border border-[#c8b894] rounded-lg flex items-center justify-center font-urbanist font-black text-[10px] sm:text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs hover:border-[#18542a] transition-all cursor-default">
-              USDA ORGANIC
-            </div>
-            <div className="flex-1 sm:flex-none min-w-[70px] sm:w-32 h-10 bg-[#e6dec9] border border-[#c8b894] rounded-lg flex items-center justify-center font-urbanist font-black text-[10px] sm:text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs hover:border-[#18542a] transition-all cursor-default">
-              FSSAI CERTIFIED
-            </div>
-            <div className="flex-1 sm:flex-none min-w-[70px] sm:w-32 h-10 bg-[#e6dec9] border border-[#c8b894] rounded-lg flex items-center justify-center font-urbanist font-black text-[10px] sm:text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs hover:border-[#18542a] transition-all cursor-default">
-              SGS BIO-VERIFIED
-            </div>
-            <div className="flex-1 sm:flex-none min-w-[70px] sm:w-32 h-10 bg-[#e6dec9] border border-[#c8b894] rounded-lg flex items-center justify-center font-urbanist font-black text-[10px] sm:text-xs text-[#103b1d] uppercase tracking-wider shadow-2xs hover:border-[#18542a] transition-all cursor-default">
-              APEDA PURE
-            </div>
-          </div>
         </div>
       </section>
 
