@@ -15,11 +15,11 @@ export default function Footer() {
         {/* Brand Header & Tagline */}
         <div className="space-y-2 text-left">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white p-1 flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926]/40 overflow-hidden">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#18542a] flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926] overflow-hidden">
               <img 
                 src="/logo.png" 
                 alt="Godavari Organic Foods Logo" 
-                className="w-full h-full object-contain scale-115" 
+                className="w-full h-full object-cover scale-[1.65]" 
               />
             </div>
             <h3 className="font-urbanist font-black text-xl sm:text-2xl text-[#ffc926] tracking-wider uppercase">
@@ -167,11 +167,11 @@ export default function Footer() {
           {/* Column 1: Brand & Contact Info */}
           <div className="space-y-4 text-left">
             <div className="flex items-center space-x-3.5">
-              <div className="w-14 h-14 rounded-full bg-white p-1 flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926]/40 overflow-hidden">
+              <div className="w-14 h-14 rounded-full bg-[#18542a] flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926] overflow-hidden">
                 <img 
                   src="/logo.png" 
                   alt="Godavari Organic Foods Logo" 
-                  className="w-full h-full object-contain scale-115" 
+                  className="w-full h-full object-cover scale-[1.65]" 
                 />
               </div>
               <span className="font-urbanist font-black text-xl lg:text-2xl text-white tracking-tight">
