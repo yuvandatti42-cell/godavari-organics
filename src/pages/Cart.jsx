@@ -34,21 +34,11 @@ export default function Cart() {
   return (
     <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-4 md:py-8 space-y-6 font-sans">
       
-      {/* Wireframe Header: ← My Cart (3) */}
+      {/* Wireframe Header: My Cart (3) */}
       <div className="flex items-center justify-between py-2 border-b border-[#d9ca9d]">
-        <div className="flex items-center space-x-3">
-          <button 
-            type="button"
-            onClick={goBack}
-            className="p-1 text-[#103b1d] hover:text-[#18542a] cursor-pointer transition-colors"
-            aria-label="Back"
-          >
-            <ArrowLeft className="w-6 h-6 text-[#103b1d]" />
-          </button>
-          <h1 className="font-urbanist font-extrabold text-xl sm:text-2xl text-[#103b1d]">
-            My Cart ({cartCount})
-          </h1>
-        </div>
+        <h1 className="font-urbanist font-extrabold text-xl sm:text-2xl text-[#103b1d]">
+          My Cart ({cartCount})
+        </h1>
 
         <button 
           onClick={() => setCurrentPage('shop')}

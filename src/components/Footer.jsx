@@ -14,16 +14,16 @@ export default function Footer() {
       <div className="block md:hidden bg-[#18542a] text-white border-t border-[#9abc05]/40 p-6 space-y-6">
         {/* Brand Header & Tagline */}
         <div className="space-y-2 text-left">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-full bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white p-1 flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926]/40 overflow-hidden">
               <img 
                 src="/logo.png" 
                 alt="Godavari Organic Foods Logo" 
-                className="w-full h-full object-contain" 
+                className="w-full h-full object-contain scale-115" 
               />
             </div>
-            <h3 className="font-urbanist font-black text-lg sm:text-xl text-[#ffc926] tracking-wider uppercase">
-              GODAVARI ORGANIC
+            <h3 className="font-urbanist font-black text-xl sm:text-2xl text-[#ffc926] tracking-wider uppercase">
+              GODAVARI ORGANICS
             </h3>
           </div>
           <p className="text-xs text-[#f3e8cc] font-medium leading-relaxed">
@@ -166,16 +166,16 @@ export default function Footer() {
           
           {/* Column 1: Brand & Contact Info */}
           <div className="space-y-4 text-left">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm border border-white/20">
+            <div className="flex items-center space-x-3.5">
+              <div className="w-14 h-14 rounded-full bg-white p-1 flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926]/40 overflow-hidden">
                 <img 
                   src="/logo.png" 
                   alt="Godavari Organic Foods Logo" 
-                  className="w-full h-full object-contain" 
+                  className="w-full h-full object-contain scale-115" 
                 />
               </div>
-              <span className="font-urbanist font-extrabold text-lg text-white tracking-tight">
-                Godavari Organic Foods
+              <span className="font-urbanist font-black text-xl lg:text-2xl text-white tracking-tight">
+                Godavari Organics
               </span>
             </div>
 

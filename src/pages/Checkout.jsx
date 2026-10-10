@@ -58,19 +58,9 @@ export default function Checkout() {
       
       {/* Header Bar */}
       <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-gray-100">
-        <div className="flex items-center space-x-3">
-          <button 
-            type="button"
-            onClick={goBack}
-            className="p-1 text-slate-800 hover:text-slate-950 cursor-pointer transition-colors"
-            aria-label="Back"
-          >
-            <ArrowLeft className="w-5 h-5 text-slate-800" />
-          </button>
-          <h1 className="font-bold text-lg sm:text-xl text-slate-900 tracking-tight">
-            Checkout
-          </h1>
-        </div>
+        <h1 className="font-bold text-lg sm:text-xl text-[#103b1d] tracking-tight">
+          Checkout
+        </h1>
 
         <span className="px-3 py-1 bg-gray-100 text-gray-700 font-medium text-xs rounded-full">
           Step 1 of 3

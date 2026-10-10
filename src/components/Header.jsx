@@ -116,15 +116,15 @@ export default function Header() {
           <div className="flex-1 min-w-0 flex items-center justify-center px-1">
             <button 
               onClick={() => setCurrentPage('home')}
-              className="group flex items-center space-x-1 sm:space-x-2.5 text-center transition-transform active:scale-95 cursor-pointer py-0.5 min-w-0"
+              className="group flex items-center space-x-1.5 sm:space-x-2.5 text-center transition-transform active:scale-95 cursor-pointer py-0.5 min-w-0"
             >
               <img 
                 src="/logo.png" 
-                alt="Godavari Organic Symbol Logo" 
-                className="h-6 xs:h-7 sm:h-10 lg:h-12 w-auto object-contain transition-transform group-hover:scale-105 shrink-0" 
+                alt="Godavari Organics Symbol Logo" 
+                className="h-7 xs:h-8 sm:h-10 lg:h-12 w-auto object-contain transition-transform group-hover:scale-105 shrink-0" 
               />
-              <span className="font-urbanist font-black text-xs xs:text-sm sm:text-lg md:text-xl lg:text-2xl text-[#18542a] tracking-tight group-hover:text-[#9abc05] transition-colors leading-none uppercase truncate">
-                Godavari Organic
+              <span className="font-urbanist font-black text-sm xs:text-base sm:text-xl md:text-2xl lg:text-3xl text-[#18542a] tracking-tight group-hover:text-[#9abc05] transition-colors leading-none uppercase truncate">
+                Godavari Organics
               </span>
             </button>
           </div>

@@ -3,6 +3,7 @@ import { useCart } from '../context/CartContext';
 import Breadcrumb from '../components/Breadcrumb';
 import ProductCard from '../components/ProductCard';
 import FilterSidebar from '../components/FilterSidebar';
+import MobileFilterModal from '../components/MobileFilterModal';
 import { SlidersHorizontal, ArrowUpDown, ChevronLeft, ChevronRight, X, Sprout } from 'lucide-react';
 
 export default function Shop() {
@@ -11,6 +12,8 @@ export default function Shop() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [priceRange, setPriceRange] = useState([100, 1000]);
   const [selectedRatings, setSelectedRatings] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
   const [sortBy, setSortBy] = useState('featured');
   const [currentPageNum, setCurrentPageNum] = useState(1);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -42,49 +45,22 @@ export default function Shop() {
     setSelectedCategories([]);
     setPriceRange([100, 1000]);
     setSelectedRatings([]);
+    setSelectedTags([]);
+    setSelectedBrands([]);
     setSortBy('featured');
     showToast('Filters reset to default');
   };
 
   return (
-    <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 py-6 md:py-8 space-y-6 font-sans">
+    <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 py-4 md:py-6 space-y-6 font-sans">
       
-      {/* Page Header (← Shop [🔍 ⇶]) */}
-      <div className="flex items-center justify-between py-2 border-b border-[#d9ca9d]">
-        <div className="flex items-center space-x-3">
-          <button 
-            onClick={goBack}
-            className="p-1 text-[#103b1d] hover:text-[#18542a] cursor-pointer"
-            aria-label="Back"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <h1 className="font-urbanist font-extrabold text-xl text-[#103b1d]">
-            Shop
-          </h1>
-        </div>
-
-        <div className="flex items-center space-x-3 text-[#103b1d]">
-          <button 
-            onClick={() => showToast('Search catalog...')} 
-            className="p-1 hover:text-[#18542a] cursor-pointer"
-          >
-            <SlidersHorizontal className="w-5 h-5 rotate-90" />
-          </button>
-          <button 
-            onClick={() => setMobileFilterOpen(true)}
-            className="p-1 hover:text-[#18542a] cursor-pointer"
-          >
-            <SlidersHorizontal className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
+      {/* Control Bar: Filter, Sort & Product Count */}
 
       {/* Control Bar (Matching Screenshot: [Filter] | [Sort by: Relevance v] | 128 products) */}
       <div className="flex items-center justify-between gap-2 py-2 border-b border-[#d9ca9d] text-xs">
         {/* Filter Button */}
         <button
-          onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
+          onClick={() => setMobileFilterOpen(true)}
           className="px-3.5 py-2 bg-[#f3e8cc] hover:bg-[#e6dec9] border border-[#d9ca9d] text-[#103b1d] font-bold text-xs rounded-xl flex items-center space-x-1.5 shadow-2xs cursor-pointer transition-colors"
         >
           <SlidersHorizontal className="w-3.5 h-3.5 text-[#18542a]" />
@@ -129,36 +105,24 @@ export default function Shop() {
           />
         </div>
 
-        {/* Mobile Filter Overlay Modal */}
-        {mobileFilterOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-end lg:hidden">
-            <div className="bg-white w-full max-w-xs h-full p-5 overflow-y-auto space-y-4">
-              <div className="flex justify-between items-center border-b border-[#f3e8cc] pb-3">
-                <h3 className="font-extrabold text-sm text-[#18542a] font-urbanist uppercase">Filter Harvest</h3>
-                <button onClick={() => setMobileFilterOpen(false)} className="p-1.5 rounded-full bg-[#f3e8cc] text-[#18542a]">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <FilterSidebar 
-                selectedCategories={selectedCategories}
-                setSelectedCategories={setSelectedCategories}
-                priceRange={priceRange}
-                setPriceRange={setPriceRange}
-                selectedRatings={selectedRatings}
-                setSelectedRatings={setSelectedRatings}
-                onReset={handleReset}
-              />
-
-              <button 
-                onClick={() => setMobileFilterOpen(false)}
-                className="w-full py-3 bg-[#18542a] text-white text-xs font-bold rounded-xl shadow-lg"
-              >
-                Apply Filters
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Mobile Split-Tab Filter Overlay Modal */}
+        <MobileFilterModal 
+          isOpen={mobileFilterOpen}
+          onClose={() => setMobileFilterOpen(false)}
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
+          priceRange={priceRange}
+          setPriceRange={setPriceRange}
+          selectedRatings={selectedRatings}
+          setSelectedRatings={setSelectedRatings}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          selectedTags={selectedTags}
+          setSelectedTags={setSelectedTags}
+          selectedBrands={selectedBrands}
+          setSelectedBrands={setSelectedBrands}
+          onReset={handleReset}
+        />
 
         {/* Products Grid Area */}
         <div className="lg:col-span-9 space-y-6">

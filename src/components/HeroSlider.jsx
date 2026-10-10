@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 
@@ -7,8 +7,8 @@ export const HERO_SLIDES = [
     id: 'slide-1',
     productId: 'p1',
     title: 'Fresh Godavari Organic Harvest',
-    bannerImage: '/banners/banner1.jpg',
-    buttonTextColor: 'text-[#5c1922]'
+    bannerImage: '/hero.png',
+    buttonTextColor: 'text-[#18542a]'
   },
   {
     id: 'slide-2',
@@ -28,8 +28,8 @@ export const HERO_SLIDES = [
     id: 'slide-4',
     productId: 'p3',
     title: 'Stone Milled Organic Spices & Oils',
-    bannerImage: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&q=80&w=1400',
-    buttonTextColor: 'text-[#7c2d12]'
+    bannerImage: '/banners/banner1.jpg',
+    buttonTextColor: 'text-[#5c1922]'
   },
   {
     id: 'slide-5',
@@ -65,71 +65,107 @@ export default function HeroSlider() {
   const { setCurrentPage, navigateToProduct } = useCart();
   const [virtualIndex, setVirtualIndex] = useState(1); // Starts at real slide 1 (index 1)
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isInteracting, setIsInteracting] = useState(false);
+  
   const scrollContainerRef = useRef(null);
-  const isAutoScrollingRef = useRef(false);
+  const isProgrammaticScrollRef = useRef(false);
+  const interactionTimerRef = useRef(null);
+  const scrollTimeoutRef = useRef(null);
 
-  // Auto-slide effect (3.5 second interval)
-  useEffect(() => {
-    if (!isPlaying) return;
-    const interval = setInterval(() => {
-      setVirtualIndex((prev) => prev + 1);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, [isPlaying]);
+  // Helper to scroll to specific virtual index programmatically
+  const scrollToVirtualIndex = useCallback((targetIndex, behavior = 'smooth') => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    const card = container.children[targetIndex];
+    if (card) {
+      isProgrammaticScrollRef.current = true;
+      setVirtualIndex(targetIndex);
+      
+      const targetScrollLeft = card.offsetLeft - (container.clientWidth - card.clientWidth) / 2;
+      container.scrollTo({ left: targetScrollLeft, behavior });
+      
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = setTimeout(() => {
+        isProgrammaticScrollRef.current = false;
+        
+        // Handle clone wrap-arounds
+        if (targetIndex === EXTENDED_SLIDES.length - 1) {
+          const firstRealCard = container.children[1];
+          if (firstRealCard) {
+            const firstScrollLeft = firstRealCard.offsetLeft - (container.clientWidth - firstRealCard.clientWidth) / 2;
+            container.scrollTo({ left: firstScrollLeft, behavior: 'instant' });
+            setVirtualIndex(1);
+          }
+        } else if (targetIndex === 0) {
+          const lastRealCard = container.children[HERO_SLIDES.length];
+          if (lastRealCard) {
+            const lastScrollLeft = lastRealCard.offsetLeft - (container.clientWidth - lastRealCard.clientWidth) / 2;
+            container.scrollTo({ left: lastScrollLeft, behavior: 'instant' });
+            setVirtualIndex(HERO_SLIDES.length);
+          }
+        }
+      }, behavior === 'instant' ? 0 : 450);
+    }
+  }, []);
 
-  // Initial scroll setup to position at index 1 without animation
+  // Initial scroll positioning
   useEffect(() => {
     if (scrollContainerRef.current) {
       const container = scrollContainerRef.current;
       const card = container.children[1];
       if (card) {
-        container.scrollLeft = card.offsetLeft - 16;
+        const targetScrollLeft = card.offsetLeft - (container.clientWidth - card.clientWidth) / 2;
+        container.scrollLeft = targetScrollLeft;
       }
     }
   }, []);
 
-  // Sync scroll position for seamless infinite loop
+  // Auto-slide effect (only runs when playing AND user is not interacting)
   useEffect(() => {
-    if (!scrollContainerRef.current) return;
-    const container = scrollContainerRef.current;
-    const card = container.children[virtualIndex];
+    if (!isPlaying || isInteracting) return;
+    const interval = setInterval(() => {
+      setVirtualIndex((prevIndex) => {
+        const nextIndex = prevIndex + 1;
+        scrollToVirtualIndex(nextIndex, 'smooth');
+        return nextIndex;
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isPlaying, isInteracting, scrollToVirtualIndex]);
 
-    if (card) {
-      isAutoScrollingRef.current = true;
-      const left = card.offsetLeft - 16;
-      container.scrollTo({ left, behavior: 'smooth' });
+  // User Interaction Handlers (Pause auto-slide when user touches, drags, or hovers)
+  const handleInteractionStart = () => {
+    setIsInteracting(true);
+    if (interactionTimerRef.current) clearTimeout(interactionTimerRef.current);
+  };
 
-      const timer = setTimeout(() => {
-        // If we scrolled forward into the clone-end at index 8, instantly jump to real slide 1 at index 1
-        if (virtualIndex === EXTENDED_SLIDES.length - 1) {
-          const realFirstCard = container.children[1];
-          if (realFirstCard) {
-            container.scrollTo({ left: realFirstCard.offsetLeft - 16, behavior: 'instant' });
-            setVirtualIndex(1);
-          }
-        }
-        // If we scrolled backward into the clone-start at index 0, instantly jump to real slide 7 at index 7
-        else if (virtualIndex === 0) {
-          const realLastCard = container.children[HERO_SLIDES.length];
-          if (realLastCard) {
-            container.scrollTo({ left: realLastCard.offsetLeft - 16, behavior: 'instant' });
-            setVirtualIndex(HERO_SLIDES.length);
-          }
-        }
-
-        isAutoScrollingRef.current = false;
-      }, 550);
-
-      return () => clearTimeout(timer);
-    }
-  }, [virtualIndex]);
+  const handleInteractionEnd = () => {
+    // Resume auto-slide after 3.5 seconds of idle time post-interaction
+    if (interactionTimerRef.current) clearTimeout(interactionTimerRef.current);
+    interactionTimerRef.current = setTimeout(() => {
+      setIsInteracting(false);
+    }, 3500);
+  };
 
   const handlePrev = () => {
-    setVirtualIndex((prev) => prev - 1);
+    handleInteractionStart();
+    const nextIndex = virtualIndex - 1;
+    scrollToVirtualIndex(nextIndex, 'smooth');
+    handleInteractionEnd();
   };
 
   const handleNext = () => {
-    setVirtualIndex((prev) => prev + 1);
+    handleInteractionStart();
+    const nextIndex = virtualIndex + 1;
+    scrollToVirtualIndex(nextIndex, 'smooth');
+    handleInteractionEnd();
+  };
+
+  const handleDotClick = (index) => {
+    handleInteractionStart();
+    const targetVirtual = index + 1;
+    scrollToVirtualIndex(targetVirtual, 'smooth');
+    handleInteractionEnd();
   };
 
   const handleSlideClick = (productId) => {
@@ -140,15 +176,51 @@ export default function HeroSlider() {
     }
   };
 
+  // Scroll listener ONLY updates active index during user swipe
   const handleScroll = () => {
-    if (isAutoScrollingRef.current || !scrollContainerRef.current) return;
+    if (isProgrammaticScrollRef.current || !scrollContainerRef.current) return;
+    
     const container = scrollContainerRef.current;
     const scrollLeft = container.scrollLeft;
-    const cardWidth = container.children[0]?.clientWidth || 300;
-    const index = Math.round(scrollLeft / (cardWidth + 12));
-    if (index >= 0 && index < EXTENDED_SLIDES.length && index !== virtualIndex) {
-      setVirtualIndex(index);
+    const containerCenter = scrollLeft + container.clientWidth / 2;
+    
+    // Find closest slide index based on current center offset
+    let closestIndex = 1;
+    let minDistance = Infinity;
+
+    Array.from(container.children).forEach((child, idx) => {
+      const childCenter = child.offsetLeft + child.clientWidth / 2;
+      const distance = Math.abs(containerCenter - childCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = idx;
+      }
+    });
+
+    if (closestIndex !== virtualIndex) {
+      setVirtualIndex(closestIndex);
     }
+
+    // Infinite loop jump check after manual swipe ends
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => {
+      if (isProgrammaticScrollRef.current) return;
+      if (closestIndex === EXTENDED_SLIDES.length - 1) {
+        const firstRealCard = container.children[1];
+        if (firstRealCard) {
+          const targetScroll = firstRealCard.offsetLeft - (container.clientWidth - firstRealCard.clientWidth) / 2;
+          container.scrollTo({ left: targetScroll, behavior: 'instant' });
+          setVirtualIndex(1);
+        }
+      } else if (closestIndex === 0) {
+        const lastRealCard = container.children[HERO_SLIDES.length];
+        if (lastRealCard) {
+          const targetScroll = lastRealCard.offsetLeft - (container.clientWidth - lastRealCard.clientWidth) / 2;
+          container.scrollTo({ left: targetScroll, behavior: 'instant' });
+          setVirtualIndex(HERO_SLIDES.length);
+        }
+      }
+    }, 150);
   };
 
   // Calculate active real slide index (0 to 6)
@@ -156,11 +228,16 @@ export default function HeroSlider() {
 
   return (
     <section 
-      className="w-full bg-[#faf5ea] pt-3 sm:pt-5 pb-4 sm:pb-6 select-none border-b border-[#d9ca9d]"
-      onMouseEnter={() => setIsPlaying(false)}
-      onMouseLeave={() => setIsPlaying(true)}
+      className="w-full bg-[#faf5ea] py-4 sm:py-6 md:py-8 select-none border-b border-[#d9ca9d]"
+      onMouseEnter={handleInteractionStart}
+      onMouseLeave={handleInteractionEnd}
+      onTouchStart={handleInteractionStart}
+      onTouchEnd={handleInteractionEnd}
+      onTouchCancel={handleInteractionEnd}
+      onMouseDown={handleInteractionStart}
+      onMouseUp={handleInteractionEnd}
     >
-      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 relative">
+      <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-12 relative">
         
         {/* Carousel Outer Wrapper */}
         <div className="relative group">
@@ -169,17 +246,17 @@ export default function HeroSlider() {
           <div 
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="flex space-x-3 sm:space-x-5 overflow-x-auto snap-x snap-mandatory no-scrollbar py-1"
+            className="flex space-x-3 sm:space-x-6 overflow-x-auto snap-x snap-mandatory no-scrollbar py-2 scroll-smooth"
           >
             {EXTENDED_SLIDES.map((slide, index) => (
               <div 
                 key={`${slide.id}-${index}`}
                 onClick={() => handleSlideClick(slide.productId)}
-                className={`shrink-0 snap-start relative rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-sm hover:shadow-md border border-black/10 cursor-pointer transition-transform duration-300 transform active:scale-[0.99]
-                  w-[85vw] max-w-[340px] h-[210px] xs:h-[235px] 
-                  sm:w-[65vw] sm:max-w-[540px] sm:h-[300px]
-                  md:w-[50vw] md:max-w-[700px] md:h-[360px]
-                  lg:w-[42vw] lg:max-w-[800px] lg:h-[400px]
+                className={`shrink-0 snap-center relative rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-lg hover:shadow-2xl border border-black/10 cursor-pointer transition-all duration-300 transform active:scale-[0.99] aspect-[16/10]
+                  w-[90vw] max-w-[420px] 
+                  sm:w-[74vw] sm:max-w-[660px] 
+                  md:w-[60vw] md:max-w-[840px] 
+                  lg:w-[52vw] lg:max-w-[980px]
                 `}
               >
                 <img 
@@ -187,22 +264,44 @@ export default function HeroSlider() {
                   alt={slide.title}
                   className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
                   loading="eager"
+                  draggable={false}
                 />
 
-                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none" />
+                {/* Bottom Shadow Gradient */}
+                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 via-black/25 to-transparent pointer-events-none" />
 
-                <div className="absolute left-4 sm:left-6 bottom-4 sm:bottom-6 z-10">
+                {/* Left Side: Shop Now Button */}
+                <div className="absolute left-4 sm:left-6 bottom-3.5 sm:bottom-5 z-10">
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSlideClick(slide.productId);
                     }}
-                    className={`px-5 py-2.5 sm:px-6 sm:py-3 bg-white hover:bg-slate-100 ${slide.buttonTextColor || 'text-slate-900'} text-[11px] sm:text-xs font-black uppercase tracking-wider rounded-full shadow-lg border border-white/80 active:scale-95 transition-all inline-flex items-center space-x-1.5 cursor-pointer`}
+                    className={`px-5 py-2.5 sm:px-6 sm:py-3 bg-white hover:bg-amber-50 ${slide.buttonTextColor || 'text-slate-900'} text-[11px] sm:text-xs font-black uppercase tracking-wider rounded-full shadow-lg border border-white/80 active:scale-95 transition-all inline-flex items-center space-x-1.5 cursor-pointer`}
                   >
                     <span>SHOP NOW</span>
                   </button>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Instagram-Style Fixed Dots (No frame box, clean floating transparent dots) */}
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-3.5 sm:bottom-5 z-20 flex items-center space-x-1.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] pointer-events-auto">
+            {HERO_SLIDES.map((_, dotIdx) => (
+              <button
+                key={dotIdx}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDotClick(dotIdx);
+                }}
+                aria-label={`Go to slide ${dotIdx + 1}`}
+                className={`rounded-full transition-all duration-300 cursor-pointer ${
+                  realIndex === dotIdx 
+                    ? 'w-2 h-2 bg-white scale-125 shadow-sm' 
+                    : 'w-1.5 h-1.5 bg-white/50 hover:bg-white/85'
+                }`}
+              />
             ))}
           </div>
 
@@ -221,36 +320,6 @@ export default function HeroSlider() {
             className="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-xl border border-slate-200 items-center justify-center transition-all cursor-pointer active:scale-90 opacity-0 group-hover:opacity-100"
           >
             <ChevronRight className="w-6 h-6 text-slate-800" />
-          </button>
-        </div>
-
-        {/* PAGINATION BAR */}
-        <div className="flex items-center justify-center space-x-3 pt-4 sm:pt-5">
-          <span className="px-3.5 py-1 rounded-full bg-[#33373d] text-white text-[11px] sm:text-xs font-bold font-mono tracking-wider shadow-xs">
-            {realIndex + 1}/{HERO_SLIDES.length}
-          </span>
-
-          <div className="flex items-center space-x-1.5 sm:space-x-2">
-            {HERO_SLIDES.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setVirtualIndex(index + 1)}
-                aria-label={`Go to slide ${index + 1}`}
-                className={`rounded-full transition-all duration-300 cursor-pointer ${
-                  realIndex === index 
-                    ? 'w-3 h-3 bg-slate-800 scale-110 shadow-xs' 
-                    : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
-                }`}
-              />
-            ))}
-          </div>
-
-          <button 
-            onClick={() => setIsPlaying(!isPlaying)}
-            title={isPlaying ? "Pause Slideshow" : "Play Slideshow"}
-            className="w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition-all cursor-pointer ml-1"
-          >
-            {isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 ml-0.5" />}
           </button>
         </div>
 

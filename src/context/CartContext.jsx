@@ -47,7 +47,7 @@ export const INITIAL_PRODUCTS = [
     id: 'p3',
     name: 'Cold Pressed Oil',
     shortName: 'Cold Pressed Oil',
-    category: 'Natural Products',
+    category: 'Oils',
     price: 499,
     originalPrice: 599,
     discount: '17% OFF',
@@ -67,7 +67,7 @@ export const INITIAL_PRODUCTS = [
     id: 'p4',
     name: 'Organic Jaggery',
     shortName: 'Organic Jaggery',
-    category: 'Traditional Foods',
+    category: 'Organic Spices',
     price: 120,
     originalPrice: 160,
     discount: '25% OFF',
@@ -107,7 +107,7 @@ export const INITIAL_PRODUCTS = [
     id: 'p6',
     name: 'Millet Flour',
     shortName: 'Millet Flour',
-    category: 'Traditional Foods',
+    category: 'Organic Millets',
     price: 180,
     originalPrice: 240,
     discount: '25% OFF',
@@ -127,7 +127,7 @@ export const INITIAL_PRODUCTS = [
     id: 'p7',
     name: 'Organic Toor Dal',
     shortName: 'Organic Toor Dal',
-    category: 'Organic Rice',
+    category: 'Organic Millets',
     price: 195,
     originalPrice: 250,
     discount: '22% OFF',
@@ -147,7 +147,7 @@ export const INITIAL_PRODUCTS = [
     id: 'p8',
     name: 'Desi Gir Cow Ghee',
     shortName: 'Desi Gir Cow Ghee',
-    category: 'Natural Products',
+    category: 'Oils',
     price: 850,
     originalPrice: 990,
     discount: '14% OFF',
@@ -168,35 +168,35 @@ export const INITIAL_PRODUCTS = [
 export const CATEGORIES = [
   { 
     id: 'c1', 
-    name: 'Fresh Vegetables', 
-    subtext: 'Farm fresh organic vegetables', 
+    name: 'Oils', 
+    subtext: 'Wood pressed pure organic oils & ghee', 
     count: 12,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/vegetables.jpg'
+    image: '/categories/oil.png'
   },
   { 
     id: 'c2', 
-    name: 'Fresh Fruits', 
-    subtext: 'Seasonal fresh fruits', 
-    count: 10,
+    name: 'Organic Rice', 
+    subtext: 'Aged basmati & traditional red rice', 
+    count: 15,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/fruits.jpg'
+    image: '/categories/rice.png'
   },
   { 
     id: 'c3', 
-    name: 'Dairy, Bread and Eggs', 
-    subtext: 'Dairy, fresh bread & eggs', 
-    count: 8,
+    name: 'Organic Millets', 
+    subtext: 'Nutrient dense native millets & flours', 
+    count: 10,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/dairy_bread.jpg'
+    image: '/categories/millet.png'
   },
   { 
     id: 'c4', 
-    name: 'Meat and Seafood', 
-    subtext: 'Clean fresh meat & seafood', 
-    count: 9,
+    name: 'Organic Spices', 
+    subtext: 'Pure stone ground spices & turmeric', 
+    count: 14,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/meat_seafood.jpg'
+    image: '/categories/spices.png'
   },
 ];
 

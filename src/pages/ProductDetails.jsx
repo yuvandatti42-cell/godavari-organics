@@ -71,47 +71,6 @@ export default function ProductDetails() {
   return (
     <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 py-4 md:py-8 space-y-6 md:space-y-8 font-sans text-[#103b1d]">
       
-      {/* Mobile Top Header Bar (Visible on mobile < lg) */}
-      <div className="flex lg:hidden items-center justify-between pb-3 border-b border-[#d9ca9d]">
-        <button 
-          type="button"
-          onClick={goBack}
-          className="p-1 text-[#103b1d] hover:text-[#18542a] cursor-pointer transition-colors"
-          aria-label="Back"
-        >
-          <ArrowLeft className="w-6 h-6 text-[#103b1d]" />
-        </button>
-
-        <h1 className="font-urbanist font-extrabold text-lg sm:text-xl text-[#103b1d]">
-          Product Details
-        </h1>
-
-        <div className="flex items-center space-x-3 text-[#103b1d]">
-          <button 
-            type="button"
-            onClick={() => setSearchModalOpen(true)}
-            className="p-1 hover:text-[#18542a] cursor-pointer transition-colors"
-            aria-label="Search"
-          >
-            <Search className="w-5 h-5 text-[#103b1d]" />
-          </button>
-          
-          <button 
-            type="button"
-            onClick={() => setCurrentPage('cart')}
-            className="relative p-1 hover:text-[#18542a] cursor-pointer transition-colors"
-            aria-label="Cart"
-          >
-            <ShoppingBag className="w-5 h-5 text-[#103b1d]" />
-            {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1.5 w-4 h-4 bg-[#18542a] text-[#ffc926] font-extrabold text-[10px] rounded-full flex items-center justify-center border border-[#f3e8cc]">
-                {cartCount}
-              </span>
-            )}
-          </button>
-        </div>
-      </div>
-
       {/* Breadcrumb Navigation */}
       <Breadcrumb 
         items={[
