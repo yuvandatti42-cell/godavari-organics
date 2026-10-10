@@ -118,13 +118,11 @@ export default function Header() {
               onClick={() => setCurrentPage('home')}
               className="group flex items-center space-x-2 sm:space-x-3 text-center transition-transform active:scale-95 cursor-pointer py-0.5 min-w-0"
             >
-              <div className="h-8 w-8 xs:h-9 xs:w-9 sm:h-11 sm:w-11 lg:h-13 lg:w-13 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-[#18542a] border-2 border-[#ffc926] shadow-xs group-hover:scale-105 transition-transform">
-                <img 
-                  src="/logo.png" 
-                  alt="Godavari Organics Symbol Logo" 
-                  className="w-full h-full object-cover scale-[1.65]" 
-                />
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="Godavari Organics Symbol Logo" 
+                className="h-9 xs:h-10 sm:h-12 lg:h-14 w-auto object-contain transition-transform group-hover:scale-105 shrink-0 drop-shadow-xs" 
+              />
               <span className="font-urbanist font-black text-sm xs:text-base sm:text-xl md:text-2xl lg:text-3xl text-[#18542a] tracking-tight group-hover:text-[#9abc05] transition-colors leading-none uppercase truncate">
                 Godavari Organics
               </span>
