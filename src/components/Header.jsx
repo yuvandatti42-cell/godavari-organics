@@ -14,6 +14,7 @@ export default function Header() {
     setAuthModalOpen,
     setSearchModalOpen,
     navigateToProduct,
+    setSelectedCategoryFilter,
     products
   } = useCart();
   
@@ -74,40 +75,62 @@ export default function Header() {
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
-            <nav className="hidden lg:flex items-center space-x-6 text-xs font-bold text-[#18542a] tracking-wider uppercase">
+            <nav className="hidden lg:flex items-center space-x-5 text-xs font-bold text-[#18542a] tracking-wider uppercase">
               <button 
                 onClick={() => setCurrentPage('home')}
-                className={`transition-colors ${currentPage === 'home' ? 'font-extrabold text-[#18542a] underline underline-offset-4 decoration-[#9abc05] decoration-3' : 'hover:text-[#9abc05]'}`}
+                className={`transition-colors cursor-pointer ${currentPage === 'home' ? 'font-extrabold text-[#18542a] underline underline-offset-4 decoration-[#9abc05] decoration-3' : 'hover:text-[#9abc05]'}`}
               >
                 Home
               </button>
 
               <button 
-                onClick={() => setCurrentPage('shop')}
-                className={`transition-colors ${currentPage === 'shop' ? 'font-extrabold text-[#18542a] underline underline-offset-4 decoration-[#9abc05] decoration-3' : 'hover:text-[#9abc05]'}`}
+                onClick={() => {
+                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
+                  setCurrentPage('shop');
+                }}
+                className={`transition-colors cursor-pointer ${currentPage === 'shop' ? 'font-extrabold text-[#18542a] underline underline-offset-4 decoration-[#9abc05] decoration-3' : 'hover:text-[#9abc05]'}`}
               >
-                Shop Grains
+                All Shop
               </button>
 
               <button 
-                onClick={() => setCurrentPage('shop')}
-                className="hover:text-[#9abc05] transition-colors"
+                onClick={() => {
+                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('Oils');
+                  setCurrentPage('shop');
+                }}
+                className="hover:text-[#9abc05] transition-colors cursor-pointer"
               >
-                Traditional Spices
+                Oils
               </button>
 
               <button 
-                onClick={() => showToast('Godavari Organic Delta Farms')}
-                className="hover:text-[#9abc05] transition-colors"
+                onClick={() => {
+                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Rice');
+                  setCurrentPage('shop');
+                }}
+                className="hover:text-[#9abc05] transition-colors cursor-pointer"
               >
-                Our Farms
+                Rice
               </button>
 
               <button 
-                onClick={() => showToast('Our Farming Collective Mission')}
-                className="hover:text-[#f96015] transition-colors"
+                onClick={() => {
+                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Millets');
+                  setCurrentPage('shop');
+                }}
+                className="hover:text-[#9abc05] transition-colors cursor-pointer"
               >
-                Our Mission
+                Millets
+              </button>
+
+              <button 
+                onClick={() => {
+                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Spices');
+                  setCurrentPage('shop');
+                }}
+                className="hover:text-[#9abc05] transition-colors cursor-pointer"
+              >
+                Spices
               </button>
             </nav>
           </div>

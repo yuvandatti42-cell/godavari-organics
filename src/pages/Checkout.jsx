@@ -42,11 +42,10 @@ export default function Checkout() {
     }, 800);
   };
 
-  // Demo fallback items matching mockup if cart is empty
+  // Demo fallback items matching catalog if cart is empty
   const displayItems = cartItems.length > 0 ? cartItems : [
-    { id: 1, name: 'Organic Basmati Rice', selectedSize: '500g', quantity: 1, price: 299 },
-    { id: 2, name: 'Turmeric Powder', selectedSize: '200g', quantity: 2, price: 298 },
-    { id: 3, name: 'Cold Pressed Oil', selectedSize: '1L', quantity: 1, price: 499 }
+    { id: 'p_oil_groundnut', name: 'Cold Pressed Groundnut Oil', selectedSize: '1 Litre', quantity: 1, price: 399 },
+    { id: 'p_spice_turmeric', name: 'High-Curcumin Turmeric Powder', selectedSize: '250g', quantity: 1, price: 120 }
   ];
 
   const finalDisplayTotal = cartItems.length > 0 

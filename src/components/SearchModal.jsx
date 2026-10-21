@@ -7,15 +7,15 @@ export default function SearchModal() {
   const { searchModalOpen, setSearchModalOpen, products, navigateToProduct } = useCart();
   const [query, setQuery] = useState('');
   
-  // Sample initial recent search items matching wireframe
+  // Sample initial recent search items matching catalog
   const [recentSearches, setRecentSearches] = useState([
-    'Traditional Basmati Rice',
-    'Pure Cold Pressed Groundnut Oil',
-    'Aromatic Spice Mix'
+    'Cold Pressed Groundnut Oil',
+    'Desi Gir Cow A2 Ghee',
+    'High-Curcumin Turmeric Powder'
   ]);
 
   // Sample popular search pill tags
-  const popularTags = ['Rice', 'Spices', 'Oil', 'Jaggery', 'Millet'];
+  const popularTags = ['Oils', 'Organic Rice', 'Organic Millets', 'Organic Spices'];
 
   if (!searchModalOpen) return null;
 
@@ -54,14 +54,14 @@ export default function SearchModal() {
               placeholder="Search organic products..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-10 pr-10 py-3 bg-[#f3e8cc] border-2 border-[#103b1d] rounded-2xl text-sm font-urbanist font-extrabold text-[#103b1d] focus:outline-none focus:ring-2 focus:ring-[#9abc05] placeholder-[#556b54]"
+              className="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm font-urbanist font-extrabold text-[#103b1d] focus:outline-none focus:bg-white focus:border-[#103b1d] focus:ring-1 focus:ring-[#103b1d] placeholder-stone-400"
             />
-            <Search className="w-5 h-5 text-[#103b1d] absolute left-3.5 top-3.5 pointer-events-none" />
+            <Search className="w-5 h-5 text-stone-400 absolute left-3.5 top-3.5 pointer-events-none" />
             
             {query && (
               <button 
                 onClick={() => setQuery('')}
-                className="absolute right-3.5 top-3.5 text-[#556b54] hover:text-[#103b1d]"
+                className="absolute right-3.5 top-3.5 text-stone-400 hover:text-stone-700"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -70,34 +70,34 @@ export default function SearchModal() {
 
           <button 
             onClick={() => setSearchModalOpen(false)}
-            className="text-sm font-urbanist font-extrabold text-[#103b1d] hover:text-[#f96015] px-2 py-1 transition-colors cursor-pointer"
+            className="text-sm font-urbanist font-extrabold text-stone-600 hover:text-[#103b1d] px-2 py-1 transition-colors cursor-pointer"
           >
             Cancel
           </button>
         </div>
 
-        {/* 2. RECENT SEARCHES SECTION (Matching Screenshot) */}
+        {/* 2. RECENT SEARCHES SECTION */}
         {recentSearches.length > 0 && !query && (
           <div className="space-y-2 text-left">
             <h3 className="font-urbanist font-extrabold text-sm text-[#103b1d] tracking-tight">
               Recent Searches
             </h3>
             
-            <div className="bg-[#f3e8cc] rounded-2xl border border-[#d9ca9d] divide-y divide-[#d9ca9d]/60 overflow-hidden shadow-2xs">
+            <div className="bg-white rounded-2xl border border-stone-200 divide-y divide-stone-100 overflow-hidden shadow-2xs">
               {recentSearches.map((item, idx) => (
                 <div 
                   key={idx}
                   onClick={() => handleSelectQuery(item)}
-                  className="px-4 py-3 flex items-center justify-between text-xs font-medium text-[#556b54] hover:bg-[#e6dec9] transition-colors cursor-pointer"
+                  className="px-4 py-3 flex items-center justify-between text-xs font-medium text-stone-600 hover:bg-stone-50 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center space-x-3">
-                    <Clock className="w-4 h-4 text-[#18542a]/70 shrink-0" />
+                    <Clock className="w-4 h-4 text-stone-400 shrink-0" />
                     <span>{item}</span>
                   </div>
 
                   <button 
                     onClick={(e) => handleRemoveRecent(item, e)}
-                    className="text-[#18542a]/50 hover:text-red-600 p-0.5"
+                    className="text-stone-300 hover:text-rose-500 p-0.5"
                     title="Remove from history"
                   >
                     <XCircle className="w-4 h-4" />
@@ -108,19 +108,19 @@ export default function SearchModal() {
           </div>
         )}
 
-        {/* 3. POPULAR SEARCHES SECTION (Pills Row matching Screenshot) */}
+        {/* 3. POPULAR SEARCHES SECTION */}
         {!query && (
           <div className="space-y-2 text-left">
             <h3 className="font-urbanist font-extrabold text-sm text-[#103b1d] tracking-tight">
               Popular Searches
             </h3>
             
-            <div className="flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-2">
               {popularTags.map((tag, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSelectQuery(tag)}
-                  className="px-5 py-2 bg-[#f3e8cc] hover:bg-[#18542a] hover:text-white border border-[#d9ca9d] text-[#103b1d] text-xs font-bold rounded-full transition-all shadow-2xs cursor-pointer active:scale-95"
+                  className="px-4 py-1.5 bg-white hover:bg-[#103b1d] hover:text-white border border-stone-200 text-stone-700 text-xs font-bold rounded-full transition-all shadow-2xs cursor-pointer active:scale-95"
                 >
                   {tag}
                 </button>
@@ -129,7 +129,7 @@ export default function SearchModal() {
           </div>
         )}
 
-        {/* 4. TRENDING PRODUCTS / MATCHING RESULTS GRID (Matching Screenshot) */}
+        {/* 4. TRENDING PRODUCTS / MATCHING RESULTS GRID */}
         <div className="space-y-3 text-left flex-1 pb-6">
           <h3 className="font-urbanist font-extrabold text-sm text-[#103b1d] tracking-tight">
             {query ? `Search Results (${matchingProducts.length})` : 'Trending Products'}
@@ -147,8 +147,8 @@ export default function SearchModal() {
               ))}
             </div>
           ) : (
-            <div className="bg-[#f3e8cc] rounded-2xl border border-[#d9ca9d] p-8 text-center space-y-2">
-              <p className="text-xs text-[#556b54] font-medium">No organic products found for "{query}".</p>
+            <div className="bg-white rounded-2xl border border-stone-200 p-8 text-center space-y-2">
+              <p className="text-xs text-stone-500 font-medium">No organic products found for "{query}".</p>
               <button 
                 onClick={() => setQuery('')}
                 className="text-xs font-extrabold text-[#18542a] underline"

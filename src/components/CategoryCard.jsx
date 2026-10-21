@@ -2,11 +2,18 @@ import React from 'react';
 import { useCart } from '../context/CartContext';
 
 export default function CategoryCard({ category }) {
-  const { setCurrentPage } = useCart();
+  const { setCurrentPage, setSelectedCategoryFilter } = useCart();
+
+  const handleClick = () => {
+    if (setSelectedCategoryFilter) {
+      setSelectedCategoryFilter(category.name);
+    }
+    setCurrentPage('shop');
+  };
 
   return (
     <div 
-      onClick={() => setCurrentPage('shop')}
+      onClick={handleClick}
       className="flex flex-col items-center cursor-pointer group select-none transition-transform active:scale-98 h-full"
     >
       {/* Soft Organic Warm Beige Rounded Card Frame (Godavari Brand Color Palette) */}

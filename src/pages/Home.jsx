@@ -6,7 +6,8 @@ import ProductCard from '../components/ProductCard';
 import FeaturedHarvestProducts from '../components/FeaturedHarvestProducts';
 import WhyChooseArma from '../components/WhyChooseArma';
 import CustomerReviews from '../components/CustomerReviews';
-import { ArrowRight, ArrowUpRight, ShieldCheck, Users, HeartHandshake, Sprout, CheckCircle2, Award, Leaf, Truck, Sparkles, MapPin, Gift, Image } from 'lucide-react';
+import StoreLocation from '../components/StoreLocation';
+import { ArrowRight, ArrowUpRight, ShieldCheck, Users, HeartHandshake, Sprout, CheckCircle2, Award, Leaf, Truck, Sparkles, MapPin, Gift, Image, PhoneCall } from 'lucide-react';
 
 export default function Home() {
   const { setCurrentPage, products, categories, showToast } = useCart();
@@ -21,53 +22,6 @@ export default function Home() {
 
       {/* Main Page Body Container (Top Section) - Expanded to Full Desktop Width */}
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 pt-6 sm:pt-10 pb-2">
-
-        {/* STANDALONE ENLARGED CERTIFIED QUALITY STANDARDS BADGES */}
-        {/* Desktop: One single horizontal line | Mobile: Continuous smooth right-to-left marquee scroll */}
-        <div className="mb-8 sm:mb-10 py-3 overflow-hidden">
-          {/* Mobile continuous right-to-left marquee scroll (< sm) */}
-          <div className="block sm:hidden w-full overflow-hidden relative">
-            <div className="animate-marquee whitespace-nowrap flex items-center space-x-10 py-3">
-              <div className="flex items-center space-x-10 shrink-0">
-                <img src="/fssai.webp" alt="FSSAI Certified" className="h-14 sm:h-16 w-auto object-contain drop-shadow-xs" />
-                <img src="/USDA.gif" alt="USDA Organic" className="h-16 sm:h-20 w-auto object-contain drop-shadow-xs" />
-                <img src="/SGS.png" alt="SGS Bio-Verified" className="h-14 sm:h-16 w-auto object-contain drop-shadow-xs" />
-                <img src="/apeda-pure.png" alt="APEDA Pure" className="h-16 sm:h-20 w-auto object-contain drop-shadow-xs" />
-              </div>
-              {/* Duplicated set for seamless continuous right-to-left marquee loop on mobile */}
-              <div className="flex items-center space-x-10 shrink-0">
-                <img src="/fssai.webp" alt="FSSAI Certified" className="h-14 sm:h-16 w-auto object-contain drop-shadow-xs" />
-                <img src="/USDA.gif" alt="USDA Organic" className="h-16 sm:h-20 w-auto object-contain drop-shadow-xs" />
-                <img src="/SGS.png" alt="SGS Bio-Verified" className="h-14 sm:h-16 w-auto object-contain drop-shadow-xs" />
-                <img src="/apeda-pure.png" alt="APEDA Pure" className="h-16 sm:h-20 w-auto object-contain drop-shadow-xs" />
-              </div>
-            </div>
-          </div>
-
-          {/* Desktop floating logos row (>= sm) */}
-          <div className="hidden sm:flex items-center justify-around gap-8 md:gap-12 lg:gap-20 py-3 px-4 max-w-6xl mx-auto">
-            <img 
-              src="/fssai.webp" 
-              alt="FSSAI Certified" 
-              className="h-16 sm:h-20 lg:h-24 max-h-28 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-xs" 
-            />
-            <img 
-              src="/USDA.gif" 
-              alt="USDA Organic" 
-              className="h-20 sm:h-24 lg:h-28 max-h-32 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-xs" 
-            />
-            <img 
-              src="/SGS.png" 
-              alt="SGS Bio-Verified" 
-              className="h-16 sm:h-20 lg:h-24 max-h-28 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-xs" 
-            />
-            <img 
-              src="/apeda-pure.png" 
-              alt="APEDA Pure" 
-              className="h-20 sm:h-24 lg:h-28 max-h-32 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-xs" 
-            />
-          </div>
-        </div>
 
         {/* 2. CATEGORY SECTION (Matches reference screenshot layout) */}
         <section className="space-y-4 sm:space-y-6 pt-2 pb-4">
@@ -84,6 +38,53 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        {/* STANDALONE CERTIFIED QUALITY STANDARDS BADGES */}
+        {/* Desktop: One single horizontal line | Mobile: Continuous smooth right-to-left marquee scroll */}
+        <div className="mt-2 sm:mt-4 mb-3 sm:mb-5 py-1.5 sm:py-2 overflow-hidden">
+          {/* Mobile continuous right-to-left marquee scroll (< sm) */}
+          <div className="block sm:hidden w-full overflow-hidden relative">
+            <div className="animate-marquee whitespace-nowrap flex items-center space-x-8 py-1.5">
+              <div className="flex items-center space-x-8 shrink-0">
+                <img src="/fssai.webp" alt="FSSAI Certified" className="h-9 w-auto object-contain" />
+                <img src="/USDA.gif" alt="USDA Organic" className="h-10 w-auto object-contain" />
+                <img src="/SGS.png" alt="SGS Bio-Verified" className="h-9 w-auto object-contain" />
+                <img src="/apeda-pure.png" alt="APEDA Pure" className="h-10 w-auto object-contain" />
+              </div>
+              {/* Duplicated set for seamless continuous right-to-left marquee loop on mobile */}
+              <div className="flex items-center space-x-8 shrink-0">
+                <img src="/fssai.webp" alt="FSSAI Certified" className="h-9 w-auto object-contain" />
+                <img src="/USDA.gif" alt="USDA Organic" className="h-10 w-auto object-contain" />
+                <img src="/SGS.png" alt="SGS Bio-Verified" className="h-9 w-auto object-contain" />
+                <img src="/apeda-pure.png" alt="APEDA Pure" className="h-10 w-auto object-contain" />
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop floating logos row (>= sm) */}
+          <div className="hidden sm:flex items-center justify-around gap-6 md:gap-10 lg:gap-14 py-2 px-4 max-w-4xl mx-auto">
+            <img 
+              src="/fssai.webp" 
+              alt="FSSAI Certified" 
+              className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+            <img 
+              src="/USDA.gif" 
+              alt="USDA Organic" 
+              className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+            <img 
+              src="/SGS.png" 
+              alt="SGS Bio-Verified" 
+              className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+            <img 
+              src="/apeda-pure.png" 
+              alt="APEDA Pure" 
+              className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+          </div>
+        </div>
 
       </div>
 
@@ -158,68 +159,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 8. COMBINED ABOUT US & WHY CHOOSE US — DESKTOP SPLIT ROW MATCHING WIREFRAME */}
+      {/* 8. WHY CHOOSE ARMA */}
       <section className="space-y-5 sm:space-y-6">
-        {/* Split Grid: Left = About Us (wider lg:col-span-7), Right = Why Choose Us (lg:col-span-5) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-stretch">
-          
-          {/* LEFT COLUMN: ABOUT GODAVARI / OUR COOPERATIVE FARMING CORE (WIDER: lg:col-span-7) */}
-          <div className="lg:col-span-7 bg-[#f3e8cc] rounded-2xl border border-[#d9ca9d] p-4 xs:p-5 sm:p-6 flex flex-col justify-between shadow-xs hover:shadow-md transition-all text-left group">
-            <div className="space-y-3.5">
-              {/* Feature Image Showcase Box Frame in Beige */}
-              <div className="relative h-44 xs:h-48 sm:h-56 md:h-60 w-full rounded-xl overflow-hidden bg-[#e6dec9] border border-[#c8b894]">
-                <img 
-                  src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1200" 
-                  alt="Godavari Organic Farming Lands" 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
-              </div>
-
-              {/* Title & Copy */}
-              <div className="space-y-2">
-                <h3 className="font-urbanist font-extrabold text-lg sm:text-xl text-[#103b1d] leading-snug tracking-tight">
-                  Our Cooperative Farming Core
-                </h3>
-                <p className="text-xs sm:text-sm text-[#556b54] font-medium leading-relaxed">
-                  We partner directly with family farms in the fertile Godavari Basin of Andhra Pradesh. By guaranteeing fair-trade pricing and investing in certified organic systems, we make sure every bag of grains preserves old-growth native species.
-                </p>
-              </div>
-            </div>
-
-            {/* Action Link */}
-            <div className="pt-3 border-t border-[#d9ca9d]/60 mt-3">
-              <button 
-                onClick={() => {
-                  showToast('Welcome to Godavari Organic Cooperative Model!');
-                  setCurrentPage('shop');
-                }}
-                className="inline-flex items-center space-x-1.5 font-urbanist font-extrabold text-xs sm:text-sm text-[#18542a] hover:text-[#9abc05] group/btn transition-colors cursor-pointer"
-              >
-                <span className="underline underline-offset-4 decoration-2 decoration-[#18542a]/30 group-hover/btn:decoration-[#9abc05]">
-                  Learn About Our Cooperative Model
-                </span>
-                <ArrowRight className="w-4 h-4 text-[#18542a] group-hover/btn:text-[#9abc05] group-hover/btn:translate-x-1 transition-all" />
-              </button>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN: WHY CHOOSE ARMA (lg:col-span-5) */}
-          <div className="lg:col-span-5 h-full">
-            <WhyChooseArma />
-          </div>
-
-        </div>
+        <WhyChooseArma />
       </section>
 
-      {/* Quick Enquiry Form Section */}
-      <section className="w-full bg-[#f3e8cc] rounded-3xl border border-[#d9ca9d] p-6 sm:p-8 md:p-10 shadow-xs text-left relative overflow-hidden">
-        <div className="max-w-3xl mx-auto space-y-4 sm:space-y-5">
-          <div className="text-center space-y-1.5">
-            <span className="inline-block bg-[#18542a] text-[#ffc926] text-[10px] sm:text-xs font-extrabold uppercase px-3 py-1 rounded-full tracking-wider shadow-xs">
-              Quick Enquiry
+      {/* Sleek Minimal Quick Callback Bar - Seamless with No Background Card */}
+      <section className="w-full py-4 sm:py-6">
+        <div className="max-w-xl mx-auto px-4 text-center space-y-3">
+          <div className="space-y-1">
+            <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#18542a]">
+              <PhoneCall className="w-3.5 h-3.5 text-[#18542a]" />
+              Quick Callback
             </span>
-            <h3 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight">
-              Have Questions? Get in Touch with Us
+            <h3 className="font-urbanist font-extrabold text-lg sm:text-2xl text-[#103b1d] tracking-tight">
+              Have questions? We'll call you right back
             </h3>
           </div>
 
@@ -227,42 +181,29 @@ export default function Home() {
             onSubmit={(e) => {
               e.preventDefault();
               const form = e.target;
-              const name = form.clientName.value.trim();
               const phone = form.clientPhone.value.trim();
-              if (name && phone) {
-                showToast(`Thank you ${name}! We will call you at ${phone} shortly.`);
+              if (phone) {
+                showToast(`Thank you! We'll call you at ${phone} shortly.`);
                 form.reset();
               } else {
-                showToast('Please fill in your Name and Phone Number.');
+                showToast('Please enter your phone number.');
               }
             }}
-            className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 max-w-xl mx-auto pt-1"
+            className="flex items-center w-full max-w-md mx-auto bg-white border border-[#d9ca9d] rounded-full p-1 sm:p-1.5 pl-4 sm:pl-5 shadow-xs focus-within:border-[#18542a] focus-within:ring-2 focus-within:ring-[#18542a]/20 transition-all"
           >
-            <div className="w-full sm:flex-1">
-              <input 
-                type="text" 
-                name="clientName"
-                required
-                placeholder="Your Full Name"
-                className="w-full px-4 py-3 sm:py-3.5 bg-white border border-[#d9ca9d] rounded-2xl text-xs sm:text-sm text-[#103b1d] placeholder-[#556b54]/70 focus:outline-none focus:border-[#18542a] focus:ring-2 focus:ring-[#18542a]/20 font-medium shadow-xs"
-              />
-            </div>
-
-            <div className="w-full sm:flex-1">
-              <input 
-                type="tel" 
-                name="clientPhone"
-                required
-                placeholder="Phone Number (+91)"
-                className="w-full px-4 py-3 sm:py-3.5 bg-white border border-[#d9ca9d] rounded-2xl text-xs sm:text-sm text-[#103b1d] placeholder-[#556b54]/70 focus:outline-none focus:border-[#18542a] focus:ring-2 focus:ring-[#18542a]/20 font-medium shadow-xs"
-              />
-            </div>
-
+            <input 
+              type="tel" 
+              name="clientPhone"
+              required
+              placeholder="Enter your phone number..."
+              className="flex-1 bg-transparent border-none text-xs sm:text-sm text-[#103b1d] placeholder-[#556b54]/60 focus:outline-none font-medium min-w-0"
+            />
             <button 
               type="submit"
-              className="w-full sm:w-auto px-7 py-3 sm:py-3.5 bg-[#18542a] hover:bg-[#103b1d] text-white text-xs sm:text-sm font-extrabold rounded-2xl shadow-md transition-all cursor-pointer active:scale-95 whitespace-nowrap"
+              className="px-4 sm:px-5 py-2 sm:py-2.5 bg-[#18542a] hover:bg-[#103b1d] text-white text-xs sm:text-sm font-bold rounded-full shadow-xs transition-all flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer"
             >
-              Submit Enquiry
+              <span>Request Call</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </form>
         </div>
@@ -270,6 +211,9 @@ export default function Home() {
 
       {/* 10. CUSTOMER REVIEWS (SLIDING MOBILE CAROUSEL & DESKTOP GRID) */}
       <CustomerReviews />
+
+      {/* 11. STORE & MILL LOCATION (GOOGLE MAPS) */}
+      <StoreLocation />
 
 
 

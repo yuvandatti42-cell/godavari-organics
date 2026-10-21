@@ -5,52 +5,38 @@ import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 export const HERO_SLIDES = [
   {
     id: 'slide-1',
-    productId: 'p1',
-    title: 'Fresh Godavari Organic Harvest',
+    productId: 'p_millet_foxtail',
+    title: 'Wholesome Millet Power & Siridhanya',
     bannerImage: '/hero.png',
     buttonTextColor: 'text-[#18542a]'
   },
   {
     id: 'slide-2',
-    productId: 'p8',
-    title: 'Pure Forest & Farm Goodness',
-    bannerImage: '/banners/banner2.jpg',
+    productId: 'p_oil_groundnut',
+    title: '100% Pure Cold Pressed Natural Oils',
+    bannerImage: '/banners/banner_oil.jpg',
     buttonTextColor: 'text-[#18542a]'
   },
   {
     id: 'slide-3',
-    productId: 'p2',
-    title: 'Traditional & Pure Wellness Picks',
-    bannerImage: '/banners/banner3.jpg',
-    buttonTextColor: 'text-[#78350f]'
+    productId: 'p_ghee_cow',
+    title: 'Pure Vedic Bilona Desi Cow A2 Ghee',
+    bannerImage: '/banners/banner_ghee.jpg',
+    buttonTextColor: 'text-[#92400e]'
   },
   {
     id: 'slide-4',
-    productId: 'p3',
-    title: 'Stone Milled Organic Spices & Oils',
-    bannerImage: '/banners/banner1.jpg',
-    buttonTextColor: 'text-[#5c1922]'
+    productId: 'p_rice_red',
+    title: 'Traditional Godavari Heritage Rice',
+    bannerImage: '/banners/banner_rice.jpg',
+    buttonTextColor: 'text-[#991b1b]'
   },
   {
     id: 'slide-5',
-    productId: 'p4',
-    title: 'Wild Forest Raw Honey & Nuts',
-    bannerImage: 'https://images.unsplash.com/photo-1587049352847-4a222e784d38?auto=format&fit=crop&q=80&w=1400',
-    buttonTextColor: 'text-[#701a75]'
-  },
-  {
-    id: 'slide-6',
-    productId: 'p5',
-    title: 'Ancient Native Organic Millets',
-    bannerImage: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=1400',
-    buttonTextColor: 'text-[#14532d]'
-  },
-  {
-    id: 'slide-7',
-    productId: 'p6',
-    title: 'Natural Palm Jaggery & Sweeteners',
-    bannerImage: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1400',
-    buttonTextColor: 'text-[#713f12]'
+    productId: 'p_spice_turmeric',
+    title: 'Pure Stone Ground Spices & Turmeric',
+    bannerImage: '/banners/banner_spices.jpg',
+    buttonTextColor: 'text-[#78350f]'
   }
 ];
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Star, User } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 const reviews = [
   {
@@ -8,7 +8,7 @@ const reviews = [
     rating: 4.5,
     location: "Rajahmundry, AP",
     quote: "The traditional Basmati Rice aroma is incredible. Reminds me of actual village-farm cooked food. Clean packaging too.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ const reviews = [
     rating: 5.0,
     location: "Hyderabad, Telangana",
     quote: "Switched all our household cooking to Godavari organic oils and basmati rice. Superior quality, zero stones or dust, and clean long grain length!",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ const reviews = [
     rating: 5.0,
     location: "Bengaluru, Karnataka",
     quote: "A2 Gir Cow Ghee and traditional cane jaggery are super pure. Fast shipping, eco-friendly packaging, and genuine natural sweetness.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200"
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800"
   }
 ];
 
@@ -72,14 +72,14 @@ export default function CustomerReviews() {
 
   return (
     <section className="space-y-4 sm:space-y-6">
-      <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-slate-900 tracking-tight text-left">
+      <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight text-left">
         What Our Customers Say
       </h2>
 
       {/* MOBILE RESPONSIVE SLIDER (< md) - SHOWS 1 REVIEW AT A TIME WITH SLIDING */}
       <div className="block md:hidden">
         <div 
-          className="overflow-hidden relative rounded-2xl"
+          className="overflow-hidden relative rounded-2xl sm:rounded-3xl"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
           onTouchStart={handleTouchStart}
@@ -91,7 +91,7 @@ export default function CustomerReviews() {
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
             {reviews.map((rev) => (
-              <div key={rev.id} className="w-full shrink-0 p-0.5">
+              <div key={rev.id} className="w-full shrink-0 p-1">
                 <ReviewCard review={rev} />
               </div>
             ))}
@@ -107,8 +107,8 @@ export default function CustomerReviews() {
               aria-label={`Go to review ${index + 1}`}
               className={`transition-all duration-300 rounded-full cursor-pointer focus:outline-none ${
                 currentIndex === index 
-                  ? 'w-6 h-2 bg-slate-900' 
-                  : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
+                  ? 'w-6 h-2 bg-[#18542a]' 
+                  : 'w-2 h-2 bg-[#d9ca9d] hover:bg-[#b8a77a]'
               }`}
             />
           ))}
@@ -127,24 +127,23 @@ export default function CustomerReviews() {
 
 function ReviewCard({ review }) {
   return (
-    <div className="bg-[#f3e8cc] border border-[#d9ca9d] rounded-2xl p-5 sm:p-6 text-left space-y-3.5 shadow-xs hover:shadow-md transition-all h-full flex flex-col justify-between">
-      {/* Top Header: Avatar + Name + Rating */}
-      <div className="flex items-start space-x-3.5">
-        {/* User Circle Avatar Frame */}
-        <div className="w-11 h-11 rounded-full bg-[#e6dec9] border border-[#c8b894] overflow-hidden shrink-0 flex items-center justify-center">
-          {review.avatar ? (
-            <img src={review.avatar} alt={review.name} className="w-full h-full object-cover" />
-          ) : (
-            <User className="w-6 h-6 text-[#556b54]" />
-          )}
-        </div>
+    <div className="bg-[#f3e8cc] border border-[#d9ca9d] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-all h-full min-h-[180px] sm:min-h-[200px] flex items-stretch text-left group">
+      {/* LEFT 67%: Review text content, name, rating */}
+      <div className="w-[67%] p-4 xs:p-5 sm:p-5 flex flex-col justify-between space-y-3">
+        <div className="space-y-1.5">
+          {/* Reviewer Name without avatar icon */}
+          <div>
+            <h3 className="font-urbanist font-extrabold text-sm xs:text-base sm:text-base text-[#103b1d] leading-snug">
+              {review.name}
+            </h3>
+            {review.location && (
+              <p className="text-[11px] text-[#556b54] font-medium tracking-tight">
+                {review.location}
+              </p>
+            )}
+          </div>
 
-        {/* Name & Stars */}
-        <div className="space-y-1">
-          <h3 className="font-urbanist font-extrabold text-sm sm:text-base text-[#103b1d] leading-snug">
-            {review.name}
-          </h3>
-
+          {/* Stars & Rating */}
           <div className="flex items-center space-x-1.5">
             <div className="flex text-amber-500">
               {[...Array(5)].map((_, i) => (
@@ -160,17 +159,28 @@ function ReviewCard({ review }) {
                 />
               ))}
             </div>
-            <span className="text-xs font-bold text-slate-800">
+            <span className="text-xs font-bold text-[#103b1d]">
               {review.rating}
             </span>
           </div>
         </div>
+
+        {/* Review Quote Text */}
+        <p className="text-xs sm:text-[13px] text-[#556b54] font-medium leading-relaxed italic line-clamp-4">
+          "{review.quote}"
+        </p>
       </div>
 
-      {/* Review Quote Text */}
-      <p className="text-xs sm:text-sm text-[#556b54] font-medium leading-relaxed italic">
-        "{review.quote}"
-      </p>
+      {/* RIGHT 33%: Full-height image of the person */}
+      <div className="w-[33%] shrink-0 relative overflow-hidden bg-[#e6dec9] border-l border-[#d9ca9d]/80">
+        <img 
+          src={review.avatar} 
+          alt={review.name} 
+          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" 
+        />
+        {/* Subtle left-side shade for soft transition into beige */}
+        <div className="absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-[#d9ca9d]/30 to-transparent pointer-events-none" />
+      </div>
     </div>
   );
 }

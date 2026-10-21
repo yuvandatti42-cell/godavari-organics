@@ -259,7 +259,7 @@ export default function Footer() {
               </li>
               <li>
                 <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
-                  Wood Pressed Ghani Oils & A2 Ghee
+                  Cold Pressed Oils & A2 Ghee
                 </button>
               </li>
               <li>
