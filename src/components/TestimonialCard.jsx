@@ -2,7 +2,7 @@ import React from 'react';
 import { Star, CheckCircle2, Quote } from 'lucide-react';
 
 export default function TestimonialCard({ name, location, quote, rating = 5, itemBought, avatar }) {
-  const customerAvatar = avatar || `https://images.unsplash.com/photo-${name.includes('Ananya') ? '1534528741775-53994a69daeb' : name.includes('Vikram') ? '1507003211169-0a1dd7228f2d' : '1544005313-94ddf0286df2'}?auto=format&fit=crop&q=80&w=200`;
+  const customerAvatar = avatar || (name.includes('Ananya') ? '/customers/ananya.jpg' : name.includes('Vikram') ? '/customers/vikram.jpg' : '/customers/srinivas.jpg');
 
   return (
     <div className="bg-[#faf8f3] rounded-2xl border border-[#e8e4d8] p-5 flex flex-col justify-between space-y-4 font-sans editorial-card relative">

@@ -9,7 +9,7 @@ const WHY_CHOOSE_ITEMS = [
     icon: CheckCircle2,
     badge: 'Certified Organic',
     productName: 'Godavari Basmati Rice',
-    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=900',
+    image: '/why1.png',
     color: '#18542a',
     highlight: 'Zero Chemicals',
     tag: 'APEDA Certified'
@@ -21,7 +21,7 @@ const WHY_CHOOSE_ITEMS = [
     icon: ShieldCheck,
     badge: 'Lab Tested Purity',
     productName: 'Wild Harvest Turmeric',
-    image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&q=80&w=900',
+    image: '/why2.png',
     color: '#d97706',
     highlight: 'High Curcumin',
     tag: 'SGS Bio-Verified'
@@ -33,7 +33,7 @@ const WHY_CHOOSE_ITEMS = [
     icon: Users,
     badge: 'Cooperative Model',
     productName: 'Traditional Organic Jaggery',
-    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=900',
+    image: '/why3.png',
     color: '#9abc05',
     highlight: 'Farmer Direct',
     tag: 'Fair-Trade Pricing'
@@ -45,7 +45,7 @@ const WHY_CHOOSE_ITEMS = [
     icon: Leaf,
     badge: 'Wood-Pressed Oils',
     productName: 'Pure Cold Pressed Oil',
-    image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&q=80&w=900',
+    image: '/why4.png',
     color: '#047857',
     highlight: 'Cold-Pressed',
     tag: 'Traditional Churn'

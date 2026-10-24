@@ -8,7 +8,7 @@ const reviews = [
     rating: 4.5,
     location: "Rajahmundry, AP",
     quote: "The traditional Basmati Rice aroma is incredible. Reminds me of actual village-farm cooked food. Clean packaging too.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800"
+    avatar: "/customers/srinivas.jpg"
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ const reviews = [
     rating: 5.0,
     location: "Hyderabad, Telangana",
     quote: "Switched all our household cooking to Godavari organic oils and basmati rice. Superior quality, zero stones or dust, and clean long grain length!",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
+    avatar: "/customers/ananya.jpg"
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ const reviews = [
     rating: 5.0,
     location: "Bengaluru, Karnataka",
     quote: "A2 Gir Cow Ghee and traditional cane jaggery are super pure. Fast shipping, eco-friendly packaging, and genuine natural sweetness.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800"
+    avatar: "/customers/vikram.jpg"
   }
 ];
 
