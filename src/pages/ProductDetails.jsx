@@ -50,7 +50,7 @@ export default function ProductDetails() {
     e.stopPropagation();
     setWishlist(prev => {
       const isWished = !prev[productId];
-      showToast(isWished ? 'Added to your Wishlist ♥' : 'Removed from Wishlist');
+      showToast(isWished ? 'Added to your Wishlist' : 'Removed from Wishlist');
       return { ...prev, [productId]: isWished };
     });
   };

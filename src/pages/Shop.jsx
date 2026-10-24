@@ -7,11 +7,11 @@ import MobileFilterModal from '../components/MobileFilterModal';
 import { SlidersHorizontal, ArrowUpDown, ChevronLeft, ChevronRight, X, Search, Sparkles } from 'lucide-react';
 
 const QUICK_CATEGORIES = [
-  { id: 'all', label: 'All Items', icon: '✨', category: '' },
-  { id: 'oils', label: 'Oils & Ghee', icon: '🫒', category: 'Oils' },
-  { id: 'rice', label: 'Organic Rice', icon: '🌾', category: 'Organic Rice' },
-  { id: 'millets', label: 'Siridhanya Millets', icon: '🥣', category: 'Organic Millets' },
-  { id: 'spices', label: 'Farm Spices', icon: '🌶️', category: 'Organic Spices' },
+  { id: 'all', label: 'All Items', category: '' },
+  { id: 'oils', label: 'Oils & Ghee', category: 'Oils' },
+  { id: 'rice', label: 'Organic Rice', category: 'Organic Rice' },
+  { id: 'millets', label: 'Siridhanya Millets', category: 'Organic Millets' },
+  { id: 'spices', label: 'Farm Spices', category: 'Organic Spices' },
 ];
 
 export default function Shop() {
@@ -41,6 +41,8 @@ export default function Shop() {
   useEffect(() => {
     if (selectedCategoryFilter) {
       setSelectedCategories([selectedCategoryFilter]);
+    } else {
+      setSelectedCategories([]);
     }
   }, [selectedCategoryFilter]);
 
@@ -275,7 +277,6 @@ export default function Shop() {
                     : 'bg-[#faf6ee] hover:bg-[#f3ebd7] text-[#103b1d] border-[#dfd5bf]'
                 }`}
               >
-                <span>{cat.icon}</span>
                 <span>{cat.label}</span>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
                   isSelected ? 'bg-[#ffc926] text-[#103b1d]' : 'bg-[#ebdcb9] text-[#103b1d]'

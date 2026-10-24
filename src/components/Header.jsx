@@ -14,6 +14,7 @@ export default function Header() {
     setAuthModalOpen,
     setSearchModalOpen,
     navigateToProduct,
+    selectedCategoryFilter,
     setSelectedCategoryFilter,
     products
   } = useCart();
@@ -76,62 +77,71 @@ export default function Header() {
             </button>
 
             <nav className="hidden lg:flex items-center space-x-5 text-xs font-bold text-[#18542a] tracking-wider uppercase">
-              <button 
-                onClick={() => setCurrentPage('home')}
-                className={`transition-colors cursor-pointer ${currentPage === 'home' ? 'font-extrabold text-[#18542a] underline underline-offset-4 decoration-[#9abc05] decoration-3' : 'hover:text-[#9abc05]'}`}
-              >
-                Home
-              </button>
-
-              <button 
-                onClick={() => {
-                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
-                  setCurrentPage('shop');
-                }}
-                className={`transition-colors cursor-pointer ${currentPage === 'shop' ? 'font-extrabold text-[#18542a] underline underline-offset-4 decoration-[#9abc05] decoration-3' : 'hover:text-[#9abc05]'}`}
-              >
-                All Shop
-              </button>
-
-              <button 
-                onClick={() => {
-                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('Oils');
-                  setCurrentPage('shop');
-                }}
-                className="hover:text-[#9abc05] transition-colors cursor-pointer"
-              >
-                Oils
-              </button>
-
-              <button 
-                onClick={() => {
-                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Rice');
-                  setCurrentPage('shop');
-                }}
-                className="hover:text-[#9abc05] transition-colors cursor-pointer"
-              >
-                Rice
-              </button>
-
-              <button 
-                onClick={() => {
-                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Millets');
-                  setCurrentPage('shop');
-                }}
-                className="hover:text-[#9abc05] transition-colors cursor-pointer"
-              >
-                Millets
-              </button>
-
-              <button 
-                onClick={() => {
-                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Spices');
-                  setCurrentPage('shop');
-                }}
-                className="hover:text-[#9abc05] transition-colors cursor-pointer"
-              >
-                Spices
-              </button>
+              {[
+                {
+                  id: 'home',
+                  label: 'Home',
+                  action: () => setCurrentPage('home'),
+                  isActive: currentPage === 'home',
+                },
+                {
+                  id: 'all',
+                  label: 'All Shop',
+                  action: () => {
+                    if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
+                    setCurrentPage('shop');
+                  },
+                  isActive: currentPage === 'shop' && (!selectedCategoryFilter || selectedCategoryFilter === ''),
+                },
+                {
+                  id: 'oils',
+                  label: 'Oils',
+                  action: () => {
+                    if (setSelectedCategoryFilter) setSelectedCategoryFilter('Oils');
+                    setCurrentPage('shop');
+                  },
+                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Oils',
+                },
+                {
+                  id: 'rice',
+                  label: 'Rice',
+                  action: () => {
+                    if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Rice');
+                    setCurrentPage('shop');
+                  },
+                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Organic Rice',
+                },
+                {
+                  id: 'millets',
+                  label: 'Millets',
+                  action: () => {
+                    if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Millets');
+                    setCurrentPage('shop');
+                  },
+                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Organic Millets',
+                },
+                {
+                  id: 'spices',
+                  label: 'Spices',
+                  action: () => {
+                    if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Spices');
+                    setCurrentPage('shop');
+                  },
+                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Organic Spices',
+                },
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={item.action}
+                  className={`transition-all duration-200 cursor-pointer ${
+                    item.isActive
+                      ? 'font-extrabold text-[#18542a] underline underline-offset-4 decoration-[#9abc05] decoration-3'
+                      : 'hover:text-[#9abc05]'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
             </nav>
           </div>
 
