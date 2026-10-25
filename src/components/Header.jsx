@@ -1,8 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import { Search, ShoppingBag, User, Menu, X, Leaf, Sparkles, ChevronRight, CheckCircle2, Truck, Phone, Home, Package, CreditCard, MapPin, ArrowLeft } from 'lucide-react';
 
 export default function Header() {
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        document.documentElement.style.setProperty('--header-height', `${headerRef.current.offsetHeight}px`);
+      }
+    };
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, []);
   const { 
     currentPage, 
     setCurrentPage, 
@@ -32,7 +44,7 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full font-sans sticky top-0 z-40 shadow-sm">
+    <header ref={headerRef} className="w-full font-sans sticky top-0 z-40 shadow-sm">
       {/* Top Organic Announcement Bar */}
       <div className="bg-[#18542a] text-white text-xs py-2 px-4 border-b border-[#9abc05]/30">
         <div className="w-full max-w-[1920px] mx-auto flex justify-between items-center text-[11px] font-semibold tracking-wide">

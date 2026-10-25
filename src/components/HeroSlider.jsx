@@ -106,6 +106,21 @@ export default function HeroSlider() {
     }
   }, []);
 
+  // Maintain slide alignment on window resize (desktop/tablet resize)
+  useEffect(() => {
+    const handleResize = () => {
+      if (!scrollContainerRef.current) return;
+      const container = scrollContainerRef.current;
+      const card = container.children[virtualIndex];
+      if (card) {
+        const targetScrollLeft = card.offsetLeft - (container.clientWidth - card.clientWidth) / 2;
+        container.scrollTo({ left: targetScrollLeft, behavior: 'instant' });
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [virtualIndex]);
+
   // Auto-slide effect (only runs when playing AND user is not interacting)
   useEffect(() => {
     if (!isPlaying || isInteracting) return;
@@ -214,7 +229,7 @@ export default function HeroSlider() {
 
   return (
     <section 
-      className="w-full bg-[#faf5ea] py-4 sm:py-6 md:py-8 select-none border-b border-[#d9ca9d]"
+      className="w-full bg-[#faf5ea] py-4 sm:py-6 md:py-8 lg:py-2.5 select-none border-b border-[#d9ca9d] lg:h-[calc(66vh-var(--header-height,106px))] lg:min-h-[380px] lg:max-h-[620px] lg:flex lg:flex-col lg:justify-center"
       onMouseEnter={handleInteractionStart}
       onMouseLeave={handleInteractionEnd}
       onTouchStart={handleInteractionStart}
@@ -223,32 +238,33 @@ export default function HeroSlider() {
       onMouseDown={handleInteractionStart}
       onMouseUp={handleInteractionEnd}
     >
-      <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-12 relative">
+      <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-12 relative lg:h-full lg:flex lg:flex-col lg:justify-center">
         
         {/* Carousel Outer Wrapper */}
-        <div className="relative group">
+        <div className="relative group lg:h-full lg:w-full lg:max-w-6xl xl:lg:max-w-7xl lg:mx-auto">
           
           {/* Scrollable Container */}
           <div 
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="flex space-x-3 sm:space-x-6 overflow-x-auto snap-x snap-mandatory no-scrollbar py-2 scroll-smooth"
+            className="flex space-x-3 sm:space-x-6 lg:space-x-0 overflow-x-auto snap-x snap-mandatory no-scrollbar py-2 lg:py-0 scroll-smooth lg:h-full w-full"
           >
             {EXTENDED_SLIDES.map((slide, index) => (
               <div 
                 key={`${slide.id}-${index}`}
                 onClick={() => handleSlideClick(slide.productId)}
-                className={`shrink-0 snap-center relative rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-lg hover:shadow-2xl border border-black/10 cursor-pointer transition-all duration-300 transform active:scale-[0.99] aspect-[16/10]
+                className={`shrink-0 snap-center relative rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-lg hover:shadow-2xl border border-black/10 cursor-pointer transition-all duration-300 transform active:scale-[0.99]
+                  aspect-[16/10] lg:aspect-auto lg:h-full
                   w-[90vw] max-w-[420px] 
                   sm:w-[74vw] sm:max-w-[660px] 
                   md:w-[60vw] md:max-w-[840px] 
-                  lg:w-[52vw] lg:max-w-[980px]
+                  lg:w-full lg:min-w-full lg:max-w-none
                 `}
               >
                 <img 
                   src={slide.bannerImage} 
                   alt={slide.title}
-                  className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
+                  className="w-full h-full object-cover object-center lg:object-[center_15%] transition-transform duration-700 hover:scale-105"
                   loading="eager"
                   draggable={false}
                 />
@@ -295,7 +311,7 @@ export default function HeroSlider() {
           <button 
             onClick={handlePrev}
             aria-label="Previous Slide"
-            className="hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-xl border border-slate-200 items-center justify-center transition-all cursor-pointer active:scale-90 opacity-0 group-hover:opacity-100"
+            className="hidden sm:flex absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 lg:w-12 lg:h-12 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-xl border border-slate-200 items-center justify-center transition-all cursor-pointer active:scale-90 opacity-0 group-hover:opacity-100"
           >
             <ChevronLeft className="w-6 h-6 text-slate-800" />
           </button>
@@ -303,7 +319,7 @@ export default function HeroSlider() {
           <button 
             onClick={handleNext}
             aria-label="Next Slide"
-            className="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-xl border border-slate-200 items-center justify-center transition-all cursor-pointer active:scale-90 opacity-0 group-hover:opacity-100"
+            className="hidden sm:flex absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 lg:w-12 lg:h-12 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-xl border border-slate-200 items-center justify-center transition-all cursor-pointer active:scale-90 opacity-0 group-hover:opacity-100"
           >
             <ChevronRight className="w-6 h-6 text-slate-800" />
           </button>
