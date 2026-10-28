@@ -15,9 +15,9 @@ export default function Footer() {
         {/* Brand Header & Tagline */}
         <div className="space-y-2 text-left">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white p-1 flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926] overflow-hidden">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926] overflow-hidden">
               <img 
-                src="/logo.png" 
+                src="/logo-circle.png" 
                 alt="Godavari Organic Foods Logo" 
                 className="w-full h-full object-contain" 
               />
@@ -167,9 +167,9 @@ export default function Footer() {
           {/* Column 1: Brand & Contact Info */}
           <div className="space-y-4 text-left">
             <div className="flex items-center space-x-3.5">
-              <div className="w-14 h-14 rounded-full bg-white p-1 flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926] overflow-hidden">
+              <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926] overflow-hidden">
                 <img 
-                  src="/logo.png" 
+                  src="/logo-circle.png" 
                   alt="Godavari Organic Foods Logo" 
                   className="w-full h-full object-contain" 
                 />
