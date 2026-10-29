@@ -69,9 +69,9 @@ export default function Footer() {
                 </button>
               </li>
               <li>
-                <button onClick={() => showToast('Contact support: support@godavariorganic.com')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <a href="tel:+919010088063" className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Contact Us
-                </button>
+                </a>
               </li>
               <li>
                 <button onClick={() => showToast('Godavari Organic Help & FAQs')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
@@ -190,7 +190,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center space-x-2.5">
                 <Phone className="w-4 h-4 text-[#ffc926] shrink-0" />
-                <span>+91 98765 43210 / 1800-425-9988</span>
+                <a href="tel:+919010088063" className="hover:text-[#ffc926] transition-colors">+91 90100 88063</a>
               </div>
               <div className="flex items-center space-x-2.5">
                 <Mail className="w-4 h-4 text-[#ffc926] shrink-0" />
@@ -203,7 +203,7 @@ export default function Footer() {
               {['Facebook', 'Instagram', 'WhatsApp', 'YouTube'].map((social, i) => (
                 <button 
                   key={i}
-                  onClick={() => showToast(`Social media channel: ${social}`)}
+                  onClick={() => social === 'WhatsApp' ? window.open('https://wa.me/919010088063', '_blank') : showToast(`Social media channel: ${social}`)}
                   className="px-3 py-1 rounded-full bg-white/15 hover:bg-[#f96015] hover:text-white transition-colors text-[11px] cursor-pointer"
                 >
                   {social}

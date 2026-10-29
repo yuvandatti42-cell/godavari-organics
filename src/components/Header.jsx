@@ -64,11 +64,11 @@ export default function Header() {
             </span>
             <span className="hidden md:inline opacity-40">|</span>
             <button 
-              onClick={() => showToast('Customer Care: 1800-425-9988')} 
+              onClick={() => window.open('tel:+919010088063', '_self')} 
               className="hover:text-[#ffc926] transition-colors flex items-center"
             >
               <Phone className="w-3.5 h-3.5 inline mr-1 text-[#ffc926]" />
-              1800-425-9988
+              +91 90100 88063
             </button>
           </div>
         </div>

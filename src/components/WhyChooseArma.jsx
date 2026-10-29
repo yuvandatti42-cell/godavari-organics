@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Sparkles, Volume2, VolumeX, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Volume2, VolumeX, ExternalLink } from 'lucide-react';
 
 function InstagramIcon({ className = "w-3.5 h-3.5" }) {
   return (
@@ -306,10 +306,9 @@ export default function WhyChooseArma() {
         <div className="space-y-5 text-left">
           <div className="flex items-end justify-between">
             <div>
-              <div className="inline-flex items-center space-x-1.5 bg-[#18542a]/10 text-[#18542a] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider mb-2">
-                <Sparkles className="w-3.5 h-3.5 text-[#e5a00d]" />
-                <span>Watch Our Reels</span>
-              </div>
+              <span className="text-xs sm:text-sm font-bold text-[#18542a] uppercase tracking-wider mb-1 block">
+                Watch Our Reels
+              </span>
               <h2 className="font-urbanist font-extrabold text-2xl lg:text-3xl text-[#103b1d] tracking-tight">
                 Why Choose Arma
               </h2>
@@ -428,10 +427,9 @@ export default function WhyChooseArma() {
           {/* Mobile Header */}
           <div className="flex items-center justify-between px-1">
             <div>
-              <div className="inline-flex items-center space-x-1.5 bg-[#18542a]/10 text-[#18542a] text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
-                <Sparkles className="w-3 h-3 text-[#e5a00d]" />
-                <span>Watch Our Reels</span>
-              </div>
+              <span className="text-[10px] sm:text-xs font-bold text-[#18542a] uppercase tracking-wider mb-0.5 block">
+                Watch Our Reels
+              </span>
               <h2 className="font-urbanist font-extrabold text-xl text-[#103b1d] tracking-tight">
                 Why Choose Arma
               </h2>

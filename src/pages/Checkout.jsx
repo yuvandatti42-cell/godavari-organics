@@ -92,7 +92,7 @@ export default function Checkout() {
               <input 
                 type="tel" 
                 name="phone"
-                placeholder="e.g. +91 98765 43210"
+                placeholder="e.g. +91 90100 88063"
                 value={formData.phone}
                 onChange={handleChange}
                 className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-slate-800 text-slate-900"

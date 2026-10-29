@@ -1,9 +1,18 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Reatro Retro';
+  src: url('/reatro-retro.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-sans: 'Urbanist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'Instrument Serif', 'Cormorant Garamond', Georgia, serif;
   --font-urbanist: 'Urbanist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-reatro: 'Reatro Retro', 'Urbanist', cursive, sans-serif;
 
   /* User Specified Organic Color Palette */
   --color-forest: #18542a;
@@ -44,6 +53,10 @@
 
 .font-urbanist {
   font-family: 'Urbanist', system-ui, -apple-system, sans-serif;
+}
+
+.font-reatro {
+  font-family: 'Reatro Retro', 'Urbanist', cursive, sans-serif;
 }
 
 body {

@@ -127,12 +127,14 @@ export default function Home() {
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 py-6 sm:py-8 space-y-10 sm:space-y-14">
 
         {/* 4. EDITORIAL BRAND INTRO STATEMENT */}
-        <section className="hidden md:block max-w-4xl mx-auto text-center px-4 py-2 space-y-3">
-          <span className="text-[11px] font-extrabold text-[#f96015] uppercase tracking-widest">Pure & Authentic Organic Craft</span>
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-urbanist text-[#18542a] leading-snug font-extrabold">
+        <section className="max-w-3xl mx-auto text-center px-4 py-4 sm:py-6 space-y-3">
+          <span className="font-reatro text-xs sm:text-sm md:text-base text-[#f96015] uppercase tracking-wider block">
+            Pure & Authentic Organic Craft
+          </span>
+          <h2 className="font-reatro text-lg sm:text-xl md:text-2xl lg:text-3xl text-[#18542a] leading-relaxed tracking-normal">
             "Our produce is grown in the fertile Godavari river delta using traditional organic methods, offering a pure, authentic taste experience that is perfect for enhancing every meal."
           </h2>
-          <div className="w-12 h-1 bg-[#9abc05] mx-auto rounded-full mt-4"></div>
+          <div className="w-14 h-1 bg-[#9abc05] mx-auto rounded-full mt-3"></div>
         </section>
 
         {/* FEATURED HARVEST PRODUCTS SECTION (Matches reference screenshot 1:1) */}
