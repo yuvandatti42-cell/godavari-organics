@@ -695,6 +695,52 @@ export function CartProvider({ children }) {
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Customer Account & Authentication State (persisted in localStorage)
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('godavari_user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const loginUser = useCallback((userData) => {
+    setUser(userData);
+    try {
+      localStorage.setItem('godavari_user', JSON.stringify(userData));
+    } catch (e) {
+      console.error(e);
+    }
+    setAuthModalOpen(false);
+  }, []);
+
+  const logoutUser = useCallback(() => {
+    setUser(null);
+    try {
+      localStorage.removeItem('godavari_user');
+      sessionStorage.removeItem('godavari_auth_dismissed');
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  // Customer Login Initial Pop-up: Trigger when the website first loads if not logged in
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('godavari_user');
+      const dismissed = sessionStorage.getItem('godavari_auth_dismissed');
+      if (!saved && !dismissed) {
+        const timer = setTimeout(() => {
+          setAuthModalOpen(true);
+        }, 750);
+        return () => clearTimeout(timer);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   // Core navigation function synchronized with browser history
   const changePage = useCallback((page, options = {}) => {
     const targetProductId = options.productId || selectedProductId;
@@ -874,6 +920,9 @@ export function CartProvider({ children }) {
       setQuickViewProduct,
       authModalOpen,
       setAuthModalOpen,
+      user,
+      loginUser,
+      logoutUser,
       searchModalOpen,
       setSearchModalOpen,
       searchQuery,

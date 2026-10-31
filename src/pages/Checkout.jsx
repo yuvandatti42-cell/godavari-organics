@@ -9,14 +9,15 @@ export default function Checkout() {
     clearCart,
     setCurrentPage, 
     goBack,
-    showToast 
+    showToast,
+    user
   } = useCart();
 
   const [paymentMethod, setPaymentMethod] = useState('upi');
   const [formData, setFormData] = useState({
-    fullName: '',
-    phone: '',
-    email: '',
+    fullName: user?.name || '',
+    phone: user?.phone || '',
+    email: user?.email || '',
     address1: '',
     address2: '',
     city: '',
