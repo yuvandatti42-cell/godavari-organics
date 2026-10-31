@@ -162,7 +162,7 @@ export default function Home() {
       </section>
 
       {/* 8. WHY CHOOSE ARMA */}
-      <section className="space-y-5 sm:space-y-6">
+      <section id="why-choose-arma" className="space-y-5 sm:space-y-6">
         <WhyChooseArma />
       </section>
 
