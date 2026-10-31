@@ -12,6 +12,7 @@ export const HERO_SLIDES = [
     subtitle: 'Discover the flavour. Explore the traditional slow wooden pressing process.',
     title: '100% Pure Cold Pressed Natural Oils',
     bannerImage: '/banners/banner_oil.jpg',
+    desktopImage: '/banners/hero_oil_editorial.jpg',
     buttonText: 'Shop Oils',
     buttonTextColor: 'text-[#18542a]'
   },
@@ -24,6 +25,7 @@ export const HERO_SLIDES = [
     subtitle: 'Slow simmered bilona ghee handcrafted from cultured curd of grass-fed desi cows.',
     title: 'Pure Vedic Bilona Desi Cow A2 Ghee',
     bannerImage: '/banners/banner_ghee.jpg',
+    desktopImage: '/banners/hero_ghee_editorial.jpg',
     buttonText: 'Shop Ghee',
     buttonTextColor: 'text-[#92400e]'
   },
@@ -36,6 +38,7 @@ export const HERO_SLIDES = [
     subtitle: 'Unpolished traditional grains sourced directly from fertile Godavari river delta farms.',
     title: 'Wholesome Millet Power & Siridhanya',
     bannerImage: '/hero.png',
+    desktopImage: '/banners/hero_millets_editorial.jpg',
     buttonText: 'Shop Millets',
     buttonTextColor: 'text-[#18542a]'
   },
@@ -48,6 +51,7 @@ export const HERO_SLIDES = [
     subtitle: 'Naturally grown red, black & aged sona masoori rice harvested from native heirloom seeds.',
     title: 'Traditional Godavari Heritage Rice',
     bannerImage: '/banners/banner_rice.jpg',
+    desktopImage: '/banners/hero_rice_editorial.jpg',
     buttonText: 'Shop Rice',
     buttonTextColor: 'text-[#991b1b]'
   },
@@ -60,6 +64,7 @@ export const HERO_SLIDES = [
     subtitle: 'Hand-picked turmeric, chillies, and aromatic whole spices with zero adulteration.',
     title: 'Pure Stone Ground Spices & Turmeric',
     bannerImage: '/banners/banner_spices.jpg',
+    desktopImage: '/banners/hero_spices_editorial.jpg',
     buttonText: 'Shop Spices',
     buttonTextColor: 'text-[#78350f]'
   }
@@ -429,7 +434,7 @@ export default function HeroSlider() {
               {HERO_SLIDES.map((slide, idx) => (
                 <img
                   key={slide.id}
-                  src={slide.bannerImage}
+                  src={slide.desktopImage || slide.bannerImage}
                   alt={slide.title}
                   className={`absolute inset-0 w-full h-full object-contain object-center transition-all duration-700 ease-in-out transform ${
                     desktopIndex === idx 
