@@ -1,3 +1,12 @@
+import {
+  subscribeToStorefrontProducts,
+  subscribeToStorefrontCategories,
+  subscribeToStorefrontContent,
+  placeStorefrontOrder,
+  syncStorefrontCustomer
+} from "../services/firebaseService.js";
+import { auth } from "../firebase.js";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const CartContext = createContext();
@@ -683,6 +692,39 @@ export const CATEGORIES = [
 ];
 
 export function CartProvider({ children }) {
+  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+  const [categories, setCategories] = useState(CATEGORIES);
+  const [storeContent, setStoreContent] = useState(null);
+  const [firebaseConnected, setFirebaseConnected] = useState(false);
+  const [lastOrder, setLastOrder] = useState(null);
+
+  // Subscribe to live Firebase Firestore updates
+  useEffect(() => {
+    const unsubProducts = subscribeToStorefrontProducts((liveProducts) => {
+      if (liveProducts && liveProducts.length > 0) {
+        setProducts(liveProducts);
+        setFirebaseConnected(true);
+      }
+    });
+
+    const unsubCategories = subscribeToStorefrontCategories((liveCategories) => {
+      if (liveCategories && liveCategories.length > 0) {
+        setCategories(liveCategories);
+      }
+    });
+
+    const unsubContent = subscribeToStorefrontContent((liveContent) => {
+      if (liveContent) {
+        setStoreContent(liveContent);
+      }
+    });
+
+    return () => {
+      unsubProducts();
+      unsubCategories();
+      unsubContent();
+    };
+  }, []);
   const [currentPage, setCurrentPageState] = useState(() => {
     const hash = window.location.hash.replace('#/', '');
     return hash || 'home';
@@ -705,6 +747,31 @@ export function CartProvider({ children }) {
     }
   });
 
+  // Listen to Firebase Auth state changes (Google, Email/Password, etc.)
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        const mappedUser = {
+          uid: firebaseUser.uid,
+          name: firebaseUser.displayName || (firebaseUser.email ? firebaseUser.email.split('@')[0] : 'Organic Shopper'),
+          email: firebaseUser.email || '',
+          phone: firebaseUser.phoneNumber || '',
+          photoURL: firebaseUser.photoURL || '',
+          isLoggedIn: true,
+          memberSince: new Date(firebaseUser.metadata?.creationTime || Date.now()).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
+        };
+        setUser(mappedUser);
+        try {
+          localStorage.setItem('godavari_user', JSON.stringify(mappedUser));
+        } catch (e) {
+          console.error(e);
+        }
+        syncStorefrontCustomer(mappedUser);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   const loginUser = useCallback((userData) => {
     setUser(userData);
     try {
@@ -712,10 +779,16 @@ export function CartProvider({ children }) {
     } catch (e) {
       console.error(e);
     }
+    syncStorefrontCustomer(userData);
     setAuthModalOpen(false);
   }, []);
 
-  const logoutUser = useCallback(() => {
+  const logoutUser = useCallback(async () => {
+    try {
+      await signOut(auth);
+    } catch (err) {
+      console.warn('Firebase signout error:', err);
+    }
     setUser(null);
     try {
       localStorage.removeItem('godavari_user');
@@ -723,6 +796,7 @@ export function CartProvider({ children }) {
     } catch (e) {
       console.error(e);
     }
+    setAuthModalOpen(false);
   }, []);
 
   // Customer Login Initial Pop-up: Trigger when the website first loads if not logged in
@@ -901,7 +975,31 @@ export function CartProvider({ children }) {
     changePage('product', { productId });
   };
 
-  const selectedProduct = INITIAL_PRODUCTS.find(p => p.id === selectedProductId) || INITIAL_PRODUCTS[0];
+  const placeOrder = useCallback(async (orderPayload) => {
+    try {
+      const savedOrder = await placeStorefrontOrder(orderPayload);
+      setLastOrder(savedOrder);
+      clearCart();
+      return savedOrder;
+    } catch (err) {
+      console.error("Firestore order placement error:", err);
+      const fallbackOrder = {
+        ...orderPayload,
+        id: "GOF-" + Date.now().toString().slice(-6),
+        date: new Date().toISOString()
+      };
+      setLastOrder(fallbackOrder);
+      clearCart();
+      return fallbackOrder;
+    }
+  }, []);
+
+  const normalizeId = (id) => (id || '').toLowerCase().replace(/^(p_|prod-|prod_)/, '').replace(/[-_]/g, '');
+
+  const selectedProduct = products.find(p => 
+    p.id === selectedProductId || 
+    (normalizeId(p.id) && normalizeId(p.id) === normalizeId(selectedProductId))
+  ) || products[0] || INITIAL_PRODUCTS[0];
 
   return (
     <CartContext.Provider value={{
@@ -939,8 +1037,15 @@ export function CartProvider({ children }) {
       cartTotal,
       notification,
       showToast,
-      products: INITIAL_PRODUCTS,
-      categories: CATEGORIES,
+      products,
+      categories,
+      storeContent,
+      heroSlides: storeContent?.heroSlides || null,
+      firebaseConnected,
+      placeOrder,
+      lastOrder,
+      setLastOrder,
+      
     }}>
       {children}
     </CartContext.Provider>

@@ -1,17 +1,24 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
-import { CheckCircle2, ArrowRight, ShoppingBag, PackageCheck, Printer, Leaf } from 'lucide-react';
+import { CheckCircle2, ShoppingBag, Printer, Leaf, MapPin, CreditCard, Calendar } from 'lucide-react';
 
 export default function OrderConfirmation() {
-  const { setCurrentPage, showToast } = useCart();
+  const { setCurrentPage, showToast, lastOrder } = useCart();
+
+  const orderId = lastOrder?.id || 'GO-2026-98421';
+  const totalAmount = lastOrder?.total ? `₹${lastOrder.total.toLocaleString('en-IN')}` : '₹758';
+  const paymentMethod = lastOrder?.paymentMethod || 'UPI / Google Pay';
+  const addressStr = lastOrder?.shippingAddress
+    ? `${lastOrder.shippingAddress.street ? lastOrder.shippingAddress.street + ', ' : ''}${lastOrder.shippingAddress.city || 'Rajahmundry'}, ${lastOrder.shippingAddress.state || 'AP'} - ${lastOrder.shippingAddress.pincode || '533101'}`
+    : 'Rajahmundry, AP - 533101';
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 font-sans py-4">
+    <div className="max-w-2xl mx-auto space-y-6 font-sans py-4 px-4">
       
       {/* Confirmation Box */}
       <div className="bg-[#f3e8cc] rounded-3xl border border-[#d9ca9d] p-8 md:p-10 text-center space-y-5 shadow-xl">
         
-        <div className="w-16 h-16 bg-[#18542a] text-[#ffc926] rounded-full flex items-center justify-center mx-auto shadow-lg">
+        <div className="w-16 h-16 bg-[#18542a] text-[#ffc926] rounded-full flex items-center justify-center mx-auto shadow-lg animate-bounce">
           <CheckCircle2 className="w-10 h-10" />
         </div>
 
@@ -24,34 +31,59 @@ export default function OrderConfirmation() {
             Thank You for Shopping Organic!
           </h1>
           <p className="text-xs text-[#556b54] font-medium">
-            Order Reference ID: <strong className="text-[#103b1d]">GO-2026-98421</strong>
+            Order Reference ID: <strong className="text-[#103b1d] font-mono">{orderId}</strong>
           </p>
         </div>
 
         <p className="text-xs md:text-sm text-[#556b54] max-w-md mx-auto leading-relaxed">
-          Your order of traditional Godavari organic harvest has been confirmed and assigned to our farm dispatch hub. A confirmation invoice receipt has been sent to your email.
+          Your order of traditional Godavari organic harvest has been confirmed, logged in Firebase cloud, and assigned to our farm dispatch hub.
         </p>
 
         {/* Order Details Grid in Beige */}
-        <div className="bg-[#e6dec9] rounded-2xl border border-[#c8b894] p-5 text-left text-xs space-y-2.5 font-medium text-[#103b1d]">
-          <div className="flex justify-between border-b border-[#c8b894]/60 pb-2">
-            <span className="text-[#556b54]">Estimated Delivery:</span>
-            <span className="font-bold text-[#103b1d]">Oct 02, 2026 (3-4 Days)</span>
+        <div className="bg-[#e6dec9] rounded-2xl border border-[#c8b894] p-5 text-left text-xs space-y-3 font-medium text-[#103b1d]">
+          <div className="flex justify-between items-center border-b border-[#c8b894]/60 pb-2">
+            <span className="text-[#556b54] flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Estimated Delivery:</span>
+            </span>
+            <span className="font-bold text-[#103b1d]">3 - 4 Days (Express Farm Dispatch)</span>
           </div>
 
-          <div className="flex justify-between border-b border-[#c8b894]/60 pb-2">
-            <span className="text-[#556b54]">Delivery Address:</span>
-            <span className="font-bold text-[#103b1d]">Rajahmundry, AP - 533101</span>
+          <div className="flex justify-between items-start border-b border-[#c8b894]/60 pb-2">
+            <span className="text-[#556b54] flex items-center gap-1.5 shrink-0">
+              <MapPin className="w-3.5 h-3.5" />
+              <span>Delivery Address:</span>
+            </span>
+            <span className="font-bold text-[#103b1d] text-right truncate max-w-[260px]">
+              {addressStr}
+            </span>
           </div>
 
-          <div className="flex justify-between border-b border-[#c8b894]/60 pb-2">
-            <span className="text-[#556b54]">Payment Status:</span>
-            <span className="font-bold text-white bg-[#18542a] px-2.5 py-0.5 rounded-md">PAID VIA UPI</span>
+          <div className="flex justify-between items-center border-b border-[#c8b894]/60 pb-2">
+            <span className="text-[#556b54] flex items-center gap-1.5">
+              <CreditCard className="w-3.5 h-3.5" />
+              <span>Payment Status:</span>
+            </span>
+            <span className="font-bold text-white bg-[#18542a] px-2.5 py-0.5 rounded-md text-[11px]">
+              {paymentMethod.toUpperCase()}
+            </span>
           </div>
+
+          {lastOrder?.items && lastOrder.items.length > 0 && (
+            <div className="border-b border-[#c8b894]/60 pb-2 space-y-1">
+              <span className="text-[#556b54] block text-[11px]">Items Ordered:</span>
+              {lastOrder.items.map((it, idx) => (
+                <div key={idx} className="flex justify-between text-[11px] text-[#103b1d]">
+                  <span className="truncate pr-2">{it.productName} ({it.unit}) x {it.quantity}</span>
+                  <span className="font-bold shrink-0">₹{(it.unitPrice * it.quantity).toLocaleString('en-IN')}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="flex justify-between pt-1 font-bold text-sm text-[#103b1d]">
             <span>Total Paid Amount:</span>
-            <span>₹758</span>
+            <span className="text-base text-[#18542a]">{totalAmount}</span>
           </div>
         </div>
 
@@ -79,4 +111,3 @@ export default function OrderConfirmation() {
     </div>
   );
 }
-

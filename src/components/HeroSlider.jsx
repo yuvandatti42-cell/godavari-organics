@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
-import { ChevronLeft, ChevronRight, ArrowRight, Sprout, Cog, Droplets } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 
 export const HERO_SLIDES = [
   {
@@ -65,15 +65,29 @@ export const HERO_SLIDES = [
   }
 ];
 
-// Extended slides array with clones at start and end for seamless infinite looping (Mobile Carousel - 100% UNTOUCHED)
-const EXTENDED_SLIDES = [
-  { ...HERO_SLIDES[HERO_SLIDES.length - 1], id: 'clone-start' },
-  ...HERO_SLIDES,
-  { ...HERO_SLIDES[0], id: 'clone-end' }
-];
-
 export default function HeroSlider() {
-  const { setCurrentPage, navigateToProduct } = useCart();
+  const { setCurrentPage, navigateToProduct, heroSlides } = useCart();
+
+  const effectiveSlides = (heroSlides && heroSlides.filter(s => s.active !== false).length > 0)
+    ? heroSlides.filter(s => s.active !== false).map((s, idx) => ({
+        id: s.id || ("slide-" + idx),
+        productId: s.productId || s.link || s.ctaLink || HERO_SLIDES[idx % HERO_SLIDES.length]?.productId || "p_oil_groundnut",
+        eyebrow: s.badgeText || "100% ORGANIC",
+        headlineMain: s.title || "Pure Organic Harvest",
+        headlineSub: "",
+        subtitle: s.subtitle || "",
+        title: s.title || "Godavari Organic Foods",
+        bannerImage: s.imageUrl || "/banners/banner_oil.jpg",
+        buttonText: s.ctaText || "Shop Now",
+        buttonTextColor: "text-[#18542a]"
+      }))
+    : HERO_SLIDES;
+
+  const currentExtendedSlides = [
+    { ...effectiveSlides[effectiveSlides.length - 1], id: "clone-start" },
+    ...effectiveSlides,
+    { ...effectiveSlides[0], id: "clone-end" }
+  ];
   
   // Mobile Carousel State (Kept completely intact)
   const [virtualIndex, setVirtualIndex] = useState(1);
@@ -94,19 +108,19 @@ export default function HeroSlider() {
   useEffect(() => {
     if (isDesktopHovered) return;
     const interval = setInterval(() => {
-      setDesktopIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+      setDesktopIndex((prev) => (prev + 1) % effectiveSlides.length);
     }, 5500);
     return () => clearInterval(interval);
   }, [isDesktopHovered]);
 
   const handlePrevDesktop = (e) => {
     if (e) e.stopPropagation();
-    setDesktopIndex((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+    setDesktopIndex((prev) => (prev - 1 + effectiveSlides.length) % effectiveSlides.length);
   };
 
   const handleNextDesktop = (e) => {
     if (e) e.stopPropagation();
-    setDesktopIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+    setDesktopIndex((prev) => (prev + 1) % effectiveSlides.length);
   };
 
   const handleSeeProcess = () => {
@@ -135,7 +149,7 @@ export default function HeroSlider() {
         isProgrammaticScrollRef.current = false;
         
         // Handle clone wrap-arounds
-        if (targetIndex === EXTENDED_SLIDES.length - 1) {
+        if (targetIndex === currentExtendedSlides.length - 1) {
           const firstRealCard = container.children[1];
           if (firstRealCard) {
             const firstScrollLeft = firstRealCard.offsetLeft - (container.clientWidth - firstRealCard.clientWidth) / 2;
@@ -143,11 +157,11 @@ export default function HeroSlider() {
             setVirtualIndex(1);
           }
         } else if (targetIndex === 0) {
-          const lastRealCard = container.children[HERO_SLIDES.length];
+          const lastRealCard = container.children[effectiveSlides.length];
           if (lastRealCard) {
             const lastScrollLeft = lastRealCard.offsetLeft - (container.clientWidth - lastRealCard.clientWidth) / 2;
             container.scrollTo({ left: lastScrollLeft, behavior: 'instant' });
-            setVirtualIndex(HERO_SLIDES.length);
+            setVirtualIndex(effectiveSlides.length);
           }
         }
       }, behavior === 'instant' ? 0 : 450);
@@ -199,9 +213,17 @@ export default function HeroSlider() {
     handleInteractionEnd();
   };
 
-  const handleSlideClick = (productId) => {
-    if (productId && navigateToProduct) {
-      navigateToProduct(productId);
+  const handleSlideClick = (target) => {
+    if (!target) {
+      setCurrentPage('shop');
+      return;
+    }
+    if (typeof target === 'string' && (target.startsWith('/') || target.includes('shop') || target.includes('collections'))) {
+      setCurrentPage('shop');
+      return;
+    }
+    if (navigateToProduct) {
+      navigateToProduct(target);
     } else {
       setCurrentPage('shop');
     }
@@ -234,7 +256,7 @@ export default function HeroSlider() {
     if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     scrollTimeoutRef.current = setTimeout(() => {
       if (isProgrammaticScrollRef.current) return;
-      if (closestIndex === EXTENDED_SLIDES.length - 1) {
+      if (closestIndex === currentExtendedSlides.length - 1) {
         const firstRealCard = container.children[1];
         if (firstRealCard) {
           const targetScroll = firstRealCard.offsetLeft - (container.clientWidth - firstRealCard.clientWidth) / 2;
@@ -242,18 +264,18 @@ export default function HeroSlider() {
           setVirtualIndex(1);
         }
       } else if (closestIndex === 0) {
-        const lastRealCard = container.children[HERO_SLIDES.length];
+        const lastRealCard = container.children[effectiveSlides.length];
         if (lastRealCard) {
           const targetScroll = lastRealCard.offsetLeft - (container.clientWidth - lastRealCard.clientWidth) / 2;
           container.scrollTo({ left: targetScroll, behavior: 'instant' });
-          setVirtualIndex(HERO_SLIDES.length);
+          setVirtualIndex(effectiveSlides.length);
         }
       }
     }, 150);
   };
 
-  const realIndex = (virtualIndex - 1 + HERO_SLIDES.length) % HERO_SLIDES.length;
-  const activeDesktopSlide = HERO_SLIDES[desktopIndex];
+  const realIndex = (virtualIndex - 1 + effectiveSlides.length) % effectiveSlides.length;
+  const activeDesktopSlide = effectiveSlides[desktopIndex] || effectiveSlides[0] || HERO_SLIDES[0];
 
   return (
     <section className="w-full bg-[#faf5ea] select-none border-b border-[#d9ca9d] relative overflow-hidden py-4 sm:py-6 md:py-0">
@@ -274,7 +296,7 @@ export default function HeroSlider() {
           onScroll={handleScroll}
           className="flex space-x-3 sm:space-x-6 overflow-x-auto snap-x snap-mandatory no-scrollbar py-2 scroll-smooth"
         >
-          {EXTENDED_SLIDES.map((slide, index) => (
+          {currentExtendedSlides.map((slide, index) => (
             <div 
               key={`${slide.id}-${index}`}
               onClick={() => handleSlideClick(slide.productId)}
@@ -309,7 +331,7 @@ export default function HeroSlider() {
 
         {/* Instagram-Style Fixed Dots (No frame box, clean floating transparent dots) */}
         <div className="absolute left-1/2 -translate-x-1/2 bottom-3.5 sm:bottom-5 z-20 flex items-center space-x-1.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] pointer-events-auto">
-          {HERO_SLIDES.map((_, dotIdx) => (
+          {effectiveSlides.map((_, dotIdx) => (
             <button
               key={dotIdx}
               onClick={(e) => {
@@ -380,7 +402,7 @@ export default function HeroSlider() {
             <div className="flex items-center space-x-4 pt-3 lg:pt-4">
               {/* Slide Indicators */}
               <div className="flex items-center space-x-1.5">
-                {HERO_SLIDES.map((_, idx) => (
+                {effectiveSlides.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setDesktopIndex(idx)}
@@ -396,7 +418,7 @@ export default function HeroSlider() {
 
               {/* Clean Monospace Slide Counter */}
               <span className="text-xs font-bold text-[#8c7355] font-mono tracking-wider tabular-nums select-none">
-                0{desktopIndex + 1} / 0{HERO_SLIDES.length}
+                0{desktopIndex + 1} / 0{effectiveSlides.length}
               </span>
 
               {/* Circular Prev/Next Arrow Buttons with Elegant Border & Smooth Transitions */}
@@ -426,7 +448,7 @@ export default function HeroSlider() {
               onClick={() => handleSlideClick(activeDesktopSlide.productId)}
               className="relative w-full aspect-[16/10] overflow-hidden cursor-pointer group select-none"
             >
-              {HERO_SLIDES.map((slide, idx) => (
+              {effectiveSlides.map((slide, idx) => (
                 <img
                   key={slide.id}
                   src={slide.bannerImage}
@@ -442,51 +464,6 @@ export default function HeroSlider() {
             </div>
           </div>
 
-        </div>
-
-        {/* 3-Column Trust Strip (Matching Reference Image) */}
-        <div className="w-full border-t border-[#d9ca9d]/50 mt-10 lg:mt-12 pt-6 lg:pt-8 grid grid-cols-3 gap-6 lg:gap-10">
-          <div className="flex items-start space-x-3.5 text-left">
-            <div className="w-10 h-10 rounded-full border border-[#d9ca9d] bg-white/70 flex items-center justify-center shrink-0 text-[#18542a] shadow-2xs">
-              <Sprout className="w-5 h-5 text-[#18542a]" />
-            </div>
-            <div>
-              <h4 className="font-urbanist font-extrabold text-xs lg:text-sm text-[#103b1d]">
-                Seed Sourcing
-              </h4>
-              <p className="text-xs text-[#556b54] font-medium leading-relaxed mt-0.5">
-                Thoughtfully sourced, naturally better
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-3.5 text-left">
-            <div className="w-10 h-10 rounded-full border border-[#d9ca9d] bg-white/70 flex items-center justify-center shrink-0 text-[#18542a] shadow-2xs">
-              <Cog className="w-5 h-5 text-[#18542a]" />
-            </div>
-            <div>
-              <h4 className="font-urbanist font-extrabold text-xs lg:text-sm text-[#103b1d]">
-                Extraction Process
-              </h4>
-              <p className="text-xs text-[#556b54] font-medium leading-relaxed mt-0.5">
-                Slow pressed for natural flavour
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-3.5 text-left">
-            <div className="w-10 h-10 rounded-full border border-[#d9ca9d] bg-white/70 flex items-center justify-center shrink-0 text-[#18542a] shadow-2xs">
-              <Droplets className="w-5 h-5 text-[#18542a]" />
-            </div>
-            <div>
-              <h4 className="font-urbanist font-extrabold text-xs lg:text-sm text-[#103b1d]">
-                Quality Details
-              </h4>
-              <p className="text-xs text-[#556b54] font-medium leading-relaxed mt-0.5">
-                Simple, transparent, honest
-              </p>
-            </div>
-          </div>
         </div>
 
       </div>

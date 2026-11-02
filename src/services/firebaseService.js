@@ -1,0 +1,287 @@
+import {
+  collection,
+  doc,
+  setDoc,
+  updateDoc,
+  onSnapshot,
+  query,
+  getDoc
+} from 'firebase/firestore';
+import { db } from '../firebase.js';
+
+export const COLLECTIONS = {
+  PRODUCTS: 'products',
+  CATEGORIES: 'categories',
+  ORDERS: 'orders',
+  CUSTOMERS: 'customers',
+  STORE_CONTENT: 'storeContent',
+  NOTIFICATIONS: 'notifications'
+};
+
+// Real-time listener for live products synced from Admin
+export function subscribeToStorefrontProducts(callback, onError) {
+  const q = query(collection(db, COLLECTIONS.PRODUCTS));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const items = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        // Skip archived items for customer storefront
+        if (data.status === 'Archived') return;
+
+        const mainImage = data.image || data.imageUrl || '/categories/oil.png';
+        const gallery = Array.isArray(data.images) && data.images.length > 0 
+          ? data.images 
+          : (data.imageUrl ? [data.imageUrl] : [mainImage]);
+
+        const unit = data.unit || data.weight || '1 unit';
+        const price = Number(data.price) || 0;
+        const origPrice = Number(data.originalPrice || data.compareAtPrice || price);
+        const discountText = origPrice > price 
+          ? `${Math.round(((origPrice - price) / origPrice) * 100)}% OFF` 
+          : (data.discount || '');
+
+        items.push({
+          id: docSnap.id,
+          name: data.name,
+          shortName: data.shortName || data.name,
+          subtitle: data.subtitle || data.description?.slice(0, 60) || '',
+          category: data.category || data.categoryName || 'General',
+          categoryId: data.categoryId,
+          packSizes: Array.isArray(data.packSizes) && data.packSizes.length > 0 ? data.packSizes : [unit],
+          weight: unit,
+          price: price,
+          originalPrice: origPrice,
+          prices: data.prices || { [unit]: price },
+          originalPrices: data.originalPrices || { [unit]: origPrice },
+          discount: discountText,
+          rating: Number(data.rating) || 4.9,
+          reviewsCount: Number(data.reviewsCount || data.salesCount || 120),
+          description: data.description || '',
+          inStock: data.inStock !== undefined ? Boolean(data.inStock) : (data.stock > 0 && data.status === 'Active'),
+          isPopular: Boolean(data.isPopular || data.featured),
+          isBestseller: Boolean(data.isBestseller || (data.salesCount && data.salesCount > 80)),
+          craftTag: data.craftTag || (data.category?.includes('Oil') ? '100% Cold Pressed' : '100% Organic'),
+          image: mainImage,
+          images: gallery,
+          origin: data.origin || data.harvestLocation || 'Godavari Delta, Andhra Pradesh',
+          certifications: Array.isArray(data.certifications) && data.certifications.length > 0 
+            ? data.certifications 
+            : ['100% Pure Organic', 'Zero Chemicals', 'Farm Fresh']
+        });
+      });
+      callback(items);
+    },
+    (err) => {
+      console.warn('Storefront products subscription warning:', err);
+      if (onError) onError(err);
+    }
+  );
+}
+
+// Real-time listener for live categories synced from Admin
+export function subscribeToStorefrontCategories(callback, onError) {
+  const q = query(collection(db, COLLECTIONS.CATEGORIES));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const items = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (data.visibility === 'Hidden') return;
+        items.push({
+          id: docSnap.id,
+          name: data.name,
+          subtext: data.description || data.subtext || '',
+          count: data.count || 0,
+          bgTint: data.bgTint || 'bg-[#f3e8cc]',
+          image: data.imageUrl || data.image || '/categories/oil.png',
+          displayOrder: data.displayOrder || 0
+        });
+      });
+      items.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+      callback(items);
+    },
+    (err) => {
+      console.warn('Storefront categories subscription warning:', err);
+      if (onError) onError(err);
+    }
+  );
+}
+
+// Real-time listener for visual store content (Hero slides, offer banners)
+export function subscribeToStorefrontContent(callback, onError) {
+  const docRef = doc(db, COLLECTIONS.STORE_CONTENT, 'active');
+  return onSnapshot(
+    docRef,
+    (docSnap) => {
+      if (docSnap.exists()) {
+        callback(docSnap.data());
+      } else {
+        callback(null);
+      }
+    },
+    (err) => {
+      console.warn('Storefront content subscription warning:', err);
+      if (onError) onError(err);
+    }
+  );
+}
+
+// Helper to sanitize undefined values before saving to Firestore
+export function sanitizeForFirestore(obj) {
+  if (obj === null || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) {
+    return obj.map((item) => (item !== null && typeof item === 'object' ? sanitizeForFirestore(item) : item));
+  }
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value === undefined) continue;
+    if (value !== null && typeof value === 'object') {
+      result[key] = sanitizeForFirestore(value);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
+// Place a new customer order into Firebase Firestore
+export async function placeStorefrontOrder(orderData) {
+  try {
+    const orderId = orderData.id || `GOF-${Date.now().toString().slice(-6)}`;
+    const fullOrder = sanitizeForFirestore({
+      ...orderData,
+      id: orderId,
+      date: new Date().toISOString(),
+      orderStatus: 'Pending',
+      paymentStatus: orderData.paymentMethod?.toLowerCase().includes('cash') ? 'Pending' : 'Paid',
+      timeline: [
+        {
+          status: 'Order Placed',
+          timestamp: new Date().toISOString(),
+          note: `Customer placed order on website via ${orderData.paymentMethod || 'Online'}`
+        }
+      ]
+    });
+
+    // 1. Save order to Firestore
+    await setDoc(doc(db, COLLECTIONS.ORDERS, orderId), fullOrder);
+
+    // 2. Log real-time notification for Admin Portal
+    try {
+      const notifId = `notif-ord-${Date.now()}`;
+      await setDoc(doc(db, COLLECTIONS.NOTIFICATIONS, notifId), {
+        id: notifId,
+        title: `Live Order: #${orderId}`,
+        message: `${orderData.customerName || 'Customer'} placed an order of ₹${orderData.total.toLocaleString('en-IN')}`,
+        timestamp: new Date().toISOString(),
+        type: 'order',
+        read: false,
+        link: '/orders'
+      });
+    } catch (nErr) {
+      console.warn('Admin notification creation non-blocking error:', nErr);
+    }
+
+    // 3. Upsert customer record
+    if (orderData.customerPhone || orderData.customerEmail) {
+      const customerId = (orderData.customerPhone || orderData.customerEmail).replace(/[^a-zA-Z0-9]/g, '_');
+      const now = new Date().toISOString();
+      try {
+        const custRef = doc(db, COLLECTIONS.CUSTOMERS, customerId);
+        const existingCust = await getDoc(custRef);
+        if (existingCust.exists()) {
+          const cData = existingCust.data();
+          const newOrders = (cData.totalOrders || 0) + 1;
+          const newSpent = (cData.totalSpent || 0) + (orderData.total || 0);
+          await updateDoc(custRef, sanitizeForFirestore({
+            totalOrders: newOrders,
+            totalSpent: newSpent,
+            hasPurchased: true,
+            firstOrderDate: cData.firstOrderDate || now,
+            lastOrderDate: now,
+            recentOrderIds: [orderId, ...(cData.recentOrderIds || []).filter(id => id !== orderId).slice(0, 9)],
+            city: orderData.shippingAddress?.city || cData.city || '',
+            state: orderData.shippingAddress?.state || cData.state || '',
+            status: newSpent >= 5000 ? 'VIP' : 'Active'
+          }));
+        } else {
+          await setDoc(custRef, sanitizeForFirestore({
+            id: customerId,
+            name: orderData.customerName || 'Online Customer',
+            email: orderData.customerEmail || '',
+            phone: orderData.customerPhone || '',
+            city: orderData.shippingAddress?.city || '',
+            state: orderData.shippingAddress?.state || '',
+            totalOrders: 1,
+            totalSpent: orderData.total || 0,
+            hasPurchased: true,
+            firstOrderDate: now,
+            lastOrderDate: now,
+            lastLoginDate: now,
+            joinedDate: now.split('T')[0],
+            status: (orderData.total || 0) >= 5000 ? 'VIP' : 'Active',
+            recentOrderIds: [orderId]
+          }));
+        }
+      } catch (cErr) {
+        console.warn('Customer upsert non-blocking error:', cErr);
+      }
+    }
+
+    return fullOrder;
+  } catch (err) {
+    console.error('Failed to place order in Firestore:', err);
+    throw err;
+  }
+}
+
+// Sync customer account on login / registration
+export async function syncStorefrontCustomer(userData) {
+  if (!userData || (!userData.phone && !userData.email)) return;
+  const customerId = (userData.phone || userData.email).replace(/[^a-zA-Z0-9]/g, '_');
+  const now = new Date().toISOString();
+  try {
+    const custRef = doc(db, COLLECTIONS.CUSTOMERS, customerId);
+    const existing = await getDoc(custRef);
+    if (!existing.exists()) {
+      const newRecord = sanitizeForFirestore({
+        id: customerId,
+        uid: userData.uid || '',
+        name: userData.name || 'Organic Shopper',
+        phone: userData.phone || '',
+        email: userData.email || '',
+        photoURL: userData.photoURL || '',
+        city: userData.city || '',
+        state: userData.state || '',
+        totalOrders: 0,
+        totalSpent: 0,
+        hasPurchased: false,
+        joinedDate: now.split('T')[0],
+        lastLoginDate: now,
+        authProvider: userData.authProvider || (userData.email && userData.uid ? 'Google' : 'Email/Password'),
+        loginCount: 1,
+        status: 'Active',
+        recentOrderIds: []
+      });
+      await setDoc(custRef, newRecord);
+    } else {
+      const cData = existing.data();
+      const updates = sanitizeForFirestore({
+        name: userData.name || cData.name || undefined,
+        photoURL: userData.photoURL || cData.photoURL || undefined,
+        uid: userData.uid || cData.uid || undefined,
+        lastLoginDate: now,
+        loginCount: (cData.loginCount || 1) + 1,
+        authProvider: userData.authProvider || cData.authProvider || undefined
+      });
+      if (Object.keys(updates).length > 0) {
+        await updateDoc(custRef, updates);
+      }
+    }
+  } catch (e) {
+    console.warn('Sync customer non-blocking error:', e);
+  }
+}
