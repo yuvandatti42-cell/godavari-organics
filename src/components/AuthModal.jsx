@@ -3,6 +3,7 @@ import { useCart } from '../context/CartContext';
 import { auth, googleProvider } from '../firebase.js';
 import { 
   signInWithPopup, 
+  signInWithRedirect,
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   updateProfile 
@@ -23,7 +24,10 @@ import {
   LogOut, 
   ShoppingBag,
   KeyRound,
-  Loader2
+  Loader2,
+  AlertCircle,
+  ExternalLink,
+  HelpCircle
 } from 'lucide-react';
 
 export default function AuthModal() {
@@ -43,7 +47,10 @@ export default function AuthModal() {
   const [isOtpMode, setIsOtpMode] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
 
-  // Phone completion for Google Sign-In
+  // Error and diagnostic states
+  const [authError, setAuthError] = useState(null);
+
+  // Phone completion for Google Sign-In (optional)
   const [pendingGoogleUser, setPendingGoogleUser] = useState(null);
   const [googlePhone, setGooglePhone] = useState('');
 
@@ -57,17 +64,18 @@ export default function AuthModal() {
       console.error(e);
     }
     setPendingGoogleUser(null);
+    setAuthError(null);
     setAuthModalOpen(false);
   };
 
   // 1. Google 1-Click Sign-In
   const handleGoogleSignIn = async () => {
+    setAuthError(null);
     setIsLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const fbUser = result.user;
       
-      // Check if we have an existing phone cached locally for this email
       let existingPhone = fbUser.phoneNumber || '';
       try {
         const cached = JSON.parse(localStorage.getItem('godavari_user') || '{}');
@@ -87,25 +95,44 @@ export default function AuthModal() {
         memberSince: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
       };
 
-      // If Google did not supply a phone number, prompt for it so delivery always has a number
-      if (!existingPhone) {
-        setPendingGoogleUser(loggedUser);
-        setIsLoading(false);
-        return;
+      // Directly log user in without friction!
+      loginUser(loggedUser);
+      showToast(`Welcome ${loggedUser.name}! Signed in with Google.`);
+      handleClose();
+    } catch (err) {
+      console.error('Google sign-in error:', err);
+      let errorMsg = 'Unable to sign in with Google.';
+
+      if (err.code === 'auth/operation-not-allowed' || err.code === 'auth/configuration-not-found') {
+        errorMsg = 'Google Sign-In is disabled in Firebase Console. Please open Firebase Console > Authentication > Sign-in method > Google and toggle Enable.';
+      } else if (err.code === 'auth/unauthorized-domain') {
+        errorMsg = `Domain "${typeof window !== 'undefined' ? window.location.hostname : 'current'}" is not authorized. Add it in Firebase Console > Authentication > Settings > Authorized domains.`;
+      } else if (err.code === 'auth/popup-blocked') {
+        errorMsg = 'Google sign-in popup was blocked by your browser. Please allow popups for this site, or try redirect below.';
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        errorMsg = 'Google sign-in window was closed before signing in.';
+      } else if (err.code === 'auth/cancelled-popup-request') {
+        errorMsg = 'Another sign-in popup is already open. Please switch to it or refresh.';
+      } else {
+        errorMsg = err.message || 'Google sign-in failed. Please try again.';
       }
 
-      loginUser(loggedUser);
-      showToast(`Signed in with Google as ${loggedUser.name}!`);
-    } catch (err) {
-      console.warn('Google sign-in error:', err);
-      if (err.code === 'auth/popup-closed-by-user') {
-        showToast('Google sign-in window was closed.');
-      } else if (err.code === 'auth/operation-not-allowed') {
-        showToast('Google Sign-In is ready! Make sure to toggle it ON in Firebase Console.');
-      } else {
-        showToast(err.message || 'Unable to sign in with Google');
-      }
+      setAuthError({ code: err.code, message: errorMsg });
+      showToast(errorMsg);
     } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fallback: Google Redirect Sign-In (if popup blocked)
+  const handleGoogleRedirectSignIn = async () => {
+    setAuthError(null);
+    setIsLoading(true);
+    try {
+      await signInWithRedirect(auth, googleProvider);
+    } catch (err) {
+      console.error('Google redirect error:', err);
+      showToast(err.message || 'Redirect failed');
       setIsLoading(false);
     }
   };
@@ -519,6 +546,40 @@ export default function AuthModal() {
                 </svg>
                 <span>Continue with Google</span>
               </button>
+
+              {/* Dynamic Error & Setup Diagnostics */}
+              {authError && (
+                <div className="mt-2.5 p-3 rounded-xl bg-amber-50 border border-amber-200 text-left text-xs space-y-1.5 animate-fade-in">
+                  <div className="flex items-center gap-1.5 font-bold text-amber-900">
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span>Google Sign-In Alert</span>
+                  </div>
+                  <p className="text-amber-800 text-[11px] leading-relaxed">
+                    {authError.message}
+                  </p>
+                  {authError.code === 'auth/popup-blocked' && (
+                    <button
+                      type="button"
+                      onClick={handleGoogleRedirectSignIn}
+                      className="mt-1 w-full py-1.5 px-3 bg-[#18542a] text-white rounded-lg font-bold text-[11px] hover:bg-[#124020] transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      <span>Sign In via Full Page Redirect</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  )}
+                  {(authError.code === 'auth/operation-not-allowed' || authError.code === 'auth/configuration-not-found') && (
+                    <a 
+                      href="https://console.firebase.google.com/project/godavari-organics-arma/authentication/providers"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-950 underline hover:text-black mt-1"
+                    >
+                      <span>Enable Google in Firebase Console</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Elegant Divider */}
