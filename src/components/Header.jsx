@@ -165,7 +165,7 @@ export default function Header() {
               className="group flex items-center space-x-2 sm:space-x-3 text-center transition-transform active:scale-95 cursor-pointer py-0.5 min-w-0"
             >
               <img 
-                src="/logo.png" 
+                src="/logo.webp" 
                 alt="Godavari Organics Symbol Logo" 
                 className="h-9 xs:h-10 sm:h-12 lg:h-14 w-auto object-contain transition-transform group-hover:scale-105 shrink-0 drop-shadow-xs" 
               />

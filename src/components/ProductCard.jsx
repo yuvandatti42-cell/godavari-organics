@@ -58,6 +58,8 @@ export default function ProductCard({ product, layout = 'grid' }) {
             <img 
               src={product.image} 
               alt={product.name}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain transform-gpu group-hover/img:scale-106 transition-transform duration-500 filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.06)]" 
             />
           )}

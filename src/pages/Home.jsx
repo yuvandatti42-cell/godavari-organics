@@ -48,15 +48,15 @@ export default function Home() {
               <div className="flex items-center space-x-8 shrink-0">
                 <img src="/fssai.webp" alt="FSSAI Certified" className="h-9 w-auto object-contain" />
                 <img src="/USDA.gif" alt="USDA Organic" className="h-10 w-auto object-contain" />
-                <img src="/SGS.png" alt="SGS Bio-Verified" className="h-9 w-auto object-contain" />
-                <img src="/apeda-pure.png" alt="APEDA Pure" className="h-10 w-auto object-contain" />
+                <img src="/SGS.webp" alt="SGS Bio-Verified" className="h-9 w-auto object-contain" />
+                <img src="/apeda-pure.webp" alt="APEDA Pure" className="h-10 w-auto object-contain" />
               </div>
               {/* Duplicated set for seamless continuous right-to-left marquee loop on mobile */}
               <div className="flex items-center space-x-8 shrink-0">
                 <img src="/fssai.webp" alt="FSSAI Certified" className="h-9 w-auto object-contain" />
                 <img src="/USDA.gif" alt="USDA Organic" className="h-10 w-auto object-contain" />
-                <img src="/SGS.png" alt="SGS Bio-Verified" className="h-9 w-auto object-contain" />
-                <img src="/apeda-pure.png" alt="APEDA Pure" className="h-10 w-auto object-contain" />
+                <img src="/SGS.webp" alt="SGS Bio-Verified" className="h-9 w-auto object-contain" />
+                <img src="/apeda-pure.webp" alt="APEDA Pure" className="h-10 w-auto object-contain" />
               </div>
             </div>
           </div>
@@ -74,12 +74,12 @@ export default function Home() {
               className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
             />
             <img 
-              src="/SGS.png" 
+              src="/SGS.webp" 
               alt="SGS Bio-Verified" 
               className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
             />
             <img 
-              src="/apeda-pure.png" 
+              src="/apeda-pure.webp" 
               alt="APEDA Pure" 
               className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
             />

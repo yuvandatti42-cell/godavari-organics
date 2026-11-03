@@ -30,11 +30,11 @@ export function subscribeToStorefrontProducts(callback, onError) {
         // Skip archived items for customer storefront
         if (data.status === 'Archived') return;
 
-        let mainImage = data.imageUrl || data.image || '/categories/oil.png';
+        let mainImage = data.imageUrl || data.image || '/categories/oil.webp';
         if (data.id === 'prod-spice-chilli' || data.id === 'p_spice_chilli' || data.name?.toLowerCase().includes('chilli')) {
-          mainImage = '/products/spices/chilli_powder.jpg';
+          mainImage = '/products/spices/chilli_powder.webp';
         } else if (data.id === 'prod-spice-turmeric' || data.id === 'p_spice_turmeric' || data.name?.toLowerCase().includes('turmeric')) {
-          mainImage = '/products/spices/turmeric_powder.jpg';
+          mainImage = '/products/spices/turmeric_powder.webp';
         }
 
         const gallery = Array.isArray(data.images) && data.images.length > 0 
@@ -102,7 +102,7 @@ export function subscribeToStorefrontCategories(callback, onError) {
           subtext: data.description || data.subtext || '',
           count: data.count || 0,
           bgTint: data.bgTint || 'bg-[#f3e8cc]',
-          image: data.imageUrl || data.image || '/categories/oil.png',
+          image: data.imageUrl || data.image || '/categories/oil.webp',
           displayOrder: data.displayOrder || 0
         });
       });

@@ -17,7 +17,7 @@ export default function Footer() {
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926] overflow-hidden">
               <img 
-                src="/logo-circle.png" 
+                src="/logo-circle.webp" 
                 alt="Godavari Organic Foods Logo" 
                 className="w-full h-full object-contain" 
               />
@@ -169,7 +169,7 @@ export default function Footer() {
             <div className="flex items-center space-x-3.5">
               <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center shrink-0 shadow-md border-2 border-[#ffc926] overflow-hidden">
                 <img 
-                  src="/logo-circle.png" 
+                  src="/logo-circle.webp" 
                   alt="Godavari Organic Foods Logo" 
                   className="w-full h-full object-contain" 
                 />

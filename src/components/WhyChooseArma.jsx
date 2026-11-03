@@ -16,28 +16,28 @@ const REEL_ITEMS = [
     id: 1,
     title: 'Our Journey & 10,000+ Customers',
     video: '/videos/reel1.mp4',
-    image: '/videos/reel1.jpg',
+    image: '/videos/reel1.webp',
     reelUrl: 'https://www.instagram.com/reel/DebtmOYhEqD/'
   },
   {
     id: 2,
     title: 'Super Millet Powder: Blood Sugar Response',
     video: '/videos/reel2.mp4',
-    image: '/videos/reel2.jpg',
+    image: '/videos/reel2.webp',
     reelUrl: 'https://www.instagram.com/reel/DeMOYGMhABC/'
   },
   {
     id: 3,
     title: 'Daily Low-GI Rice (స్థిరమైన ఎనర్జీ)',
     video: '/videos/reel3.mp4',
-    image: '/videos/reel3.jpg',
+    image: '/videos/reel3.webp',
     reelUrl: 'https://www.instagram.com/reel/Da0aFDMBbzw/'
   },
   {
     id: 4,
     title: "Baby's First Food: Raw Banana Powder",
     video: '/videos/reel4.mp4',
-    image: '/videos/reel4.jpg',
+    image: '/videos/reel4.webp',
     reelUrl: 'https://www.instagram.com/reel/DbLJpzChSoB/'
   }
 ];

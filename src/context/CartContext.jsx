@@ -41,8 +41,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: true,
     craftTag: '100% Cold Pressed',
-    image: '/products/oils/groundnut_oil.png',
-    images: ['/products/oils/groundnut_oil.png', '/products/oils/oil_difference_guide.png', '/banners/banner_oil.jpg'],
+    image: '/products/oils/groundnut_oil.webp',
+    images: ['/products/oils/groundnut_oil.webp', '/products/oils/oil_difference_guide.webp', '/banners/banner_oil.webp'],
     origin: 'Godavari Agri Collective, East Godavari, AP',
     certifications: ['100% Cold Pressed', 'Unrefined', 'Zero Preservatives']
   },
@@ -72,8 +72,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: false,
     craftTag: '100% Cold Pressed',
-    image: '/products/oils/sesame_oil.png',
-    images: ['/products/oils/sesame_oil.png', '/products/oils/oil_difference_guide.png', '/banners/banner_oil.jpg'],
+    image: '/products/oils/sesame_oil.webp',
+    images: ['/products/oils/sesame_oil.webp', '/products/oils/oil_difference_guide.webp', '/banners/banner_oil.webp'],
     origin: 'Delta Organic Farms, Andhra Pradesh',
     certifications: ['Cold Pressed', 'Rich Antioxidants', 'Traditional Method']
   },
@@ -103,8 +103,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: true,
     craftTag: '100% Cold Pressed',
-    image: '/products/oils/coconut_oil.png',
-    images: ['/products/oils/coconut_oil.png', '/products/oils/oil_difference_guide.png', '/banners/banner_oil.jpg'],
+    image: '/products/oils/coconut_oil.webp',
+    images: ['/products/oils/coconut_oil.webp', '/products/oils/oil_difference_guide.webp', '/banners/banner_oil.webp'],
     origin: 'Konaseema Coconut Belt, Andhra Pradesh',
     certifications: ['100% Virgin', 'Sulfur Free', 'Zero Heat Added']
   },
@@ -134,8 +134,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: false,
     isBestseller: false,
     craftTag: '100% Cold Pressed',
-    image: '/products/oils/black_sesame_oil.png',
-    images: ['/products/oils/black_sesame_oil.png', '/products/oils/oil_difference_guide.png', '/banners/banner_oil.jpg'],
+    image: '/products/oils/black_sesame_oil.webp',
+    images: ['/products/oils/black_sesame_oil.webp', '/products/oils/oil_difference_guide.webp', '/banners/banner_oil.webp'],
     origin: 'Agency Tribal Belt, Rampachodavaram',
     certifications: ['Ayurvedic Grade', 'High Calcium', 'Cold Pressed']
   },
@@ -165,8 +165,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: false,
     isBestseller: false,
     craftTag: '100% Cold Pressed',
-    image: '/products/oils/sunflower_oil.png',
-    images: ['/products/oils/sunflower_oil.png', '/products/oils/oil_difference_guide.png', '/banners/banner_oil.jpg'],
+    image: '/products/oils/sunflower_oil.webp',
+    images: ['/products/oils/sunflower_oil.webp', '/products/oils/oil_difference_guide.webp', '/banners/banner_oil.webp'],
     origin: 'Godavari Valley Agro, AP',
     certifications: ['Non-GMO', 'Hexane Free', 'Rich Vitamin E']
   },
@@ -196,8 +196,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: false,
     isBestseller: false,
     craftTag: '100% Cold Pressed',
-    image: '/products/oils/safflower_oil.png',
-    images: ['/products/oils/safflower_oil.png', '/products/oils/oil_difference_guide.png', '/banners/banner_oil.jpg'],
+    image: '/products/oils/safflower_oil.webp',
+    images: ['/products/oils/safflower_oil.webp', '/products/oils/oil_difference_guide.webp', '/banners/banner_oil.webp'],
     origin: 'Deccan-Godavari Organic Sector',
     certifications: ['Zero Cholesterol', 'High Smoke Point', 'Unrefined']
   },
@@ -227,8 +227,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: false,
     isBestseller: false,
     craftTag: '100% Cold Pressed',
-    image: '/products/oils/mustard_oil.png',
-    images: ['/products/oils/mustard_oil.png', '/products/oils/oil_difference_guide.png', '/banners/banner_oil.jpg'],
+    image: '/products/oils/mustard_oil.webp',
+    images: ['/products/oils/mustard_oil.webp', '/products/oils/oil_difference_guide.webp', '/banners/banner_oil.webp'],
     origin: 'Godavari Natural Farmers Group',
     certifications: ['Cold Pressed', 'Raw Pungency', 'Zero Additives']
   },
@@ -258,8 +258,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: true,
     craftTag: '100% Cold Pressed',
-    image: '/products/oils/almond_oil.png',
-    images: ['/products/oils/almond_oil.png', '/products/oils/oil_difference_guide.png', '/banners/banner_oil.jpg'],
+    image: '/products/oils/almond_oil.webp',
+    images: ['/products/oils/almond_oil.webp', '/products/oils/oil_difference_guide.webp', '/banners/banner_oil.webp'],
     origin: 'Certified Organic Direct, Godavari Network',
     certifications: ['100% Pure Badam', 'Edible Grade', 'Cold Pressed']
   },
@@ -289,8 +289,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: false,
     isBestseller: false,
     craftTag: '100% Cold Pressed',
-    image: '/products/oils/niger_oil.png',
-    images: ['/products/oils/niger_oil.png', '/products/oils/oil_difference_guide.png', '/banners/banner_oil.jpg'],
+    image: '/products/oils/niger_oil.webp',
+    images: ['/products/oils/niger_oil.webp', '/products/oils/oil_difference_guide.webp', '/banners/banner_oil.webp'],
     origin: 'Eastern Ghats Tribal Collectives',
     certifications: ['Wild Harvest Seed', 'Cold Pressed', 'Heritage Recipe']
   },
@@ -324,8 +324,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: true,
     craftTag: 'Low GI • Heirloom',
-    image: '/products/rice/red_rice.png',
-    images: ['/products/rice/red_rice.png', '/products/rice/red_rice_benefits.png', '/banners/banner_rice.jpg'],
+    image: '/products/rice/red_rice.webp',
+    images: ['/products/rice/red_rice.webp', '/products/rice/red_rice_benefits.webp', '/banners/banner_rice.webp'],
     origin: 'Godavari River Basin Cultivators, AP',
     certifications: ['Unpolished', 'Low GI', 'Heirloom Seed']
   },
@@ -355,8 +355,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: false,
     craftTag: 'Anthocyanin Superfood',
-    image: '/products/rice/black_rice.png',
-    images: ['/products/rice/black_rice.png', '/products/rice/black_rice_benefits.png', '/banners/banner_rice.jpg'],
+    image: '/products/rice/black_rice.webp',
+    images: ['/products/rice/black_rice.webp', '/products/rice/black_rice_benefits.webp', '/banners/banner_rice.webp'],
     origin: 'Organic Heritage Farmers, AP',
     certifications: ['Superfood', 'Zero Chemicals', 'Rich Anthocyanin']
   },
@@ -386,8 +386,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: false,
     isBestseller: true,
     craftTag: 'Naturally Aged 12m',
-    image: '/products/rice/sona_masoori_rice.png',
-    images: ['/products/rice/sona_masoori_rice.png', '/products/rice/sona_masoori_rice_benefits.png', '/banners/banner_rice.jpg'],
+    image: '/products/rice/sona_masoori_rice.webp',
+    images: ['/products/rice/sona_masoori_rice.webp', '/products/rice/sona_masoori_rice_benefits.webp', '/banners/banner_rice.webp'],
     origin: 'Krishna-Godavari Delta Basin',
     certifications: ['12 Months Aged', 'Pesticide Free', 'Jaivik Bharat']
   },
@@ -421,8 +421,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: true,
     craftTag: 'Siridhanya Korralu',
-    image: '/products/millets/foxtail_millet.png',
-    images: ['/products/millets/foxtail_millet.png', '/products/millets/foxtail_millet_benefits.png', '/banners/banner_spices_millets.jpg'],
+    image: '/products/millets/foxtail_millet.webp',
+    images: ['/products/millets/foxtail_millet.webp', '/products/millets/foxtail_millet_benefits.webp', '/banners/banner_spices_millets.webp'],
     origin: 'Rayalaseema-Godavari Millet Collective',
     certifications: ['Unpolished', 'Gluten Free', 'Diabetic Friendly']
   },
@@ -452,8 +452,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: false,
     isBestseller: false,
     craftTag: 'Detox Arikelu',
-    image: '/products/millets/kodo_millet.png',
-    images: ['/products/millets/kodo_millet.png', '/products/millets/kodo_millet_benefits.png', '/banners/banner_spices_millets.jpg'],
+    image: '/products/millets/kodo_millet.webp',
+    images: ['/products/millets/kodo_millet.webp', '/products/millets/kodo_millet_benefits.webp', '/banners/banner_spices_millets.webp'],
     origin: 'Godavari Natural Farming Society',
     certifications: ['Siridhanya Certified', 'Unpolished', 'Rich Fiber']
   },
@@ -483,8 +483,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: false,
     isBestseller: false,
     craftTag: 'Quick-Cook Samalu',
-    image: '/products/millets/little_millet.png',
-    images: ['/products/millets/little_millet.png', '/products/millets/little_millet_benefits.png', '/banners/banner_spices_millets.jpg'],
+    image: '/products/millets/little_millet.webp',
+    images: ['/products/millets/little_millet.webp', '/products/millets/little_millet_benefits.webp', '/banners/banner_spices_millets.webp'],
     origin: 'Organic Millet Producers, AP',
     certifications: ['Easy Digestion', 'Gluten Free', 'Natural Harvest']
   },
@@ -514,8 +514,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: false,
     isBestseller: false,
     craftTag: 'High Iron Oodalu',
-    image: '/products/millets/barnyard_millet.png',
-    images: ['/products/millets/barnyard_millet.png', '/products/millets/barnyard_millet_benefits.png', '/banners/banner_spices_millets.jpg'],
+    image: '/products/millets/barnyard_millet.webp',
+    images: ['/products/millets/barnyard_millet.webp', '/products/millets/barnyard_millet_benefits.webp', '/banners/banner_spices_millets.webp'],
     origin: 'Agency Belt Millet Farms, AP',
     certifications: ['Highest Iron', 'Low Calorie', 'Pesticide Free']
   },
@@ -545,8 +545,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: false,
     craftTag: '12.5% Fiber Supergrain',
-    image: '/products/millets/browntop_millet.png',
-    images: ['/products/millets/browntop_millet.png', '/products/millets/browntop_millet_benefits.png', '/banners/banner_spices_millets.jpg'],
+    image: '/products/millets/browntop_millet.webp',
+    images: ['/products/millets/browntop_millet.webp', '/products/millets/browntop_millet_benefits.webp', '/banners/banner_spices_millets.webp'],
     origin: 'Eastern Ghats Indigenous Seed Reserve',
     certifications: ['12.5% Fiber', 'Rare Siridhanya', 'Unpolished']
   },
@@ -582,7 +582,7 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: true,
     craftTag: '5%+ Curcumin Stone Ground',
-    image: '/products/spices/turmeric_powder.jpg',
+    image: '/products/spices/turmeric_powder.webp',
     origin: 'Rampachodavaram Agency Forest, AP',
     certifications: ['5%+ Curcumin', 'Stone Ground', 'Zero Additives']
   },
@@ -614,7 +614,7 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: false,
     craftTag: 'Guntur Sun-Pounded',
-    image: '/products/spices/chilli_powder.jpg',
+    image: '/products/spices/chilli_powder.webp',
     origin: 'Godavari-Guntur Organic Farmers',
     certifications: ['Sun-Dried', 'Zero Artificial Color', 'Traditional Pounded']
   },
@@ -650,7 +650,7 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: true,
     craftTag: 'Vedic Bilona Danedar',
-    image: '/categories/desi_cow_ghee.jpg',
+    image: '/categories/desi_cow_ghee.webp',
     origin: 'Godavari Gomatha Sanctuary, East Godavari, AP',
     certifications: ['Vedic Bilona Method', 'A2 Certified', 'Grass-Fed Cows']
   }
@@ -663,7 +663,7 @@ export const CATEGORIES = [
     subtext: 'Cold pressed pure organic oils & ghee', 
     count: 10,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/oil.png'
+    image: '/categories/oil.webp'
   },
   { 
     id: 'c2', 
@@ -671,7 +671,7 @@ export const CATEGORIES = [
     subtext: 'Red, black & traditional sona masoori rice', 
     count: 3,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/rice.png'
+    image: '/categories/rice.webp'
   },
   { 
     id: 'c3', 
@@ -679,7 +679,7 @@ export const CATEGORIES = [
     subtext: 'Unpolished native Siridhanya millets', 
     count: 5,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/millet.png'
+    image: '/categories/millet.webp'
   },
   { 
     id: 'c4', 
@@ -687,7 +687,7 @@ export const CATEGORIES = [
     subtext: 'Pure stone ground turmeric & red chilli', 
     count: 2,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/spices.png'
+    image: '/categories/spices.webp'
   }
 ];
 
@@ -884,7 +884,7 @@ export function CartProvider({ children }) {
       weight: '1 Litre',
       selectedSize: '1 Litre',
       quantity: 1,
-      image: '/products/oils/groundnut_oil.png'
+      image: '/products/oils/groundnut_oil.webp'
     },
     {
       id: 'p_spice_turmeric',
@@ -895,7 +895,7 @@ export function CartProvider({ children }) {
       weight: '250g',
       selectedSize: '250g',
       quantity: 1,
-      image: '/categories/spices.png'
+      image: '/categories/spices.webp'
     }
   ]);
 

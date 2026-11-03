@@ -84,7 +84,7 @@ export async function initiateRazorpayPayment({
     currency: 'INR',
     name: 'Godavari Organic Foods',
     description: `Order #${orderPayload.id} - Traditional Harvest`,
-    image: '/logo-circle.png',
+    image: '/logo-circle.webp',
     handler: function (response) {
       if (onSuccess) {
         onSuccess({

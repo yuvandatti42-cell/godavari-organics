@@ -2,7 +2,7 @@ import React from 'react';
 import { Star, CheckCircle2, Quote } from 'lucide-react';
 
 export default function TestimonialCard({ name, location, quote, rating = 5, itemBought, avatar }) {
-  const customerAvatar = avatar || (name.includes('Ananya') ? '/customers/ananya.jpg' : name.includes('Vikram') ? '/customers/vikram.jpg' : '/customers/srinivas.jpg');
+  const customerAvatar = avatar || (name.includes('Ananya') ? '/customers/ananya.webp' : name.includes('Vikram') ? '/customers/vikram.webp' : '/customers/srinivas.webp');
 
   return (
     <div className="bg-[#faf8f3] rounded-2xl border border-[#e8e4d8] p-5 flex flex-col justify-between space-y-4 font-sans editorial-card relative">

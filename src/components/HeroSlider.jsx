@@ -11,7 +11,7 @@ export const HERO_SLIDES = [
     headlineSub: 'Trust every meal.',
     subtitle: 'Discover the flavour. Explore the traditional slow wooden pressing process.',
     title: '100% Pure Cold Pressed Natural Oils',
-    bannerImage: '/banners/banner_oil.jpg',
+    bannerImage: '/banners/banner_oil.webp',
     buttonText: 'Shop Oils',
     buttonTextColor: 'text-[#18542a]'
   },
@@ -23,7 +23,7 @@ export const HERO_SLIDES = [
     headlineSub: 'Golden aroma.',
     subtitle: 'Slow simmered bilona ghee handcrafted from cultured curd of grass-fed desi cows.',
     title: 'Pure Vedic Bilona Desi Cow A2 Ghee',
-    bannerImage: '/banners/banner_ghee.jpg',
+    bannerImage: '/banners/banner_ghee.webp',
     buttonText: 'Shop Ghee',
     buttonTextColor: 'text-[#92400e]'
   },
@@ -35,7 +35,7 @@ export const HERO_SLIDES = [
     headlineSub: 'Pure daily energy.',
     subtitle: 'Unpolished traditional grains sourced directly from fertile Godavari river delta farms.',
     title: 'Wholesome Millet Power & Siridhanya',
-    bannerImage: '/hero.png',
+    bannerImage: '/hero.webp',
     buttonText: 'Shop Millets',
     buttonTextColor: 'text-[#18542a]'
   },
@@ -47,7 +47,7 @@ export const HERO_SLIDES = [
     headlineSub: 'Rooted in health.',
     subtitle: 'Naturally grown red, black & aged sona masoori rice harvested from native heirloom seeds.',
     title: 'Traditional Godavari Heritage Rice',
-    bannerImage: '/banners/banner_rice.jpg',
+    bannerImage: '/banners/banner_rice.webp',
     buttonText: 'Shop Rice',
     buttonTextColor: 'text-[#991b1b]'
   },
@@ -59,7 +59,7 @@ export const HERO_SLIDES = [
     headlineSub: 'Real farm aroma.',
     subtitle: 'Hand-picked turmeric, chillies, and aromatic whole spices with zero adulteration.',
     title: 'Pure Stone Ground Spices & Turmeric',
-    bannerImage: '/banners/banner_spices.jpg',
+    bannerImage: '/banners/banner_spices.webp',
     buttonText: 'Shop Spices',
     buttonTextColor: 'text-[#78350f]'
   }
@@ -77,7 +77,7 @@ export default function HeroSlider() {
         headlineSub: "",
         subtitle: s.subtitle || "",
         title: s.title || "Godavari Organic Foods",
-        bannerImage: s.imageUrl || "/banners/banner_oil.jpg",
+        bannerImage: s.imageUrl || "/banners/banner_oil.webp",
         buttonText: s.ctaText || "Shop Now",
         buttonTextColor: "text-[#18542a]"
       }))
@@ -306,7 +306,9 @@ export default function HeroSlider() {
                 src={slide.bannerImage} 
                 alt={slide.title}
                 className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
-                loading="eager"
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "low"}
+                decoding="async"
                 draggable={false}
               />
 
@@ -459,6 +461,8 @@ export default function HeroSlider() {
                       : 'opacity-0 scale-[1.01] z-0 pointer-events-none'
                   }`}
                   loading={idx === 0 || idx === 1 ? 'eager' : 'lazy'}
+                  fetchPriority={idx === 0 ? 'high' : 'low'}
+                  decoding="async"
                 />
               ))}
             </div>

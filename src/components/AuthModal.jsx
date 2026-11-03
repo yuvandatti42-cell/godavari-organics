@@ -344,7 +344,7 @@ export default function AuthModal() {
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 rounded-2xl bg-white border border-[#d9ca9d] shadow-xs p-2 flex items-center justify-center mb-3">
                 <img 
-                  src="/logo.png" 
+                  src="/logo.webp" 
                   alt="Godavari Organic Foods" 
                   className="w-full h-full object-contain"
                 />
@@ -508,7 +508,7 @@ export default function AuthModal() {
               
               <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-white border border-[#d9ca9d] shadow-xs p-2 flex items-center justify-center mb-2.5">
                 <img 
-                  src="/logo.png" 
+                  src="/logo.webp" 
                   alt="Godavari Organic Foods" 
                   className="w-full h-full object-contain"
                 />
