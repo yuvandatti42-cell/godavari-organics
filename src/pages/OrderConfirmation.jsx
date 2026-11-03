@@ -62,12 +62,24 @@ export default function OrderConfirmation() {
           <div className="flex justify-between items-center border-b border-[#c8b894]/60 pb-2">
             <span className="text-[#556b54] flex items-center gap-1.5">
               <CreditCard className="w-3.5 h-3.5" />
-              <span>Payment Status:</span>
+              <span>Payment Mode:</span>
             </span>
             <span className="font-bold text-white bg-[#18542a] px-2.5 py-0.5 rounded-md text-[11px]">
               {paymentMethod.toUpperCase()}
             </span>
           </div>
+
+          {lastOrder?.paymentId && (
+            <div className="flex justify-between items-center border-b border-[#c8b894]/60 pb-2">
+              <span className="text-[#556b54] flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#18542a]" />
+                <span>Razorpay Txn ID:</span>
+              </span>
+              <span className="font-mono font-bold text-[#103b1d] text-[11px] bg-[#d9ca9d]/50 px-2 py-0.5 rounded">
+                {lastOrder.paymentId}
+              </span>
+            </div>
+          )}
 
           {lastOrder?.items && lastOrder.items.length > 0 && (
             <div className="border-b border-[#c8b894]/60 pb-2 space-y-1">

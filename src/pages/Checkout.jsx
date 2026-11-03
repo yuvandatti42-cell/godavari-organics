@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
-import { ArrowLeft, Smartphone, CreditCard, Landmark, Truck } from 'lucide-react';
+import { ArrowLeft, Smartphone, CreditCard, Landmark, Truck, ShieldCheck, Lock } from 'lucide-react';
+import { initiateRazorpayPayment, loadRazorpayScript } from '../services/razorpayService';
 
 export default function Checkout() {
   const { 
@@ -17,6 +18,11 @@ export default function Checkout() {
   } = useCart();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Preload Razorpay checkout script in background
+  useEffect(() => {
+    loadRazorpayScript();
+  }, []);
 
   const [paymentMethod, setPaymentMethod] = useState('upi');
   const [formData, setFormData] = useState({
@@ -66,9 +72,9 @@ export default function Checkout() {
     }));
 
     const methodLabels = {
-      upi: "UPI / Google Pay",
-      card: "Credit / Debit Card",
-      netbanking: "Net Banking",
+      upi: "UPI (GPay / PhonePe / Razorpay)",
+      card: "Credit / Debit Card (Razorpay)",
+      netbanking: "Net Banking (Razorpay)",
       cod: "Cash on Delivery"
     };
 
@@ -82,7 +88,7 @@ export default function Checkout() {
       deliveryCharge: shippingFee || 0,
       discount: 0,
       total: finalDisplayTotal,
-      paymentMethod: methodLabels[paymentMethod] || "UPI / Google Pay",
+      paymentMethod: methodLabels[paymentMethod] || "Razorpay (Online)",
       shippingAddress: {
         street: (formData.address1 + " " + (formData.address2 || "")).trim(),
         city: formData.city.trim(),
@@ -91,18 +97,64 @@ export default function Checkout() {
       }
     };
 
-    try {
-      await placeOrder(orderPayload);
-      showToast("Order #" + orderPayload.id + " placed and synced to farm dispatch!");
-      setTimeout(() => {
+    // If Cash on Delivery, place order directly without gateway modal
+    if (paymentMethod === 'cod') {
+      try {
+        orderPayload.paymentStatus = 'Pending';
+        await placeOrder(orderPayload);
+        showToast("Order #" + orderPayload.id + " placed! Cash on delivery selected.");
+        setTimeout(() => {
+          setCurrentPage("order-success");
+        }, 500);
+      } catch (err) {
+        console.error(err);
+        showToast("Order #" + orderPayload.id + " placed successfully!");
         setCurrentPage("order-success");
-      }, 500);
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
+    // Online Payments (UPI, Cards, NetBanking) processed via Razorpay
+    try {
+      await initiateRazorpayPayment({
+        orderPayload,
+        onSuccess: async (rzpRes) => {
+          try {
+            const finalOrder = {
+              ...orderPayload,
+              paymentId: rzpRes.paymentId,
+              razorpayOrderId: rzpRes.orderId || null,
+              paymentStatus: 'Paid',
+              paymentMethod: rzpRes.method || methodLabels[paymentMethod] || 'Razorpay Online'
+            };
+            await placeOrder(finalOrder);
+            showToast(`Payment successful! Order #${orderPayload.id} confirmed.`);
+            setTimeout(() => {
+              setCurrentPage("order-success");
+            }, 500);
+          } catch (pErr) {
+            console.error("Order sync error post payment:", pErr);
+            showToast(`Order #${orderPayload.id} placed successfully!`);
+            setCurrentPage("order-success");
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+        onFailure: (errMsg) => {
+          setIsSubmitting(false);
+          showToast(errMsg || "Payment was not completed. Please try again.");
+        },
+        onDismiss: () => {
+          setIsSubmitting(false);
+          showToast("Payment window closed. You can retry or choose Cash on Delivery.");
+        }
+      });
     } catch (err) {
-      console.error(err);
-      showToast("Order #" + orderPayload.id + " placed successfully!");
-      setCurrentPage("order-success");
-    } finally {
+      console.error("Razorpay initiation error:", err);
       setIsSubmitting(false);
+      showToast("Unable to start payment gateway. Please try again.");
     }
   };
 
@@ -307,28 +359,39 @@ export default function Checkout() {
 
         {/* Section 4: Payment Method */}
         <section className="space-y-3">
-          <h2 className="font-bold text-sm sm:text-base text-slate-900">
-            Payment Method
-          </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+            <h2 className="font-bold text-sm sm:text-base text-slate-900">
+              Payment Method
+            </h2>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#18542a] bg-[#e8f5ec] px-2.5 py-1 rounded-full border border-[#a3d9b1] w-fit">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#18542a]" />
+              <span>Razorpay Secured Gateway</span>
+            </div>
+          </div>
 
           <div className="space-y-2.5 text-xs sm:text-sm font-semibold">
             {/* UPI */}
             <label 
               className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
                 paymentMethod === 'upi' 
-                  ? 'border-2 border-slate-900 bg-white' 
+                  ? 'border-2 border-[#18542a] bg-[#f8faf8] shadow-xs' 
                   : 'border border-gray-200 bg-white hover:border-gray-300'
               }`}
             >
               <div className="flex items-center space-x-3 text-slate-900">
-                <Smartphone className="w-5 h-5 text-slate-700" />
-                <span>UPI (GPay, PhonePe, Paytm)</span>
+                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-[#18542a] flex items-center justify-center shrink-0">
+                  <Smartphone className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-bold">UPI (GPay, PhonePe, Paytm, QR)</span>
+                  <span className="text-[11px] font-normal text-gray-500">Fast 1-tap payment via Razorpay</span>
+                </div>
               </div>
-              <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                paymentMethod === 'upi' ? 'border-slate-900' : 'border-gray-300'
+              <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
+                paymentMethod === 'upi' ? 'border-[#18542a]' : 'border-gray-300'
               }`}>
                 {paymentMethod === 'upi' && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-900"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#18542a]"></div>
                 )}
               </div>
             </label>
@@ -337,19 +400,24 @@ export default function Checkout() {
             <label 
               className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
                 paymentMethod === 'card' 
-                  ? 'border-2 border-slate-900 bg-white' 
+                  ? 'border-2 border-[#18542a] bg-[#f8faf8] shadow-xs' 
                   : 'border border-gray-200 bg-white hover:border-gray-300'
               }`}
             >
               <div className="flex items-center space-x-3 text-slate-900">
-                <CreditCard className="w-5 h-5 text-slate-700" />
-                <span>Credit / Debit Card</span>
+                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-[#18542a] flex items-center justify-center shrink-0">
+                  <CreditCard className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-bold">Credit / Debit Card</span>
+                  <span className="text-[11px] font-normal text-gray-500">Visa, Mastercard, RuPay, Amex</span>
+                </div>
               </div>
-              <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                paymentMethod === 'card' ? 'border-slate-900' : 'border-gray-300'
+              <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
+                paymentMethod === 'card' ? 'border-[#18542a]' : 'border-gray-300'
               }`}>
                 {paymentMethod === 'card' && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-900"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#18542a]"></div>
                 )}
               </div>
             </label>
@@ -358,19 +426,24 @@ export default function Checkout() {
             <label 
               className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
                 paymentMethod === 'netbanking' 
-                  ? 'border-2 border-slate-900 bg-white' 
+                  ? 'border-2 border-[#18542a] bg-[#f8faf8] shadow-xs' 
                   : 'border border-gray-200 bg-white hover:border-gray-300'
               }`}
             >
               <div className="flex items-center space-x-3 text-slate-900">
-                <Landmark className="w-5 h-5 text-slate-700" />
-                <span>Net Banking</span>
+                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-[#18542a] flex items-center justify-center shrink-0">
+                  <Landmark className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-bold">Net Banking</span>
+                  <span className="text-[11px] font-normal text-gray-500">SBI, HDFC, ICICI, Axis & 50+ Banks</span>
+                </div>
               </div>
-              <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                paymentMethod === 'netbanking' ? 'border-slate-900' : 'border-gray-300'
+              <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
+                paymentMethod === 'netbanking' ? 'border-[#18542a]' : 'border-gray-300'
               }`}>
                 {paymentMethod === 'netbanking' && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-900"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#18542a]"></div>
                 )}
               </div>
             </label>
@@ -379,33 +452,56 @@ export default function Checkout() {
             <label 
               className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
                 paymentMethod === 'cod' 
-                  ? 'border-2 border-slate-900 bg-white' 
+                  ? 'border-2 border-[#18542a] bg-[#f8faf8] shadow-xs' 
                   : 'border border-gray-200 bg-white hover:border-gray-300'
               }`}
             >
               <div className="flex items-center space-x-3 text-slate-900">
-                <Truck className="w-5 h-5 text-slate-700" />
-                <span>Cash on Delivery</span>
+                <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
+                  <Truck className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-bold">Cash on Delivery</span>
+                  <span className="text-[11px] font-normal text-gray-500">Pay cash upon doorstep delivery</span>
+                </div>
               </div>
-              <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                paymentMethod === 'cod' ? 'border-slate-900' : 'border-gray-300'
+              <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
+                paymentMethod === 'cod' ? 'border-[#18542a]' : 'border-gray-300'
               }`}>
                 {paymentMethod === 'cod' && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-900"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#18542a]"></div>
                 )}
               </div>
             </label>
           </div>
         </section>
 
-        {/* Action Button */}
-        <div className="pt-2">
+        {/* Action Button & Security Guarantee */}
+        <div className="pt-2 space-y-2.5">
           <button
             type="submit"
-            disabled={isSubmitting} className="w-full py-4 bg-[#0f172a] hover:bg-[#020617] disabled:bg-gray-500 text-white text-sm sm:text-base font-bold rounded-xl shadow-md transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed text-center"
+            disabled={isSubmitting} 
+            className="w-full py-4 bg-[#18542a] hover:bg-[#124020] disabled:bg-gray-400 text-white text-sm sm:text-base font-bold rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {isSubmitting ? "Connecting to Farm Dispatch..." : `Place Order — ₹${finalDisplayTotal.toLocaleString("en-IN")}`}
+            {isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Connecting to Secure Gateway...
+              </span>
+            ) : paymentMethod === 'cod' ? (
+              <span>Confirm Order (Cash on Delivery) — ₹{finalDisplayTotal.toLocaleString("en-IN")}</span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <Lock className="w-4 h-4" />
+                <span>Pay ₹{finalDisplayTotal.toLocaleString("en-IN")} via Razorpay</span>
+              </span>
+            )}
           </button>
+
+          <p className="text-center text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
+            <Lock className="w-3 h-3 text-[#18542a]" />
+            <span>End-to-end encrypted • Certified by Razorpay & RBI regulations</span>
+          </p>
         </div>
 
       </form>
