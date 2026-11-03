@@ -799,21 +799,9 @@ export function CartProvider({ children }) {
     setAuthModalOpen(false);
   }, []);
 
-  // Customer Login Initial Pop-up: Trigger when the website first loads if not logged in
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('godavari_user');
-      const dismissed = sessionStorage.getItem('godavari_auth_dismissed');
-      if (!saved && !dismissed) {
-        const timer = setTimeout(() => {
-          setAuthModalOpen(true);
-        }, 750);
-        return () => clearTimeout(timer);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
+  // Note: Automatic intrusive pop-up on first load has been removed to comply with
+  // Google Lighthouse Best Practices & WCAG Accessibility standards.
+  // AuthModal is triggered on-demand via Header Account button, Sign In, or Checkout.
 
   // Core navigation function synchronized with browser history
   const changePage = useCallback((page, options = {}) => {

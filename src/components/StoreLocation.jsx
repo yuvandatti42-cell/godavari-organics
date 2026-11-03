@@ -16,6 +16,7 @@ export default function StoreLocation() {
           href={GOOGLE_MAPS_LINK}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Open Godavari Organic Foods in Google Maps"
           className="inline-flex items-center space-x-1 font-urbanist font-extrabold text-xs sm:text-sm text-[#18542a] hover:text-[#103b1d] underline underline-offset-4 transition-colors cursor-pointer"
         >
           <span>Open in Google Maps</span>
@@ -39,6 +40,7 @@ export default function StoreLocation() {
           href={GOOGLE_MAPS_LINK}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Get driving directions to Godavari Organic Foods"
           className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 bg-white/95 hover:bg-white text-[#103b1d] hover:text-[#18542a] text-xs font-extrabold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-[#d9ca9d] shadow-md flex items-center space-x-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-md"
         >
           <Navigation className="w-3.5 h-3.5 text-[#18542a]" />

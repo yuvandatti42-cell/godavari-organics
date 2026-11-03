@@ -42,7 +42,12 @@ export default function SearchModal() {
   const displayProducts = query.trim() ? matchingProducts : trendingProducts;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#faf5ea] flex flex-col font-sans overflow-y-auto animate-fadeIn">
+    <div 
+      role="dialog" 
+      aria-modal="true" 
+      aria-label="Search Products"
+      className="fixed inset-0 z-50 bg-[#faf5ea] flex flex-col font-sans overflow-y-auto animate-fadeIn"
+    >
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 py-4 space-y-6 flex-1 flex flex-col">
         
         {/* 1. TOP SEARCH BAR ROW (Matching Screenshot: [🔍 Organic R | ] Cancel) */}
@@ -50,6 +55,9 @@ export default function SearchModal() {
           <div className="flex-1 relative">
             <input 
               type="text"
+              id="search-modal-input"
+              name="searchQuery"
+              aria-label="Search organic products"
               autoFocus
               placeholder="Search organic products..."
               value={query}
@@ -61,7 +69,8 @@ export default function SearchModal() {
             {query && (
               <button 
                 onClick={() => setQuery('')}
-                className="absolute right-3.5 top-3.5 text-stone-400 hover:text-stone-700"
+                aria-label="Clear search query"
+                className="absolute right-3.5 top-3.5 text-stone-400 hover:text-stone-700 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -70,6 +79,7 @@ export default function SearchModal() {
 
           <button 
             onClick={() => setSearchModalOpen(false)}
+            aria-label="Close search modal"
             className="text-sm font-urbanist font-extrabold text-stone-600 hover:text-[#103b1d] px-2 py-1 transition-colors cursor-pointer"
           >
             Cancel
@@ -97,7 +107,8 @@ export default function SearchModal() {
 
                   <button 
                     onClick={(e) => handleRemoveRecent(item, e)}
-                    className="text-stone-300 hover:text-rose-500 p-0.5"
+                    aria-label={`Remove recent search: ${item}`}
+                    className="text-stone-300 hover:text-rose-500 p-0.5 cursor-pointer"
                     title="Remove from history"
                   >
                     <XCircle className="w-4 h-4" />

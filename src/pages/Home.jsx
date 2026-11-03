@@ -16,6 +16,8 @@ export default function Home() {
 
   return (
     <div className="w-full font-sans bg-[#faf5ea] text-[#103b1d]">
+      {/* Primary Accessible Document Heading for Screen Readers & SEO */}
+      <h1 className="sr-only">Godavari Organic Foods — Pure, Authentic Farm Harvest Direct to Your Doorstep</h1>
       
       {/* 1. HERO SLIDER SECTION — DYNAMIC BACKGROUND transitions, DUAL BUTTONS, NO FRAMES */}
       <HeroSlider />
@@ -46,17 +48,17 @@ export default function Home() {
           <div className="block sm:hidden w-full overflow-hidden relative">
             <div className="animate-marquee whitespace-nowrap flex items-center space-x-8 py-1.5">
               <div className="flex items-center space-x-8 shrink-0">
-                <img src="/fssai.webp" alt="FSSAI Certified" className="h-9 w-auto object-contain" />
-                <img src="/USDA.gif" alt="USDA Organic" className="h-10 w-auto object-contain" />
-                <img src="/SGS.webp" alt="SGS Bio-Verified" className="h-9 w-auto object-contain" />
-                <img src="/apeda-pure.webp" alt="APEDA Pure" className="h-10 w-auto object-contain" />
+                <img src="/fssai.webp" alt="FSSAI Certified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/USDA.gif" alt="USDA Organic" width="48" height="40" className="h-10 w-auto object-contain" />
+                <img src="/SGS.webp" alt="SGS Bio-Verified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/apeda-pure.webp" alt="APEDA Pure" width="90" height="40" className="h-10 w-auto object-contain" />
               </div>
               {/* Duplicated set for seamless continuous right-to-left marquee loop on mobile */}
               <div className="flex items-center space-x-8 shrink-0">
-                <img src="/fssai.webp" alt="FSSAI Certified" className="h-9 w-auto object-contain" />
-                <img src="/USDA.gif" alt="USDA Organic" className="h-10 w-auto object-contain" />
-                <img src="/SGS.webp" alt="SGS Bio-Verified" className="h-9 w-auto object-contain" />
-                <img src="/apeda-pure.webp" alt="APEDA Pure" className="h-10 w-auto object-contain" />
+                <img src="/fssai.webp" alt="FSSAI Certified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/USDA.gif" alt="USDA Organic" width="48" height="40" className="h-10 w-auto object-contain" />
+                <img src="/SGS.webp" alt="SGS Bio-Verified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/apeda-pure.webp" alt="APEDA Pure" width="90" height="40" className="h-10 w-auto object-contain" />
               </div>
             </div>
           </div>
@@ -66,21 +68,29 @@ export default function Home() {
             <img 
               src="/fssai.webp" 
               alt="FSSAI Certified" 
+              width="110"
+              height="48"
               className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
             />
             <img 
               src="/USDA.gif" 
               alt="USDA Organic" 
+              width="58"
+              height="48"
               className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
             />
             <img 
               src="/SGS.webp" 
               alt="SGS Bio-Verified" 
+              width="110"
+              height="48"
               className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
             />
             <img 
               src="/apeda-pure.webp" 
               alt="APEDA Pure" 
+              width="110"
+              height="48"
               className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
             />
           </div>
@@ -148,7 +158,8 @@ export default function Home() {
           </h2>
           <button 
             onClick={() => setCurrentPage('shop')}
-            className="inline-flex items-center space-x-1 font-urbanist font-extrabold text-xs sm:text-sm text-[#103b1d] hover:text-[#9abc05] underline underline-offset-4 transition-colors cursor-pointer"
+            aria-label="Explore Full Store harvest catalog"
+            className="inline-flex items-center space-x-1 font-urbanist font-extrabold text-xs sm:text-sm text-[#103b1d] hover:text-[#18542a] underline underline-offset-4 transition-colors cursor-pointer"
           >
             <span>Explore Full Store</span>
           </button>
@@ -193,9 +204,12 @@ export default function Home() {
             }}
             className="flex items-center w-full max-w-md mx-auto bg-white border border-[#d9ca9d] rounded-full p-1 sm:p-1.5 pl-4 sm:pl-5 shadow-xs focus-within:border-[#18542a] focus-within:ring-2 focus-within:ring-[#18542a]/20 transition-all"
           >
+            <label htmlFor="quick-callback-phone" className="sr-only">Phone number for callback</label>
             <input 
               type="tel" 
+              id="quick-callback-phone"
               name="clientPhone"
+              aria-label="Enter your phone number for callback"
               required
               placeholder="Enter your phone number..."
               className="flex-1 bg-transparent border-none text-xs sm:text-sm text-[#103b1d] placeholder-[#556b54]/60 focus:outline-none font-medium min-w-0"

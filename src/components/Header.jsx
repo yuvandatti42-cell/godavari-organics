@@ -64,13 +64,14 @@ export default function Header() {
               Free Shipping over ₹999
             </span>
             <span className="hidden md:inline opacity-40">|</span>
-            <button 
-              onClick={() => window.open('tel:+919010088063', '_self')} 
-              className="hover:text-[#ffc926] transition-colors flex items-center"
+            <a 
+              href="tel:+919010088063" 
+              aria-label="Call customer support at +91 90100 88063"
+              className="hover:text-[#ffc926] transition-colors flex items-center cursor-pointer"
             >
               <Phone className="w-3.5 h-3.5 inline mr-1 text-[#ffc926]" />
               +91 90100 88063
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -167,6 +168,8 @@ export default function Header() {
               <img 
                 src="/logo.webp" 
                 alt="Godavari Organics Symbol Logo" 
+                width="56"
+                height="56"
                 className="h-9 xs:h-10 sm:h-12 lg:h-14 w-auto object-contain transition-transform group-hover:scale-105 shrink-0 drop-shadow-xs" 
               />
               <span className="font-urbanist font-black text-sm xs:text-base sm:text-xl md:text-2xl lg:text-3xl text-[#18542a] tracking-tight group-hover:text-[#9abc05] transition-colors leading-none uppercase truncate">
@@ -194,6 +197,9 @@ export default function Header() {
               >
                 <input 
                   type="text" 
+                  id="desktop-search-input"
+                  name="desktopSearch"
+                  aria-label="Search organic products"
                   readOnly
                   placeholder="Search..."
                   className="w-full pl-3 pr-8 py-1.5 text-xs bg-white/70 border-b-2 border-[#18542a]/40 focus:border-[#18542a] focus:outline-none placeholder:text-[#18542a]/60 text-[#18542a] rounded-t-md cursor-pointer"
@@ -215,10 +221,10 @@ export default function Header() {
                       }}
                       className="p-2 hover:bg-[#f3e8cc] rounded-lg cursor-pointer flex items-center space-x-3 transition-colors"
                     >
-                      <img src={prod.image} alt={prod.name} className="w-9 h-9 object-cover rounded-lg" />
+                      <img src={prod.image} alt={prod.name} width="36" height="36" className="w-9 h-9 object-cover rounded-lg" />
                       <div className="flex-1 min-w-0 text-left">
                         <div className="text-xs font-bold text-[#18542a] truncate">{prod.name}</div>
-                        <div className="text-[10px] text-[#9abc05] font-extrabold">₹{prod.price}</div>
+                        <div className="text-[10px] text-[#18542a] font-extrabold">₹{prod.price}</div>
                       </div>
                     </div>
                   ))}
@@ -232,6 +238,7 @@ export default function Header() {
                 onClick={() => setAuthModalOpen(true)}
                 className="hidden sm:flex items-center space-x-1.5 py-1 px-2.5 sm:px-3 bg-[#18542a]/10 hover:bg-[#18542a]/20 border border-[#18542a]/30 rounded-xl text-xs font-bold text-[#18542a] transition-all cursor-pointer shadow-xs active:scale-95"
                 title={`Signed in as ${user.name}`}
+                aria-label={`Signed in as ${user.name}`}
               >
                 <div className="w-5 h-5 rounded-full bg-[#18542a] text-white flex items-center justify-center text-[10px] uppercase font-black">
                   {user.name ? user.name.charAt(0) : 'U'}
@@ -243,6 +250,7 @@ export default function Header() {
                 onClick={() => setAuthModalOpen(true)}
                 className="hidden sm:flex items-center space-x-1 p-2 text-[#18542a] hover:bg-[#e8d9b5] rounded-xl transition-colors cursor-pointer"
                 title="Customer Sign In"
+                aria-label="Customer Sign In"
               >
                 <User className="w-5 h-5" />
                 <span className="hidden xl:inline text-xs font-bold uppercase tracking-wider pl-1">Sign In</span>
@@ -252,6 +260,7 @@ export default function Header() {
             {/* Cart Icon & Count Badge */}
             <button 
               onClick={() => setCurrentPage('cart')}
+              aria-label={`Shopping cart with ${cartCount} items`}
               className="flex items-center space-x-1.5 text-xs font-bold text-[#18542a] hover:text-[#f96015] transition-colors bg-white/80 border border-[#9abc05]/50 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl shadow-xs cursor-pointer"
             >
               <ShoppingBag className="w-4 h-4 text-[#18542a]" />
@@ -270,6 +279,9 @@ export default function Header() {
           <form onSubmit={handleSearchSubmit} className="flex items-center relative">
             <input 
               type="text" 
+              id="mobile-search-input"
+              name="mobileSearch"
+              aria-label="Search organic products"
               placeholder="Search organic products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

@@ -41,12 +41,18 @@ export default function QuickViewModal() {
   const packOptions = quickViewProduct.packSizes || [quickViewProduct.weight || '1kg'];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+    <div 
+      role="dialog" 
+      aria-modal="true" 
+      aria-label={`Quick view for ${quickViewProduct.name}`}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+    >
       <div className="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-[#dfd5bf]/90 relative flex flex-col md:flex-row max-h-[90vh]">
         
         {/* Close Button */}
         <button 
           onClick={() => setQuickViewProduct(null)}
+          aria-label="Close Quick View Modal"
           className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center text-stone-600 hover:text-black transition-colors border border-[#dfd5bf] shadow-xs cursor-pointer"
         >
           <X className="w-4 h-4" />
@@ -58,6 +64,8 @@ export default function QuickViewModal() {
             <img 
               src={activeImage} 
               alt={quickViewProduct.name}
+              width="300"
+              height="250"
               className="w-full h-full object-contain max-h-[250px] transition-all duration-300 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.08)]"
             />
             {currentDiscount && (
@@ -74,6 +82,7 @@ export default function QuickViewModal() {
                 <button
                   key={idx}
                   onClick={() => setActiveImgIdx(idx)}
+                  aria-label={idx === 1 ? 'View Extraction Difference Guide' : `View product image ${idx + 1}`}
                   className={`w-10 h-10 rounded-lg overflow-hidden border-2 transition-all p-0.5 bg-white cursor-pointer ${
                     activeImgIdx === idx 
                       ? 'border-[#103b1d] ring-2 ring-[#18542a]/30' 
@@ -81,7 +90,7 @@ export default function QuickViewModal() {
                   }`}
                   title={idx === 1 ? 'Extraction Difference Guide' : `Image ${idx + 1}`}
                 >
-                  <img src={imgSrc} alt="" className="w-full h-full object-contain" />
+                  <img src={imgSrc} alt={idx === 1 ? 'Extraction Difference Guide' : `${quickViewProduct.name} preview ${idx + 1}`} width="40" height="40" className="w-full h-full object-contain" />
                 </button>
               ))}
             </div>

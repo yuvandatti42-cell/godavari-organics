@@ -323,6 +323,9 @@ export default function AuthModal() {
       onClick={handleClose}
     >
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-label="Customer Account Login and Registration"
         className="w-full max-w-[440px] bg-[#faf5ea] rounded-3xl shadow-2xl border-2 border-[#d9ca9d] relative overflow-hidden transition-all duration-300 scale-100 max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
@@ -346,6 +349,8 @@ export default function AuthModal() {
                 <img 
                   src="/logo.webp" 
                   alt="Godavari Organic Foods" 
+                  width="64"
+                  height="64"
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -460,13 +465,16 @@ export default function AuthModal() {
 
             <form onSubmit={handleCompleteGooglePhone} className="space-y-4 text-left max-w-xs mx-auto">
               <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                <label htmlFor="auth-google-phone" className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
                   Mobile Number *
                 </label>
                 <div className="relative flex items-center">
                   <span className="absolute left-3 text-xs font-bold text-[#18542a] font-mono">+91</span>
                   <input 
                     type="tel"
+                    id="auth-google-phone"
+                    name="googlePhone"
+                    autoComplete="tel"
                     required
                     autoFocus
                     maxLength={10}
@@ -510,6 +518,8 @@ export default function AuthModal() {
                 <img 
                   src="/logo.webp" 
                   alt="Godavari Organic Foods" 
+                  width="64"
+                  height="64"
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -632,12 +642,15 @@ export default function AuthModal() {
                 <>
                   {/* 1. Full Name */}
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                    <label htmlFor="auth-full-name" className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
                       Full Name *
                     </label>
                     <div className="relative">
                       <input 
                         type="text"
+                        id="auth-full-name"
+                        name="fullName"
+                        autoComplete="name"
                         required
                         placeholder="e.g. Ramesh Varma"
                         value={fullName}
@@ -650,12 +663,15 @@ export default function AuthModal() {
 
                   {/* 2. Email Address */}
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                    <label htmlFor="auth-email" className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
                       Email Address *
                     </label>
                     <div className="relative">
                       <input 
                         type="email"
+                        id="auth-email"
+                        name="email"
+                        autoComplete="email"
                         required
                         placeholder="name@example.com"
                         value={email}
@@ -669,7 +685,7 @@ export default function AuthModal() {
                   {/* 3. Mobile Number (Mandatory for Delivery) */}
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                      <label htmlFor="auth-phone" className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
                         Mobile Number (for Delivery) *
                       </label>
                       <span className="text-[10px] text-[#8c7355] font-semibold">10 Digits</span>
@@ -678,6 +694,9 @@ export default function AuthModal() {
                       <span className="absolute left-3 text-xs font-bold text-[#18542a] font-mono">+91</span>
                       <input 
                         type="tel"
+                        id="auth-phone"
+                        name="phone"
+                        autoComplete="tel"
                         required
                         maxLength={10}
                         placeholder="98765 43210"
@@ -691,12 +710,15 @@ export default function AuthModal() {
 
                   {/* 4. Password */}
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                    <label htmlFor="auth-password" className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
                       Create Password *
                     </label>
                     <div className="relative">
                       <input 
                         type={showPassword ? 'text' : 'password'}
+                        id="auth-password"
+                        name="password"
+                        autoComplete="new-password"
                         required
                         minLength={6}
                         placeholder="At least 6 characters"
@@ -708,6 +730,7 @@ export default function AuthModal() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
                         className="absolute right-3 top-2.5 text-[#8c7355] hover:text-[#18542a] p-0.5 cursor-pointer"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -722,7 +745,7 @@ export default function AuthModal() {
                 <>
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                      <label htmlFor="auth-identifier" className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
                         Email or Mobile Number
                       </label>
                       <button
@@ -737,6 +760,9 @@ export default function AuthModal() {
                     <div className="relative">
                       <input 
                         type="text"
+                        id="auth-identifier"
+                        name="identifier"
+                        autoComplete="username"
                         required
                         placeholder="name@example.com or 98765 43210"
                         value={identifier}
@@ -755,7 +781,7 @@ export default function AuthModal() {
                   {!isOtpMode ? (
                     <div className="space-y-1">
                       <div className="flex items-center justify-between">
-                        <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                        <label htmlFor="auth-login-password" className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
                           Password
                         </label>
                         {identifier.includes('@') && (
@@ -767,6 +793,9 @@ export default function AuthModal() {
                       <div className="relative">
                         <input 
                           type={showPassword ? 'text' : 'password'}
+                          id="auth-login-password"
+                          name="loginPassword"
+                          autoComplete="current-password"
                           required={identifier.includes('@')}
                           placeholder="Enter your password"
                           value={password}
@@ -777,6 +806,7 @@ export default function AuthModal() {
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
+                          aria-label={showPassword ? 'Hide password' : 'Show password'}
                           className="absolute right-3 top-2.5 text-[#8c7355] hover:text-[#18542a] p-0.5 cursor-pointer"
                         >
                           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -787,7 +817,7 @@ export default function AuthModal() {
                     /* OTP Mode */
                     <div className="space-y-1">
                       <div className="flex items-center justify-between">
-                        <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                        <label htmlFor="auth-otp" className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
                           Enter 4-Digit OTP
                         </label>
                         <button
@@ -801,6 +831,8 @@ export default function AuthModal() {
                       <div className="relative">
                         <input 
                           type="text"
+                          id="auth-otp"
+                          name="otp"
                           maxLength={4}
                           placeholder="1234"
                           value={otp}

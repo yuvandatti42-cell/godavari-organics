@@ -24,6 +24,7 @@ export default function FeaturedHarvestProducts() {
         
         <button 
           onClick={() => setCurrentPage('shop')}
+          aria-label={`View all ${products.length} featured harvest products`}
           className="inline-flex items-center space-x-1 font-urbanist font-extrabold text-xs sm:text-sm text-[#103b1d] hover:text-[#18542a] underline underline-offset-4 transition-colors cursor-pointer"
         >
           <span>View All ({products.length})</span>

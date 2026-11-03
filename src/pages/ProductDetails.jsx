@@ -110,6 +110,8 @@ export default function ProductDetails() {
               <img 
                 src={currentMainImage} 
                 alt={selectedProduct.name}
+                width="500"
+                height="500"
                 className="w-full h-full object-contain transition-all duration-300 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.08)] group-hover:scale-105"
               />
               
@@ -133,13 +135,14 @@ export default function ProductDetails() {
                   key={idx}
                   type="button"
                   onClick={() => setActiveThumbnail(idx)}
+                  aria-label={`View image thumbnail ${idx + 1}`}
                   className={`aspect-square rounded-xl overflow-hidden border-2 transition-all cursor-pointer p-1.5 bg-[#faf6ee] ${
                     activeThumbnail === idx 
                       ? 'border-[#103b1d] ring-2 ring-[#18542a]/30 shadow-xs' 
                       : 'border-[#dfd5bf] opacity-80 hover:opacity-100 hover:border-[#103b1d]/40'
                   }`}
                 >
-                  <img src={imgUrl} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain" />
+                  <img src={imgUrl} alt={`Thumbnail ${idx + 1}`} width="80" height="80" className="w-full h-full object-contain" />
                 </button>
               ))}
             </div>

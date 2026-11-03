@@ -176,6 +176,10 @@ function ReviewCard({ review }) {
         <img 
           src={review.avatar} 
           alt={review.name} 
+          width="160"
+          height="200"
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" 
         />
         {/* Subtle left-side shade for soft transition into beige */}

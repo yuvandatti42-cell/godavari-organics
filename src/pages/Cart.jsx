@@ -87,6 +87,8 @@ export default function Cart() {
                     <img 
                       src={displayImage} 
                       alt={item.name} 
+                      width="88"
+                      height="88"
                       className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>

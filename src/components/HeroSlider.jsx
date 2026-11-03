@@ -305,6 +305,8 @@ export default function HeroSlider() {
               <img 
                 src={slide.bannerImage} 
                 alt={slide.title}
+                width="420"
+                height="262"
                 className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "low"}
@@ -322,6 +324,7 @@ export default function HeroSlider() {
                     e.stopPropagation();
                     handleSlideClick(slide.productId);
                   }}
+                  aria-label={`Shop ${slide.title}`}
                   className={`px-5 py-2.5 sm:px-6 sm:py-3 bg-white hover:bg-amber-50 ${slide.buttonTextColor || 'text-slate-900'} text-[11px] sm:text-xs font-black uppercase tracking-wider rounded-full shadow-lg border border-white/80 active:scale-95 transition-all inline-flex items-center space-x-1.5 cursor-pointer`}
                 >
                   <span>SHOP NOW</span>
@@ -455,6 +458,8 @@ export default function HeroSlider() {
                   key={slide.id}
                   src={slide.bannerImage}
                   alt={slide.title}
+                  width="800"
+                  height="500"
                   className={`absolute inset-0 w-full h-full object-contain object-center transition-all duration-700 ease-in-out transform ${
                     desktopIndex === idx 
                       ? 'opacity-100 scale-100 z-10' 

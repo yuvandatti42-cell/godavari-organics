@@ -193,10 +193,12 @@ export default function Checkout() {
 
           <div className="space-y-3 text-xs sm:text-sm">
             <div className="space-y-1">
-              <label className="font-bold text-slate-800 block text-xs">Full Name</label>
+              <label htmlFor="checkout-fullName" className="font-bold text-slate-800 block text-xs">Full Name</label>
               <input 
                 type="text" 
+                id="checkout-fullName"
                 name="fullName"
+                autoComplete="name"
                 placeholder="e.g. Anand Kumar"
                 value={formData.fullName}
                 onChange={handleChange}
@@ -205,10 +207,12 @@ export default function Checkout() {
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-slate-800 block text-xs">Phone Number</label>
+              <label htmlFor="checkout-phone" className="font-bold text-slate-800 block text-xs">Phone Number</label>
               <input 
                 type="tel" 
+                id="checkout-phone"
                 name="phone"
+                autoComplete="tel"
                 placeholder="e.g. +91 90100 88063"
                 value={formData.phone}
                 onChange={handleChange}
@@ -217,10 +221,12 @@ export default function Checkout() {
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-slate-800 block text-xs">Email Address</label>
+              <label htmlFor="checkout-email" className="font-bold text-slate-800 block text-xs">Email Address</label>
               <input 
                 type="email" 
+                id="checkout-email"
                 name="email"
+                autoComplete="email"
                 placeholder="e.g. anand@example.com"
                 value={formData.email}
                 onChange={handleChange}
@@ -240,10 +246,12 @@ export default function Checkout() {
 
           <div className="space-y-3 text-xs sm:text-sm">
             <div className="space-y-1">
-              <label className="font-bold text-slate-800 block text-xs">Address Line 1</label>
+              <label htmlFor="checkout-address1" className="font-bold text-slate-800 block text-xs">Address Line 1</label>
               <input 
                 type="text" 
+                id="checkout-address1"
                 name="address1"
+                autoComplete="address-line1"
                 placeholder="House / Flat No., Building Name"
                 value={formData.address1}
                 onChange={handleChange}
@@ -252,10 +260,12 @@ export default function Checkout() {
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-slate-800 block text-xs">Address Line 2</label>
+              <label htmlFor="checkout-address2" className="font-bold text-slate-800 block text-xs">Address Line 2</label>
               <input 
                 type="text" 
+                id="checkout-address2"
                 name="address2"
+                autoComplete="address-line2"
                 placeholder="Street Name, Area, Landmark"
                 value={formData.address2}
                 onChange={handleChange}
@@ -265,10 +275,12 @@ export default function Checkout() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="font-bold text-slate-800 block text-xs">City</label>
+                <label htmlFor="checkout-city" className="font-bold text-slate-800 block text-xs">City</label>
                 <input 
                   type="text" 
+                  id="checkout-city"
                   name="city"
+                  autoComplete="address-level2"
                   placeholder="City Name"
                   value={formData.city}
                   onChange={handleChange}
@@ -277,10 +289,12 @@ export default function Checkout() {
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-slate-800 block text-xs">State</label>
+                <label htmlFor="checkout-state" className="font-bold text-slate-800 block text-xs">State</label>
                 <input 
                   type="text" 
+                  id="checkout-state"
                   name="state"
+                  autoComplete="address-level1"
                   placeholder="Select State"
                   value={formData.state}
                   onChange={handleChange}
@@ -290,10 +304,12 @@ export default function Checkout() {
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-slate-800 block text-xs">PIN Code</label>
+              <label htmlFor="checkout-pincode" className="font-bold text-slate-800 block text-xs">PIN Code</label>
               <input 
                 type="text" 
+                id="checkout-pincode"
                 name="pincode"
+                autoComplete="postal-code"
                 placeholder="6-digit PIN code"
                 value={formData.pincode}
                 onChange={handleChange}

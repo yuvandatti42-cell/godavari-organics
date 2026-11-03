@@ -319,6 +319,7 @@ export default function WhyChooseArma() {
               <button
                 type="button"
                 onClick={muteAllAudio}
+                aria-label="Mute all audio"
                 className="cursor-pointer inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-[#18542a] text-white border border-[#18542a] shadow-sm animate-pulse hover:bg-[#134321] transition-all"
                 title="Click to mute sound"
               >
@@ -353,7 +354,9 @@ export default function WhyChooseArma() {
                     muted={!isCardAudioPlaying}
                     playsInline
                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                  />
+                  >
+                    <track kind="captions" src="data:text/vtt,WEBVTT" label="English" default={false} />
+                  </video>
 
                   {/* Gradient scrim on top and bottom */}
                   <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none" />
@@ -365,6 +368,7 @@ export default function WhyChooseArma() {
                       href={item.reelUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label={`Open Instagram reel: ${item.title}`}
                       onClick={(e) => e.stopPropagation()}
                       className="bg-black/50 hover:bg-black/75 backdrop-blur-md text-white border border-white/20 text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center space-x-1.5 shadow-sm transition-all"
                     >
@@ -407,6 +411,7 @@ export default function WhyChooseArma() {
                       href={item.reelUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label={`Watch ${item.title} on Instagram`}
                       onClick={(e) => e.stopPropagation()}
                       className="shrink-0 bg-white/20 hover:bg-white text-white hover:text-black backdrop-blur-md px-2 py-1 rounded-full text-[10px] font-bold flex items-center space-x-1 transition-all"
                     >
@@ -441,6 +446,7 @@ export default function WhyChooseArma() {
                 <button
                   type="button"
                   onClick={muteAllAudio}
+                  aria-label="Mute all audio"
                   className="cursor-pointer inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#18542a] text-white border border-[#18542a] shadow-xs animate-pulse"
                   title="Mute sound"
                 >
@@ -549,7 +555,9 @@ export default function WhyChooseArma() {
                       }
                     }}
                     className="absolute inset-0 w-full h-full object-cover"
-                  />
+                  >
+                    <track kind="captions" src="data:text/vtt,WEBVTT" label="English" default={false} />
+                  </video>
 
                   {/* Top & bottom gradient */}
                   <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/75 to-transparent pointer-events-none" />
@@ -571,6 +579,7 @@ export default function WhyChooseArma() {
                       href={item.reelUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label={`Open Instagram reel: ${item.title}`}
                       onClick={(e) => e.stopPropagation()}
                       className="bg-black/55 hover:bg-black/80 backdrop-blur-md border border-white/25 text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center space-x-1.5 shadow-md"
                     >
@@ -616,6 +625,7 @@ export default function WhyChooseArma() {
                       href={item.reelUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label={`Watch ${item.title} on Instagram`}
                       onClick={(e) => e.stopPropagation()}
                       className="shrink-0 bg-white/25 hover:bg-white text-white hover:text-black backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center space-x-1 shadow-md transition-all active:scale-95"
                     >

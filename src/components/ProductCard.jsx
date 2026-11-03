@@ -58,6 +58,8 @@ export default function ProductCard({ product, layout = 'grid' }) {
             <img 
               src={product.image} 
               alt={product.name}
+              width="240"
+              height="240"
               loading="lazy"
               decoding="async"
               className="w-full h-full object-contain transform-gpu group-hover/img:scale-106 transition-transform duration-500 filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.06)]" 
@@ -86,6 +88,7 @@ export default function ProductCard({ product, layout = 'grid' }) {
               }}
               className="w-7 h-7 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-red-500 flex items-center justify-center shadow-2xs border border-stone-200/60 transition-transform active:scale-90 cursor-pointer"
               title="Add to Wishlist"
+              aria-label={`Save ${product.shortName || product.name} to wishlist`}
             >
               <Heart className="w-3.5 h-3.5 transition-colors" />
             </button>
@@ -97,6 +100,7 @@ export default function ProductCard({ product, layout = 'grid' }) {
               }}
               className="w-7 h-7 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-[#103b1d] hidden sm:flex items-center justify-center shadow-2xs border border-stone-200/60 transition-transform active:scale-90 cursor-pointer"
               title="Quick Preview"
+              aria-label={`Quick preview ${product.shortName || product.name}`}
             >
               <Eye className="w-3.5 h-3.5 transition-colors" />
             </button>
@@ -120,7 +124,7 @@ export default function ProductCard({ product, layout = 'grid' }) {
           <div className="flex items-center space-x-1 shrink-0 bg-[#faf5ea] px-1.5 py-0.5 rounded-md border border-[#dfd5bf]/60">
             <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
             <span className="font-extrabold text-[#103b1d]">{product.rating}</span>
-            <span className="text-stone-400 font-medium text-[9px]">({product.reviewsCount})</span>
+            <span className="text-stone-600 font-semibold text-[9px]">({product.reviewsCount})</span>
           </div>
         </div>
 
@@ -148,7 +152,7 @@ export default function ProductCard({ product, layout = 'grid' }) {
               ₹{activePrice}
             </span>
             {activeOriginalPrice && (
-              <span className="text-[10px] sm:text-[11px] text-stone-400 line-through font-medium leading-none">
+              <span className="text-[10px] sm:text-[11px] text-stone-500 line-through font-semibold leading-none">
                 ₹{activeOriginalPrice}
               </span>
             )}
@@ -168,6 +172,7 @@ export default function ProductCard({ product, layout = 'grid' }) {
             onClick={handleQuickAdd}
             className="px-3 sm:px-4 py-1.5 sm:py-2 bg-[#ffc926] hover:bg-[#eab308] text-[#103b1d] text-xs font-black rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-1 shrink-0 cursor-pointer border border-[#e5b318]"
             title="Add to Cart"
+            aria-label={`Add ${product.shortName || product.name} to cart`}
           >
             <Plus className="w-3.5 h-3.5 stroke-[3]" />
             <span>ADD</span>

@@ -19,6 +19,8 @@ export default function Footer() {
               <img 
                 src="/logo-circle.webp" 
                 alt="Godavari Organic Foods Logo" 
+                width="56"
+                height="56"
                 className="w-full h-full object-contain" 
               />
             </div>
@@ -171,6 +173,8 @@ export default function Footer() {
                 <img 
                   src="/logo-circle.webp" 
                   alt="Godavari Organic Foods Logo" 
+                  width="56"
+                  height="56"
                   className="w-full h-full object-contain" 
                 />
               </div>
@@ -190,7 +194,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center space-x-2.5">
                 <Phone className="w-4 h-4 text-[#ffc926] shrink-0" />
-                <a href="tel:+919010088063" className="hover:text-[#ffc926] transition-colors">+91 90100 88063</a>
+                <a href="tel:+919010088063" aria-label="Call +91 90100 88063" className="hover:text-[#ffc926] transition-colors">+91 90100 88063</a>
               </div>
               <div className="flex items-center space-x-2.5">
                 <Mail className="w-4 h-4 text-[#ffc926] shrink-0" />
@@ -201,13 +205,27 @@ export default function Footer() {
             {/* Social Buttons */}
             <div className="flex items-center space-x-2 pt-2 text-xs font-bold">
               {['Facebook', 'Instagram', 'WhatsApp', 'YouTube'].map((social, i) => (
-                <button 
-                  key={i}
-                  onClick={() => social === 'WhatsApp' ? window.open('https://wa.me/919010088063', '_blank') : showToast(`Social media channel: ${social}`)}
-                  className="px-3 py-1 rounded-full bg-white/15 hover:bg-[#f96015] hover:text-white transition-colors text-[11px] cursor-pointer"
-                >
-                  {social}
-                </button>
+                social === 'WhatsApp' ? (
+                  <a 
+                    key={i}
+                    href="https://wa.me/919010088063"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Chat with Godavari Organics on WhatsApp"
+                    className="px-3 py-1 rounded-full bg-white/15 hover:bg-[#f96015] hover:text-white transition-colors text-[11px] cursor-pointer inline-block"
+                  >
+                    WhatsApp
+                  </a>
+                ) : (
+                  <button 
+                    key={i}
+                    onClick={() => showToast(`Social media channel: ${social}`)}
+                    aria-label={`Visit our ${social} page`}
+                    className="px-3 py-1 rounded-full bg-white/15 hover:bg-[#f96015] hover:text-white transition-colors text-[11px] cursor-pointer"
+                  >
+                    {social}
+                  </button>
+                )
               ))}
             </div>
           </div>
