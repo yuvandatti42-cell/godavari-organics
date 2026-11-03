@@ -35,11 +35,17 @@ export default function AuthModal() {
   
   // Form states
   const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [isOtpMode, setIsOtpMode] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
+
+  // Phone completion for Google Sign-In
+  const [pendingGoogleUser, setPendingGoogleUser] = useState(null);
+  const [googlePhone, setGooglePhone] = useState('');
 
   if (!authModalOpen) return null;
 
@@ -50,6 +56,7 @@ export default function AuthModal() {
     } catch (e) {
       console.error(e);
     }
+    setPendingGoogleUser(null);
     setAuthModalOpen(false);
   };
 
@@ -59,16 +66,34 @@ export default function AuthModal() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const fbUser = result.user;
+      
+      // Check if we have an existing phone cached locally for this email
+      let existingPhone = fbUser.phoneNumber || '';
+      try {
+        const cached = JSON.parse(localStorage.getItem('godavari_user') || '{}');
+        if (cached.email === fbUser.email && cached.phone) {
+          existingPhone = cached.phone;
+        }
+      } catch (e) {}
+
       const loggedUser = {
         uid: fbUser.uid,
         name: fbUser.displayName || fbUser.email?.split('@')[0] || 'Organic Shopper',
         email: fbUser.email || '',
-        phone: fbUser.phoneNumber || '',
+        phone: existingPhone,
         photoURL: fbUser.photoURL || '',
         authProvider: 'Google',
         isLoggedIn: true,
         memberSince: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
       };
+
+      // If Google did not supply a phone number, prompt for it so delivery always has a number
+      if (!existingPhone) {
+        setPendingGoogleUser(loggedUser);
+        setIsLoading(false);
+        return;
+      }
+
       loginUser(loggedUser);
       showToast(`Signed in with Google as ${loggedUser.name}!`);
     } catch (err) {
@@ -85,64 +110,82 @@ export default function AuthModal() {
     }
   };
 
+  // Complete Google user phone number
+  const handleCompleteGooglePhone = (e) => {
+    e.preventDefault();
+    const clean = googlePhone.replace(/\D/g, '');
+    if (!clean || clean.length < 10) {
+      showToast('Please enter a valid 10-digit mobile number');
+      return;
+    }
+    const formattedPhone = clean.length === 10 ? `+91 ${clean}` : clean;
+    const finalUser = {
+      ...pendingGoogleUser,
+      phone: formattedPhone
+    };
+    setPendingGoogleUser(null);
+    loginUser(finalUser);
+    showToast(`Welcome ${finalUser.name}! Mobile number saved.`);
+  };
+
   // 2. Email & Password / Mobile Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (isSignUp) {
+      // 1. Full name validation
       if (!fullName.trim()) {
         showToast('Please enter your full name');
         return;
       }
-      if (!identifier.trim()) {
-        showToast('Please enter your email or mobile number');
+      
+      // 2. Email validation
+      if (!email.trim() || !email.includes('@') || !email.includes('.')) {
+        showToast('Please enter a valid email address');
+        return;
+      }
+
+      // 3. Mobile phone validation
+      const cleanPhone = phone.replace(/\D/g, '');
+      if (!cleanPhone || cleanPhone.length < 10) {
+        showToast('Please enter a valid 10-digit mobile number');
+        return;
+      }
+
+      // 4. Password validation
+      if (!password || password.length < 6) {
+        showToast('Password must be at least 6 characters');
         return;
       }
 
       setIsLoading(true);
       try {
-        if (identifier.includes('@')) {
-          if (!password || password.length < 6) {
-            showToast('Password must be at least 6 characters');
-            setIsLoading(false);
-            return;
-          }
-          // Real Firebase Email/Password Sign Up
-          const userCred = await createUserWithEmailAndPassword(auth, identifier.trim(), password);
-          try {
-            await updateProfile(userCred.user, { displayName: fullName.trim() });
-          } catch (pErr) {
-            console.warn('Profile name update error:', pErr);
-          }
-          const newUser = {
-            uid: userCred.user.uid,
-            name: fullName.trim(),
-            email: identifier.trim(),
-            phone: '',
-            authProvider: 'Email/Password',
-            isLoggedIn: true,
-            memberSince: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
-          };
-          loginUser(newUser);
-          showToast(`Welcome to Godavari Organic Foods, ${newUser.name}!`);
-        } else {
-          // Fast mobile checkout profile creation
-          const newUser = {
-            name: fullName.trim(),
-            phone: identifier.trim(),
-            email: '',
-            authProvider: 'Phone',
-            isLoggedIn: true,
-            memberSince: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
-          };
-          loginUser(newUser);
-          showToast(`Welcome to Godavari Organic Foods, ${newUser.name}!`);
+        // Real Firebase Email/Password Sign Up
+        const userCred = await createUserWithEmailAndPassword(auth, email.trim(), password);
+        try {
+          await updateProfile(userCred.user, { displayName: fullName.trim() });
+        } catch (pErr) {
+          console.warn('Profile name update error:', pErr);
         }
+
+        const formattedPhone = cleanPhone.length === 10 ? `+91 ${cleanPhone}` : cleanPhone;
+        const newUser = {
+          uid: userCred.user.uid,
+          name: fullName.trim(),
+          email: email.trim(),
+          phone: formattedPhone,
+          authProvider: 'Email/Password',
+          isLoggedIn: true,
+          memberSince: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
+        };
+        loginUser(newUser);
+        showToast(`Welcome to Godavari Organic Foods, ${newUser.name}!`);
       } catch (err) {
         console.error('Sign up error:', err);
         if (err.code === 'auth/email-already-in-use') {
           showToast('This email is already registered! Please sign in with your password.');
           setIsSignUp(false);
+          setIdentifier(email.trim());
         } else if (err.code === 'auth/weak-password') {
           showToast('Password is too weak. Please use at least 6 characters.');
         } else if (err.code === 'auth/invalid-email') {
@@ -156,20 +199,34 @@ export default function AuthModal() {
     } else {
       // Sign In
       if (!identifier.trim()) {
-        showToast('Please enter your mobile number or email');
+        showToast('Please enter your email or mobile number');
         return;
       }
 
       setIsLoading(true);
       try {
-        if (identifier.includes('@') && password) {
+        if (identifier.includes('@')) {
+          if (!password) {
+            showToast('Please enter your account password');
+            setIsLoading(false);
+            return;
+          }
           // Real Firebase Email/Password Sign In
           const userCred = await signInWithEmailAndPassword(auth, identifier.trim(), password);
+          
+          let existingPhone = userCred.user.phoneNumber || '';
+          try {
+            const cached = JSON.parse(localStorage.getItem('godavari_user') || '{}');
+            if (cached.email === identifier.trim() && cached.phone) {
+              existingPhone = cached.phone;
+            }
+          } catch (e) {}
+
           const loggedUser = {
             uid: userCred.user.uid,
             name: userCred.user.displayName || identifier.split('@')[0],
             email: userCred.user.email,
-            phone: userCred.user.phoneNumber || '',
+            phone: existingPhone,
             photoURL: userCred.user.photoURL || '',
             authProvider: 'Email/Password',
             isLoggedIn: true,
@@ -179,20 +236,19 @@ export default function AuthModal() {
           showToast(`Welcome back, ${loggedUser.name}!`);
         } else {
           // Fast mobile / phone login
-          const existingName = identifier.includes('@') 
-            ? identifier.split('@')[0] 
-            : 'Customer';
+          const cleanId = identifier.replace(/\D/g, '');
+          const formattedPhone = cleanId.length === 10 ? `+91 ${cleanId}` : identifier.trim();
           
           const loggedUser = {
-            name: existingName.charAt(0).toUpperCase() + existingName.slice(1),
-            phone: !identifier.includes('@') ? identifier.trim() : '+91 90100 88063',
-            email: identifier.includes('@') ? identifier.trim() : 'customer@godavariorganics.com',
+            name: 'Customer',
+            phone: formattedPhone,
+            email: '',
             authProvider: 'Phone',
             isLoggedIn: true,
             memberSince: 'Oct 2026'
           };
           loginUser(loggedUser);
-          showToast(`Welcome back, ${loggedUser.name}!`);
+          showToast(`Welcome back!`);
         }
       } catch (err) {
         console.error('Sign in error:', err);
@@ -201,6 +257,7 @@ export default function AuthModal() {
         } else if (err.code === 'auth/user-not-found') {
           showToast('No account found for this email. Would you like to create one?');
           setIsSignUp(true);
+          setEmail(identifier.trim());
         } else {
           showToast(err.message || 'Unable to sign in.');
         }
@@ -294,6 +351,11 @@ export default function AuthModal() {
                   <p className="text-xs text-[#556b54] truncate">
                     {user.email || user.phone || 'Verified Customer'}
                   </p>
+                  {user.phone && user.email && (
+                    <p className="text-[11px] text-[#8c7355] font-medium truncate mt-0.5">
+                      {user.phone}
+                    </p>
+                  )}
                 </div>
                 <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-[#18542a]/10 border border-[#18542a]/30 rounded-full text-[10px] font-bold text-[#18542a]">
                   <Sparkles className="w-3 h-3 text-[#9abc05]" />
@@ -345,6 +407,67 @@ export default function AuthModal() {
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Sign Out of Account</span>
+              </button>
+            </div>
+          </div>
+        ) : pendingGoogleUser ? (
+          /* ------------------------------------------------------------- */
+          /* VIEW C: MANDATORY PHONE NUMBER STEP FOR GOOGLE SIGN-IN        */
+          /* ------------------------------------------------------------- */
+          <div className="p-6 sm:p-8 text-center space-y-5 overflow-y-auto">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-[#e8f5ec] border border-[#a3d9b1] text-[#18542a] flex items-center justify-center shadow-xs">
+              <Phone className="w-8 h-8 stroke-[2.2]" />
+            </div>
+
+            <div>
+              <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[#8c7355] font-urbanist">
+                Complete Profile
+              </span>
+              <h3 className="font-serif text-2xl sm:text-3xl text-[#103b1d] font-normal tracking-tight mt-1">
+                Enter Delivery Mobile Number
+              </h3>
+              <p className="text-xs text-[#556b54] font-medium leading-relaxed mt-1 max-w-xs mx-auto">
+                Hi <strong className="text-[#103b1d]">{pendingGoogleUser.name}</strong>! Please enter your 10-digit mobile number so our farm delivery team can update you on dispatch.
+              </p>
+            </div>
+
+            <form onSubmit={handleCompleteGooglePhone} className="space-y-4 text-left max-w-xs mx-auto">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                  Mobile Number *
+                </label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 text-xs font-bold text-[#18542a] font-mono">+91</span>
+                  <input 
+                    type="tel"
+                    required
+                    autoFocus
+                    maxLength={10}
+                    placeholder="98765 43210"
+                    value={googlePhone}
+                    onChange={(e) => setGooglePhone(e.target.value.replace(/\D/g, ''))}
+                    className="w-full pl-12 pr-4 py-3 bg-white border-2 border-[#d9ca9d] rounded-xl text-sm font-bold text-[#18542a] tracking-wider placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-mono"
+                  />
+                  <Phone className="w-4 h-4 text-[#8c7355] absolute right-3" />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 bg-[#18542a] hover:bg-[#103b1d] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 active:scale-98 cursor-pointer"
+              >
+                <span>Save & Continue to Store</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setPendingGoogleUser(null)}
+                className="text-xs text-[#8c7355] hover:text-[#18542a] font-medium transition-colors cursor-pointer hover:underline"
+              >
+                ← Back to Login
               </button>
             </div>
           </div>
@@ -402,7 +525,7 @@ export default function AuthModal() {
             <div className="px-6 sm:px-8 py-3 flex items-center justify-center">
               <div className="border-t border-[#d9ca9d]/70 flex-1" />
               <span className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#8c7355] font-urbanist">
-                or with email / mobile
+                {isSignUp ? 'or register with email & phone' : 'or with email / mobile'}
               </span>
               <div className="border-t border-[#d9ca9d]/70 flex-1" />
             </div>
@@ -441,119 +564,193 @@ export default function AuthModal() {
             {/* Login & Registration Form */}
             <form onSubmit={handleSubmit} className="px-6 sm:px-8 pt-3 pb-4 space-y-3 text-left">
               
-              {/* Full Name (Sign Up only) */}
-              {isSignUp && (
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
-                    Full Name *
-                  </label>
-                  <div className="relative">
-                    <input 
-                      type="text"
-                      required
-                      placeholder="e.g. Yuvan Datti"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-medium"
-                    />
-                    <User className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
-                  </div>
-                </div>
-              )}
-
-              {/* Mobile Number or Email */}
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
-                    {isSignUp ? 'Email or Mobile Number *' : 'Email or Mobile Number'}
-                  </label>
-                  {!isSignUp && (
-                    <button
-                      type="button"
-                      onClick={() => setIsOtpMode(!isOtpMode)}
-                      className="text-[10px] font-bold text-[#18542a] hover:underline cursor-pointer"
-                    >
-                      {isOtpMode ? 'Use Password' : 'Login with OTP'}
-                    </button>
-                  )}
-                </div>
-
-                <div className="relative">
-                  <input 
-                    type="text"
-                    required
-                    placeholder="name@example.com or 90100 88063"
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-medium"
-                  />
-                  {identifier.includes('@') ? (
-                    <Mail className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
-                  ) : (
-                    <Phone className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
-                  )}
-                </div>
-              </div>
-
-              {/* Password OR OTP Input */}
-              {(!isOtpMode || isSignUp) ? (
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
+              {/* ------------------------------------------------------------- */}
+              {/* SIGN UP FORM: Full Name, Email, Mobile Number, Password       */}
+              {/* ------------------------------------------------------------- */}
+              {isSignUp ? (
+                <>
+                  {/* 1. Full Name */}
+                  <div className="space-y-1">
                     <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
-                      {isSignUp ? 'Create Password *' : 'Password'}
+                      Full Name *
                     </label>
-                    {!isSignUp && identifier.includes('@') && (
-                      <span className="text-[10px] text-[#8c7355] cursor-pointer hover:text-[#18542a]">
-                        Forgot password?
-                      </span>
-                    )}
+                    <div className="relative">
+                      <input 
+                        type="text"
+                        required
+                        placeholder="e.g. Ramesh Varma"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-medium"
+                      />
+                      <User className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
+                    </div>
                   </div>
-                  <div className="relative">
-                    <input 
-                      type={showPassword ? 'text' : 'password'}
-                      required={identifier.includes('@')}
-                      placeholder={identifier.includes('@') ? "At least 6 characters" : "Optional for fast mobile login"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-9 pr-10 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-medium"
-                    />
-                    <Lock className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-2.5 text-[#8c7355] hover:text-[#18542a] p-0.5 cursor-pointer"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+
+                  {/* 2. Email Address */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                      Email Address *
+                    </label>
+                    <div className="relative">
+                      <input 
+                        type="email"
+                        required
+                        placeholder="name@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-medium"
+                      />
+                      <Mail className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
+                    </div>
                   </div>
-                </div>
+
+                  {/* 3. Mobile Number (Mandatory for Delivery) */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                        Mobile Number (for Delivery) *
+                      </label>
+                      <span className="text-[10px] text-[#8c7355] font-semibold">10 Digits</span>
+                    </div>
+                    <div className="relative flex items-center">
+                      <span className="absolute left-3 text-xs font-bold text-[#18542a] font-mono">+91</span>
+                      <input 
+                        type="tel"
+                        required
+                        maxLength={10}
+                        placeholder="98765 43210"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                        className="w-full pl-12 pr-9 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-medium font-mono"
+                      />
+                      <Phone className="w-4 h-4 text-[#8c7355] absolute right-3" />
+                    </div>
+                  </div>
+
+                  {/* 4. Password */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                      Create Password *
+                    </label>
+                    <div className="relative">
+                      <input 
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        minLength={6}
+                        placeholder="At least 6 characters"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full pl-9 pr-10 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-medium"
+                      />
+                      <Lock className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-2.5 text-[#8c7355] hover:text-[#18542a] p-0.5 cursor-pointer"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                </>
               ) : (
-                /* OTP Mode */
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
-                      Enter 4-Digit OTP
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleSendOtp}
-                      className="text-[10px] font-bold text-[#18542a] hover:underline cursor-pointer"
-                    >
-                      {otpSent ? 'Resend OTP' : 'Send OTP'}
-                    </button>
+                /* ------------------------------------------------------------- */
+                /* SIGN IN FORM: Email or Mobile & Password / OTP                */
+                /* ------------------------------------------------------------- */
+                <>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                        Email or Mobile Number
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setIsOtpMode(!isOtpMode)}
+                        className="text-[10px] font-bold text-[#18542a] hover:underline cursor-pointer"
+                      >
+                        {isOtpMode ? 'Use Password' : 'Login with OTP'}
+                      </button>
+                    </div>
+
+                    <div className="relative">
+                      <input 
+                        type="text"
+                        required
+                        placeholder="name@example.com or 98765 43210"
+                        value={identifier}
+                        onChange={(e) => setIdentifier(e.target.value)}
+                        className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-medium"
+                      />
+                      {identifier.includes('@') ? (
+                        <Mail className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
+                      ) : (
+                        <Phone className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
+                      )}
+                    </div>
                   </div>
-                  <div className="relative">
-                    <input 
-                      type="text"
-                      maxLength={4}
-                      placeholder="1234"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] tracking-widest font-mono placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-bold text-center"
-                    />
-                    <KeyRound className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
-                  </div>
-                </div>
+
+                  {/* Password OR OTP Input */}
+                  {!isOtpMode ? (
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                          Password
+                        </label>
+                        {identifier.includes('@') && (
+                          <span className="text-[10px] text-[#8c7355] cursor-pointer hover:text-[#18542a]">
+                            Forgot password?
+                          </span>
+                        )}
+                      </div>
+                      <div className="relative">
+                        <input 
+                          type={showPassword ? 'text' : 'password'}
+                          required={identifier.includes('@')}
+                          placeholder="Enter your password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full pl-9 pr-10 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-medium"
+                        />
+                        <Lock className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-2.5 text-[#8c7355] hover:text-[#18542a] p-0.5 cursor-pointer"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* OTP Mode */
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-bold text-[#103b1d] uppercase tracking-wider block font-urbanist">
+                          Enter 4-Digit OTP
+                        </label>
+                        <button
+                          type="button"
+                          onClick={handleSendOtp}
+                          className="text-[10px] font-bold text-[#18542a] hover:underline cursor-pointer"
+                        >
+                          {otpSent ? 'Resend OTP' : 'Send OTP'}
+                        </button>
+                      </div>
+                      <div className="relative">
+                        <input 
+                          type="text"
+                          maxLength={4}
+                          placeholder="1234"
+                          value={otp}
+                          onChange={(e) => setOtp(e.target.value)}
+                          className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#d9ca9d] rounded-xl text-xs sm:text-sm text-[#18542a] tracking-widest font-mono placeholder-[#8c7355]/60 focus:outline-none focus:border-[#18542a] focus:ring-1 focus:ring-[#18542a] transition-all font-bold text-center"
+                        />
+                        <KeyRound className="w-4 h-4 text-[#8c7355] absolute left-3 top-3" />
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Submit CTA Button */}
@@ -584,7 +781,7 @@ export default function AuthModal() {
                   className="w-full py-2 bg-amber-50 hover:bg-amber-100 text-[#8c7355] hover:text-[#18542a] border border-[#d9ca9d] rounded-xl text-[11px] font-bold transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-[#f96015]" />
-                  <span>1-Click Fast Login as Yuvan</span>
+                  <span>1-Click Fast Login as Yuvan (+91 90100 88063)</span>
                 </button>
               </div>
 

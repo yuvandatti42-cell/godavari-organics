@@ -197,6 +197,9 @@ export async function placeStorefrontOrder(orderData) {
           const newOrders = (cData.totalOrders || 0) + 1;
           const newSpent = (cData.totalSpent || 0) + (orderData.total || 0);
           await updateDoc(custRef, sanitizeForFirestore({
+            name: orderData.customerName || cData.name || undefined,
+            email: orderData.customerEmail || cData.email || undefined,
+            phone: orderData.customerPhone || cData.phone || undefined,
             totalOrders: newOrders,
             totalSpent: newSpent,
             hasPurchased: true,
@@ -271,6 +274,8 @@ export async function syncStorefrontCustomer(userData) {
       const cData = existing.data();
       const updates = sanitizeForFirestore({
         name: userData.name || cData.name || undefined,
+        phone: userData.phone || cData.phone || undefined,
+        email: userData.email || cData.email || undefined,
         photoURL: userData.photoURL || cData.photoURL || undefined,
         uid: userData.uid || cData.uid || undefined,
         lastLoginDate: now,
