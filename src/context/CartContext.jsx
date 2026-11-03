@@ -582,7 +582,7 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: true,
     craftTag: '5%+ Curcumin Stone Ground',
-    image: '/categories/spices.png',
+    image: '/products/spices/turmeric_powder.jpg',
     origin: 'Rampachodavaram Agency Forest, AP',
     certifications: ['5%+ Curcumin', 'Stone Ground', 'Zero Additives']
   },
@@ -614,7 +614,7 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: false,
     craftTag: 'Guntur Sun-Pounded',
-    image: '/categories/spices.png',
+    image: '/products/spices/chilli_powder.jpg',
     origin: 'Godavari-Guntur Organic Farmers',
     certifications: ['Sun-Dried', 'Zero Artificial Color', 'Traditional Pounded']
   },
