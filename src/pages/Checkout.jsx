@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
-import { ArrowLeft, Smartphone, CreditCard, Landmark, Truck, ShieldCheck, Lock, QrCode } from 'lucide-react';
+import { ArrowLeft, Smartphone, CreditCard, Landmark, Truck, ShieldCheck, Lock } from 'lucide-react';
 import { initiateRazorpayPayment, loadRazorpayScript } from '../services/razorpayService';
-import RazorpayQrModal from '../components/RazorpayQrModal';
 
 export default function Checkout() {
   const { 
@@ -19,8 +18,6 @@ export default function Checkout() {
   } = useCart();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
-  const [activeOrderPayload, setActiveOrderPayload] = useState(null);
 
   // Preload Razorpay checkout script in background
   useEffect(() => {
@@ -119,18 +116,11 @@ export default function Checkout() {
       return;
     }
 
-    // 1. If UPI is chosen, pop open Live Razorpay Dynamic UPI QR Code directly!
-    if (paymentMethod === 'upi') {
-      setIsSubmitting(false);
-      setActiveOrderPayload(orderPayload);
-      setIsQrModalOpen(true);
-      return;
-    }
-
-    // 2. Card / NetBanking processed via Razorpay standard modal
+    // Directly launch the official Razorpay Checkout Gateway!
     try {
       await initiateRazorpayPayment({
         orderPayload,
+        preferredMethod: paymentMethod,
         onSuccess: async (rzpRes) => {
           try {
             const finalOrder = {
@@ -166,32 +156,6 @@ export default function Checkout() {
       console.error("Razorpay initiation error:", err);
       setIsSubmitting(false);
       showToast("Unable to start payment gateway. Please try again.");
-    }
-  };
-
-  // Callback when QR payment completes
-  const handleQrPaymentSuccess = async (rzpRes) => {
-    setIsQrModalOpen(false);
-    setIsSubmitting(true);
-    try {
-      const finalOrder = {
-        ...activeOrderPayload,
-        paymentId: rzpRes.paymentId,
-        razorpayOrderId: rzpRes.orderId || null,
-        paymentStatus: 'Paid',
-        paymentMethod: rzpRes.method || 'Razorpay UPI QR Code'
-      };
-      await placeOrder(finalOrder);
-      showToast(`Payment verified! Order #${activeOrderPayload.id} confirmed.`);
-      setTimeout(() => {
-        setCurrentPage("order-success");
-      }, 500);
-    } catch (pErr) {
-      console.error("Order sync error post QR payment:", pErr);
-      showToast(`Order #${activeOrderPayload.id} placed successfully!`);
-      setCurrentPage("order-success");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -523,15 +487,10 @@ export default function Checkout() {
             {isSubmitting ? (
               <span className="flex items-center gap-2">
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Connecting to Secure Gateway...
+                Opening Razorpay Gateway...
               </span>
             ) : paymentMethod === 'cod' ? (
               <span>Confirm Order (Cash on Delivery) — ₹{finalDisplayTotal.toLocaleString("en-IN")}</span>
-            ) : paymentMethod === 'upi' ? (
-              <span className="flex items-center gap-2">
-                <QrCode className="w-4 h-4 text-emerald-300" />
-                <span>Open Razorpay UPI QR & Pay ₹{finalDisplayTotal.toLocaleString("en-IN")}</span>
-              </span>
             ) : (
               <span className="flex items-center gap-2">
                 <Lock className="w-4 h-4" />
@@ -547,15 +506,6 @@ export default function Checkout() {
         </div>
 
       </form>
-
-      {/* Live Razorpay Dynamic UPI QR Modal */}
-      <RazorpayQrModal 
-        isOpen={isQrModalOpen}
-        onClose={() => setIsQrModalOpen(false)}
-        orderPayload={activeOrderPayload}
-        onPaymentSuccess={handleQrPaymentSuccess}
-        onPaymentFailure={(errMsg) => showToast(errMsg || 'Payment failed')}
-      />
     </div>
   );
 }
