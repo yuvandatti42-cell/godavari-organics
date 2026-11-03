@@ -30,10 +30,16 @@ export function subscribeToStorefrontProducts(callback, onError) {
         // Skip archived items for customer storefront
         if (data.status === 'Archived') return;
 
-        const mainImage = data.image || data.imageUrl || '/categories/oil.png';
+        let mainImage = data.imageUrl || data.image || '/categories/oil.png';
+        if (data.id === 'prod-spice-chilli' || data.id === 'p_spice_chilli' || data.name?.toLowerCase().includes('chilli')) {
+          mainImage = '/products/spices/chilli_powder.jpg';
+        } else if (data.id === 'prod-spice-turmeric' || data.id === 'p_spice_turmeric' || data.name?.toLowerCase().includes('turmeric')) {
+          mainImage = '/products/spices/turmeric_powder.jpg';
+        }
+
         const gallery = Array.isArray(data.images) && data.images.length > 0 
           ? data.images 
-          : (data.imageUrl ? [data.imageUrl] : [mainImage]);
+          : [mainImage];
 
         const unit = data.unit || data.weight || '1 unit';
         const price = Number(data.price) || 0;

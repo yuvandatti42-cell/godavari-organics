@@ -57,12 +57,7 @@ export default function ProductDetails() {
 
   const productImages = selectedProduct.images && selectedProduct.images.length > 0 
     ? selectedProduct.images 
-    : [
-        selectedProduct.image,
-        '/categories/oil.png',
-        '/categories/rice.png',
-        '/categories/spices.png'
-      ];
+    : [selectedProduct.image];
 
   const currentMainImage = productImages[activeThumbnail] || selectedProduct.image;
   
