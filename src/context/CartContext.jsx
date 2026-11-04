@@ -582,7 +582,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: true,
     craftTag: '5%+ Curcumin Stone Ground',
-    image: '/categories/spices.webp',
+    image: '/products/spices/turmeric_powder.webp',
+    images: ['/products/spices/turmeric_powder.webp', '/banners/banner_spices.webp'],
     origin: 'Rampachodavaram Agency Forest, AP',
     certifications: ['5%+ Curcumin', 'Stone Ground', 'Zero Additives']
   },
@@ -614,7 +615,8 @@ export const INITIAL_PRODUCTS = [
     isPopular: true,
     isBestseller: false,
     craftTag: 'Guntur Sun-Pounded',
-    image: '/categories/spices.webp',
+    image: '/products/spices/chilli_powder.webp',
+    images: ['/products/spices/chilli_powder.webp', '/banners/banner_spices.webp'],
     origin: 'Godavari-Guntur Organic Farmers',
     certifications: ['Sun-Dried', 'Zero Artificial Color', 'Traditional Pounded']
   },
@@ -883,7 +885,7 @@ export function CartProvider({ children }) {
       weight: '250g',
       selectedSize: '250g',
       quantity: 1,
-      image: '/categories/spices.webp'
+      image: '/products/spices/turmeric_powder.webp'
     }
   ]);
 
