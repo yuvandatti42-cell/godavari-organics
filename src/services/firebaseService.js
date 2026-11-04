@@ -68,13 +68,15 @@ export function subscribeToStorefrontProducts(callback, onError) {
           inStock: data.inStock !== undefined ? Boolean(data.inStock) : (data.stock > 0 && data.status === 'Active'),
           isPopular: Boolean(data.isPopular || data.featured),
           isBestseller: Boolean(data.isBestseller || (data.salesCount && data.salesCount > 80)),
-          craftTag: data.craftTag || (data.category?.includes('Oil') ? '100% Cold Pressed' : '100% Organic'),
+          craftTag: (data.craftTag || (data.category?.includes('Oil') ? 'Cold Pressed' : ''))
+            .replace(/100%\s*(certified\s*|pure\s*)?organic/gi, '')
+            .trim(),
           image: mainImage,
           images: gallery,
           origin: data.origin || data.harvestLocation || 'Godavari Delta, Andhra Pradesh',
           certifications: Array.isArray(data.certifications) && data.certifications.length > 0 
-            ? data.certifications 
-            : ['100% Pure Organic', 'Zero Chemicals', 'Farm Fresh']
+            ? data.certifications.map(c => c.replace(/100%\s*(certified\s*|pure\s*)?organic/gi, 'Certified Organic').trim()) 
+            : ['Certified Organic', 'Zero Chemicals', 'Farm Fresh']
         });
       });
       callback(items);

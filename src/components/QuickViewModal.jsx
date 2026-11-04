@@ -104,7 +104,7 @@ export default function QuickViewModal() {
               <span className="text-[11px] font-black tracking-wider text-[#18542a] uppercase bg-[#faf6ee] px-2.5 py-1 rounded-full border border-[#dfd5bf]">
                 {quickViewProduct.category}
               </span>
-              {quickViewProduct.craftTag && (
+              {quickViewProduct.craftTag && !quickViewProduct.craftTag.toLowerCase().includes('100% organic') && (
                 <span className="bg-[#103b1d] text-white text-[10.5px] font-black px-2.5 py-0.5 rounded-full border border-[#18542a]/80 shadow-2xs">
                   {quickViewProduct.craftTag}
                 </span>

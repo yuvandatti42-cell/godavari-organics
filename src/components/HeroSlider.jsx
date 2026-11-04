@@ -72,7 +72,7 @@ export default function HeroSlider() {
     ? heroSlides.filter(s => s.active !== false).map((s, idx) => ({
         id: s.id || ("slide-" + idx),
         productId: s.productId || s.link || s.ctaLink || HERO_SLIDES[idx % HERO_SLIDES.length]?.productId || "p_oil_groundnut",
-        eyebrow: s.badgeText || "100% ORGANIC",
+        eyebrow: (s.badgeText || "CERTIFIED ORGANIC").replace(/100%\s*ORGANIC/gi, "CERTIFIED ORGANIC"),
         headlineMain: s.title || "Pure Organic Harvest",
         headlineSub: "",
         subtitle: s.subtitle || "",

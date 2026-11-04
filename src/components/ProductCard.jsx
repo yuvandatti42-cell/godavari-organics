@@ -107,7 +107,7 @@ export default function ProductCard({ product, layout = 'grid' }) {
           </div>
 
           {/* Bottom Floating Craft Tag (Artisanal Godavari USP in Rich Forest Green) */}
-          {product.craftTag && (
+          {product.craftTag && !product.craftTag.toLowerCase().includes('100% organic') && (
             <div className="absolute bottom-2 left-2 right-2 flex justify-center pointer-events-none z-10">
               <span className="bg-[#103b1d] text-white text-[9.5px] font-black px-2.5 py-0.5 rounded-full tracking-wider shadow-xs truncate max-w-[95%] border border-[#18542a]/80">
                 {product.craftTag}

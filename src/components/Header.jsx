@@ -51,7 +51,7 @@ export default function Header() {
         <div className="w-full max-w-[1920px] mx-auto flex justify-between items-center text-[11px] font-semibold tracking-wide">
           <div className="flex items-center space-x-2.5">
             <span className="bg-[#ffc926] text-[#18542a] font-extrabold text-[10px] px-2.5 py-0.5 rounded-full uppercase shadow-xs">
-              100% Organic
+              Certified Organic
             </span>
             <span className="hidden sm:inline text-[#f3e8cc]">
               Directly Sourced From Godavari River Delta Farmers

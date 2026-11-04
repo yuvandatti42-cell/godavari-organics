@@ -165,7 +165,7 @@ export default function ProductDetails() {
                   <span className="text-xs font-black uppercase tracking-wider text-[#18542a]">
                     {selectedProduct.category}
                   </span>
-                  {selectedProduct.craftTag && (
+                  {selectedProduct.craftTag && !selectedProduct.craftTag.toLowerCase().includes('100% organic') && (
                     <span className="bg-[#103b1d] text-white text-[11px] font-black px-2.5 py-0.5 rounded-full border border-[#18542a]/80 shadow-2xs">
                       {selectedProduct.craftTag}
                     </span>
@@ -326,7 +326,7 @@ export default function ProductDetails() {
 
         <Accordion title="Certifications & Quality Standards">
           <div className="flex flex-wrap gap-2 pt-1">
-            {(selectedProduct.certifications || ['100% Certified Organic', 'Jaivik Bharat', 'FSSAI Verified']).map((cert, i) => (
+            {(selectedProduct.certifications || ['Certified Organic', 'Jaivik Bharat', 'FSSAI Verified']).map((c) => c.replace(/100%\s*(certified\s*|pure\s*)?organic/gi, 'Certified Organic')).map((cert, i) => (
               <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#faf6ee] border border-[#dfd5bf] rounded-full text-xs font-bold text-[#103b1d]">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#18542a]" />
                 {cert}

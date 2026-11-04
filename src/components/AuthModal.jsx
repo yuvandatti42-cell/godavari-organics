@@ -895,7 +895,7 @@ export default function AuthModal() {
             <div className="bg-[#f3e8cc]/70 border-t border-[#d9ca9d] px-4 py-3 flex items-center justify-around text-[10px] sm:text-[11px] font-bold text-[#18542a] mt-auto">
               <div className="flex items-center space-x-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#9abc05] shrink-0" />
-                <span>100% Organic</span>
+                <span>Certified Organic</span>
               </div>
               <span className="text-[#d9ca9d]">•</span>
               <div className="flex items-center space-x-1">

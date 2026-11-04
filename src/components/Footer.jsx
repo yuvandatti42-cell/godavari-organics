@@ -184,7 +184,7 @@ export default function Footer() {
             </div>
 
             <p className="text-xs text-[#f3e8cc] leading-relaxed">
-              High quality 100% certified organic foods produced directly by traditional farming families along the fertile Godavari river delta.
+              High quality certified organic foods produced directly by traditional farming families along the fertile Godavari river delta.
             </p>
 
             <div className="space-y-2 text-xs text-[#f3e8cc]">
@@ -328,7 +328,7 @@ export default function Footer() {
             <span>© 2026 Godavari Organic Foods. All rights reserved.</span>
             <span className="text-[#9abc05] font-bold flex items-center justify-center">
               <Leaf className="w-4 h-4 inline mr-1 text-[#9abc05]" />
-              100% Pure Organic Farm Harvest Direct To Your Doorstep
+              Pure Organic Farm Harvest Direct To Your Doorstep
             </span>
           </div>
         </div>

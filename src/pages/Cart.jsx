@@ -150,7 +150,7 @@ export default function Cart() {
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <span className="font-semibold text-stone-800 text-xs">
-                100% Certified Organic & Farm Fresh Guarantee
+                Certified Organic & Farm Fresh Guarantee
               </span>
             </div>
             <span className="text-[11px] font-bold text-[#18542a] hidden sm:inline">

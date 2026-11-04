@@ -108,7 +108,7 @@ export default function Home() {
             <span className="text-[#9abc05]">•</span>
             <span>SUSTAINABLE PRODUCTION PRACTICES</span>
             <span className="text-[#9abc05]">•</span>
-            <span>100% CERTIFIED ORGANIC</span>
+            <span>CERTIFIED ORGANIC</span>
             <span className="text-[#9abc05]">•</span>
             <span>GODAVARI RIVER BASIN HARVEST</span>
             <span className="text-[#9abc05]">•</span>
@@ -123,7 +123,7 @@ export default function Home() {
             <span className="text-[#9abc05]">•</span>
             <span>SUSTAINABLE PRODUCTION PRACTICES</span>
             <span className="text-[#9abc05]">•</span>
-            <span>100% CERTIFIED ORGANIC</span>
+            <span>CERTIFIED ORGANIC</span>
             <span className="text-[#9abc05]">•</span>
             <span>GODAVARI RIVER BASIN HARVEST</span>
             <span className="text-[#9abc05]">•</span>
