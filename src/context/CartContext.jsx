@@ -2,6 +2,7 @@ import {
   subscribeToStorefrontProducts,
   subscribeToStorefrontCategories,
   subscribeToStorefrontContent,
+  subscribeToStorefrontSettings,
   subscribeToStorefrontPromotions,
   placeStorefrontOrder,
   syncStorefrontCustomer
@@ -737,6 +738,7 @@ export function CartProvider({ children }) {
   const [products, setProducts] = useState(INITIAL_PRODUCTS);
   const [categories, setCategories] = useState(CATEGORIES);
   const [storeContent, setStoreContent] = useState(null);
+  const [storeSettings, setStoreSettings] = useState(null);
   const [promotions, setPromotions] = useState(INITIAL_PROMOTIONS);
   const [firebaseConnected, setFirebaseConnected] = useState(false);
   const [lastOrder, setLastOrder] = useState(null);
@@ -768,11 +770,18 @@ export function CartProvider({ children }) {
       }
     });
 
+    const unsubSettings = subscribeToStorefrontSettings((liveSettings) => {
+      if (liveSettings) {
+        setStoreSettings(liveSettings);
+      }
+    });
+
     return () => {
       unsubProducts();
       unsubCategories();
       unsubContent();
       unsubPromotions();
+      unsubSettings();
     };
   }, []);
   const [currentPage, setCurrentPageState] = useState(() => {
@@ -1004,7 +1013,26 @@ export function CartProvider({ children }) {
 
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const cartSubtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const shippingFee = cartSubtotal > 1500 || cartSubtotal === 0 ? 0 : 50;
+
+  // Dynamic Free Shipping & Delivery Fee calculation configured in Admin
+  const freeShippingThreshold = useMemo(() => {
+    const fromSettings = storeSettings?.shipping?.freeShippingThreshold;
+    const fromContent = storeContent?.shipping?.freeShippingThreshold;
+    const val = Number(fromSettings !== undefined ? fromSettings : fromContent);
+    return !isNaN(val) && val > 0 ? val : 1500;
+  }, [storeSettings, storeContent]);
+
+  const standardDeliveryCharge = useMemo(() => {
+    const fromSettings = storeSettings?.shipping?.standardDeliveryCharge;
+    const fromContent = storeContent?.shipping?.standardDeliveryCharge;
+    const val = Number(fromSettings !== undefined ? fromSettings : fromContent);
+    return !isNaN(val) && val >= 0 ? val : 50;
+  }, [storeSettings, storeContent]);
+
+  const isFreeShipping = cartSubtotal >= freeShippingThreshold || cartSubtotal === 0;
+  const shippingFee = isFreeShipping ? 0 : standardDeliveryCharge;
+  const remainingForFreeShipping = Math.max(0, freeShippingThreshold - cartSubtotal);
+  const freeShippingProgress = Math.min(100, Math.round((cartSubtotal / freeShippingThreshold) * 100));
   const taxFee = 0; // Simplified to match wireframe directly (Subtotal + Delivery Charge)
 
   // Promotion / Coupon state & application
@@ -1124,6 +1152,11 @@ export function CartProvider({ children }) {
       clearCart,
       cartCount,
       cartSubtotal,
+      freeShippingThreshold,
+      standardDeliveryCharge,
+      isFreeShipping,
+      remainingForFreeShipping,
+      freeShippingProgress,
       shippingFee,
       taxFee,
       cartTotal,

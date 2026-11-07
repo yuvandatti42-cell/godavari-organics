@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import { useCart, INITIAL_PRODUCTS } from '../context/CartContext';
 import QuantitySelector from '../components/QuantitySelector';
-import { Trash2, ArrowLeft, ArrowRight, ShoppingBag, ShieldCheck, Tag } from 'lucide-react';
+import { 
+  Trash2, 
+  ArrowLeft, 
+  ArrowRight, 
+  ShoppingBag, 
+  ShieldCheck, 
+  Tag, 
+  Truck, 
+  AlertCircle, 
+  CheckCircle2 
+} from 'lucide-react';
 
 export default function Cart() {
   const { 
@@ -10,7 +20,7 @@ export default function Cart() {
     removeFromCart, 
     cartSubtotal, 
     shippingFee, 
-    cartTotal,
+    cartTotal, 
     cartCount,
     setCurrentPage, 
     goBack,
@@ -20,28 +30,39 @@ export default function Cart() {
     removeCoupon,
     discountAmount,
     user,
-    setAuthModalOpen
+    setAuthModalOpen,
+    freeShippingThreshold = 1500,
+    isFreeShipping = false,
+    remainingForFreeShipping = 0,
+    freeShippingProgress = 0
   } = useCart();
 
   const [couponInput, setCouponInput] = useState('');
+  const [couponError, setCouponError] = useState('');
 
   const handleApplyCoupon = (e) => {
     e.preventDefault();
+    setCouponError('');
     if (!couponInput.trim()) {
-      showToast("Please enter a valid coupon code");
+      setCouponError('Please enter a coupon code.');
+      showToast('Please enter a valid coupon code');
       return;
     }
     const res = applyCoupon(couponInput);
-    showToast(res.message);
-    if (res.success) {
+    if (!res.success) {
+      setCouponError(res.message);
+      showToast(res.message);
+    } else {
+      setCouponError('');
       setCouponInput('');
+      showToast(res.message);
     }
   };
 
   const handleProceedToCheckout = () => {
     if (!user || !user.isLoggedIn) {
       setAuthModalOpen(true);
-      showToast("Please log in to proceed to checkout");
+      showToast('Please log in to proceed to checkout');
       return;
     }
     setCurrentPage('checkout');
@@ -80,6 +101,44 @@ export default function Cart() {
       {cartItems.length > 0 ? (
         <div className="space-y-6">
           
+          {/* Dynamic Free Shipping Progress & Notification Banner */}
+          <div className={`p-4 rounded-2xl border transition-all ${
+            isFreeShipping
+              ? 'bg-emerald-50/90 border-emerald-200 text-emerald-950'
+              : 'bg-[#faf5ea] border-[#dfd5bf] text-[#103b1d]'
+          }`}>
+            <div className="flex items-center justify-between text-xs sm:text-sm font-bold mb-2">
+              <div className="flex items-center gap-2">
+                <Truck className={`w-4 h-4 ${isFreeShipping ? 'text-emerald-700' : 'text-[#18542a]'}`} />
+                <span>
+                  {isFreeShipping ? (
+                    <span className="flex items-center gap-1.5 text-emerald-800">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      🎉 <strong>Congratulations! You have unlocked FREE Delivery!</strong>
+                    </span>
+                  ) : (
+                    <span>
+                      Add <strong className="text-emerald-700 font-extrabold">₹{remainingForFreeShipping.toLocaleString('en-IN')}</strong> more to get <strong className="text-[#18542a] uppercase">FREE Shipping</strong>!
+                    </span>
+                  )}
+                </span>
+              </div>
+              <span className="text-[11px] font-semibold text-stone-500 hidden sm:inline">
+                Threshold: ₹{freeShippingThreshold.toLocaleString('en-IN')}
+              </span>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="w-full bg-stone-200 h-2 rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 rounded-full ${
+                  isFreeShipping ? 'bg-emerald-600' : 'bg-[#18542a]'
+                }`}
+                style={{ width: `${freeShippingProgress}%` }}
+              />
+            </div>
+          </div>
+
           {/* Product Items List: Minimal, Crisp White Card */}
           <div className="bg-white rounded-2xl border border-stone-200/90 divide-y divide-stone-100 overflow-hidden shadow-xs">
             {cartItems.map((item) => {
@@ -121,38 +180,34 @@ export default function Cart() {
                     >
                       {item.name}
                     </h3>
-                    <p className="text-xs text-stone-500 font-medium">
-                      Pack: <span className="text-stone-700 font-semibold">{item.selectedSize || item.weight}</span>
+                    <p className="text-xs text-stone-500 font-medium flex items-center gap-1.5">
+                      <span>Pack: <span className="font-semibold text-stone-700">{item.selectedSize}</span></span>
+                      <span>•</span>
+                      <span>Unit Price: <span className="font-semibold text-stone-700">₹{item.price}</span></span>
                     </p>
-                    <div className="pt-0.5 flex items-baseline gap-2">
-                      <span className="font-urbanist font-extrabold text-base sm:text-lg text-[#103b1d]">
-                        ₹{(item.price * item.quantity).toLocaleString('en-IN')}
-                      </span>
-                      {item.quantity > 1 && (
-                        <span className="text-[11px] text-stone-400 font-normal">
-                          (₹{item.price} each)
-                        </span>
-                      )}
+                    <div className="text-sm font-extrabold text-stone-900 pt-0.5">
+                      ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                     </div>
                   </div>
 
-                  {/* Right Side: Stepper & Remove */}
-                  <div className="flex flex-col items-end justify-between h-20 sm:h-22 shrink-0 py-0.5">
-                    {/* Delete Trash Icon */}
+                  {/* Right Actions: Quantity Selector & Remove Icon */}
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4 shrink-0">
+                    <QuantitySelector 
+                      quantity={item.quantity}
+                      onIncrease={() => updateQuantity(item.id, item.selectedSize, 1)}
+                      onDecrease={() => updateQuantity(item.id, item.selectedSize, -1)}
+                      min={1}
+                      max={99}
+                    />
+
                     <button 
                       onClick={() => removeFromCart(item.id, item.selectedSize)}
-                      className="text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg p-1.5 transition-all cursor-pointer"
-                      title="Remove item"
+                      className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                       aria-label="Remove item"
+                      title="Remove item"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
-
-                    {/* Quantity Stepper [- 1 +] */}
-                    <QuantitySelector 
-                      quantity={item.quantity} 
-                      onChange={(newQty) => updateQuantity(item.id, item.selectedSize, newQty - item.quantity)}
-                    />
                   </div>
                 </div>
               );
@@ -190,7 +245,13 @@ export default function Cart() {
 
               <div className="flex justify-between items-center">
                 <span>Delivery Charge</span>
-                <span className="font-extrabold text-stone-900">₹{shippingFee}</span>
+                {isFreeShipping || shippingFee === 0 ? (
+                  <span className="font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded text-xs border border-emerald-200">
+                    FREE
+                  </span>
+                ) : (
+                  <span className="font-extrabold text-stone-900">₹{shippingFee}</span>
+                )}
               </div>
 
               {appliedCoupon && discountAmount > 0 && (
@@ -225,13 +286,16 @@ export default function Cart() {
             </div>
 
             {/* Promo Code Input & Apply Button */}
-            <form onSubmit={handleApplyCoupon} className="pt-1">
+            <form onSubmit={handleApplyCoupon} className="pt-1 space-y-2">
               <div className="flex space-x-2">
                 <input 
                   type="text" 
                   placeholder="Enter Store Coupon (e.g. GODAVARI10)"
                   value={couponInput}
-                  onChange={(e) => setCouponInput(e.target.value)}
+                  onChange={(e) => {
+                    setCouponInput(e.target.value);
+                    if (couponError) setCouponError('');
+                  }}
                   className="flex-1 px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:bg-white focus:border-[#103b1d] focus:ring-1 focus:ring-[#103b1d] placeholder-stone-400 text-stone-900 font-medium transition-all uppercase"
                 />
                 <button 
@@ -241,8 +305,18 @@ export default function Cart() {
                   Apply
                 </button>
               </div>
-              {appliedCoupon && (
-                <div className="text-xs text-emerald-700 font-semibold flex items-center justify-between pt-2">
+
+              {/* Coupon Error in RED Color */}
+              {couponError && (
+                <div className="text-xs text-red-600 font-bold flex items-center gap-2 bg-red-50 border border-red-200 px-3.5 py-2.5 rounded-xl shadow-2xs">
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                  <span>{couponError}</span>
+                </div>
+              )}
+
+              {/* Active Coupon Banner in Green */}
+              {appliedCoupon && !couponError && (
+                <div className="text-xs text-emerald-700 font-semibold flex items-center justify-between pt-1 bg-emerald-50/60 border border-emerald-200 px-3 py-2 rounded-xl">
                   <span className="flex items-center gap-1.5">
                     <Tag className="w-3.5 h-3.5 text-emerald-600" />
                     <span>Coupon "{appliedCoupon.code}" active ({appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% OFF` : `₹${appliedCoupon.discountValue} OFF`})</span>

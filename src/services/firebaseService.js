@@ -16,7 +16,8 @@ export const COLLECTIONS = {
   CUSTOMERS: 'customers',
   PROMOTIONS: 'promotions',
   STORE_CONTENT: 'storeContent',
-  NOTIFICATIONS: 'notifications'
+  NOTIFICATIONS: 'notifications',
+  SETTINGS: 'settings'
 };
 
 // Real-time listener for live promotions & coupons synced from Admin
@@ -154,6 +155,26 @@ export function subscribeToStorefrontCategories(callback, onError) {
     },
     (err) => {
       console.warn('Storefront categories subscription warning:', err);
+      if (onError) onError(err);
+    }
+  );
+}
+
+
+// Real-time listener for general store settings (shipping threshold, standard delivery fee)
+export function subscribeToStorefrontSettings(callback, onError) {
+  const docRef = doc(db, COLLECTIONS.SETTINGS, 'general');
+  return onSnapshot(
+    docRef,
+    (docSnap) => {
+      if (docSnap.exists()) {
+        callback(docSnap.data());
+      } else {
+        callback(null);
+      }
+    },
+    (err) => {
+      console.warn('Storefront settings subscription warning:', err);
       if (onError) onError(err);
     }
   );
