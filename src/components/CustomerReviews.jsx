@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
-import { Star, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, CheckCircle2 } from 'lucide-react';
 
 const DEFAULT_REVIEWS = [
   {
@@ -8,117 +8,151 @@ const DEFAULT_REVIEWS = [
     name: 'Srinivas Rao K.',
     rating: 5,
     location: 'Rajahmundry, AP',
-    comment: 'The traditional Basmati Rice aroma is incredible. Reminds me of actual village-farm cooked food. Clean packaging too.',
-    avatarUrl: '/customers/srinivas.webp',
-    verified: true,
+    quote: 'The traditional Basmati Rice aroma is incredible. Reminds me of actual village-farm cooked food. Clean packaging too.',
+    avatar: '/customers/srinivas.webp',
   },
   {
     id: 'test-2',
     name: 'Ananya R.',
     rating: 5,
     location: 'Hyderabad, Telangana',
-    comment: 'Switched all our household cooking to Godavari organic oils and basmati rice. Superior quality, zero stones or dust, and clean long grain length!',
-    avatarUrl: '/customers/ananya.webp',
-    verified: true,
+    quote: 'Switched all our household cooking to Godavari organic oils and basmati rice. Superior quality, zero stones or dust, and clean long grain length!',
+    avatar: '/customers/ananya.webp',
   },
   {
     id: 'test-3',
     name: 'Vikram S.',
     rating: 5,
     location: 'Bengaluru, Karnataka',
-    comment: 'A2 Gir Cow Ghee and traditional cane jaggery are super pure. Fast shipping, eco-friendly packaging, and genuine natural sweetness.',
-    avatarUrl: '/customers/vikram.webp',
-    verified: true,
+    quote: 'A2 Gir Cow Ghee and traditional cane jaggery are super pure. Fast shipping, eco-friendly packaging, and genuine natural sweetness.',
+    avatar: '/customers/vikram.webp',
   },
 ];
 
 export default function CustomerReviews() {
   const { storeContent } = useCart();
-  const scrollRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
-  // Strictly use testimonials published from Admin panel; fall back to defaults if empty
-  const reviews = (storeContent?.testimonials && storeContent.testimonials.length > 0)
+  // Touch swipe refs
+  const touchStartX = useRef(null);
+  const touchEndX = useRef(null);
+  const minSwipeDistance = 40;
+
+  // Use testimonials from admin if present, else fallback
+  const rawReviews = (storeContent?.testimonials && storeContent.testimonials.length > 0)
     ? storeContent.testimonials
     : DEFAULT_REVIEWS;
 
-  // Manual scroll helper
-  const handleScroll = (direction) => {
-    if (scrollRef.current) {
-      const scrollAmount = direction === 'left' ? -380 : 380;
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  const reviews = rawReviews.slice(0, 6).map((rev, idx) => ({
+    id: rev.id || `rev-${idx}`,
+    name: rev.name || 'Verified Customer',
+    location: rev.location || 'Andhra Pradesh',
+    rating: Number(rev.rating) || 5,
+    quote: rev.quote || rev.comment || '',
+    avatar: rev.avatar || rev.avatarUrl || DEFAULT_REVIEWS[idx % DEFAULT_REVIEWS.length].avatar
+  }));
+
+  // Auto-slide effect for mobile
+  useEffect(() => {
+    if (isPaused) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % reviews.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, reviews.length]);
+
+  const handleTouchStart = (e) => {
+    touchEndX.current = null;
+    touchStartX.current = e.targetTouches[0].clientX;
+    setIsPaused(true);
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    setIsPaused(false);
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+
+    if (distance > minSwipeDistance) {
+      setCurrentIndex((prev) => (prev + 1) % reviews.length);
+    } else if (distance < -minSwipeDistance) {
+      setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
     }
   };
 
-  // Duplicate reviews for seamless continuous auto-scroll ticker loop
-  const duplicatedReviews = [...reviews, ...reviews, ...reviews];
-
   return (
-    <section className="space-y-4 sm:space-y-6 pt-2 pb-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight text-left">
-            What Our Customers Say
-          </h2>
-          <p className="text-xs sm:text-sm text-[#556b54] font-medium mt-0.5 text-left">
-            Authentic verified reviews and photos direct from our customer community
-          </p>
+    <section className="space-y-4 sm:space-y-6">
+      <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight text-left">
+        What Our Customers Say
+      </h2>
+
+      {/* MOBILE RESPONSIVE SLIDER (< md) - SHOWS 1 REVIEW AT A TIME WITH SLIDING */}
+      <div className="block md:hidden">
+        <div 
+          className="overflow-hidden relative rounded-2xl sm:rounded-3xl"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div 
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          >
+            {reviews.map((rev) => (
+              <div key={rev.id} className="w-full shrink-0 p-1">
+                <ReviewCard review={rev} />
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Scroll affordance controls */}
-        <div className="hidden sm:flex items-center gap-2">
-          <button
-            onClick={() => handleScroll('left')}
-            className="p-2 rounded-full border border-[#d9ca9d] bg-white text-[#103b1d] hover:bg-[#18542a] hover:text-white transition-colors cursor-pointer shadow-xs active:scale-95"
-            aria-label="Previous reviews"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => handleScroll('right')}
-            className="p-2 rounded-full border border-[#d9ca9d] bg-white text-[#103b1d] hover:bg-[#18542a] hover:text-white transition-colors cursor-pointer shadow-xs active:scale-95"
-            aria-label="Next reviews"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+        {/* Carousel Dots matching the number of reviews */}
+        <div className="flex items-center justify-center space-x-2 pt-3">
+          {reviews.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              aria-label={`Go to review ${index + 1}`}
+              className={`transition-all duration-300 rounded-full cursor-pointer focus:outline-none ${
+                currentIndex === index 
+                  ? 'w-6 h-2 bg-[#18542a]' 
+                  : 'w-2 h-2 bg-[#d9ca9d] hover:bg-[#b8a77a]'
+              }`}
+            />
+          ))}
         </div>
       </div>
 
-      {/* CONTINUOUS AUTO-SCROLLING REVIEW STRIP (Side-by-side with hover pause) */}
-      <div 
-        ref={scrollRef}
-        className="w-full overflow-hidden relative rounded-2xl sm:rounded-3xl py-1"
-      >
-        <div className="animate-marquee-slow whitespace-nowrap flex items-stretch space-x-5 py-2">
-          {duplicatedReviews.map((rev, index) => (
-            <div 
-              key={`${rev.id}-${index}`} 
-              className="w-[300px] xs:w-[360px] sm:w-[420px] md:w-[460px] shrink-0 whitespace-normal"
-            >
-              <ReviewCard review={rev} />
-            </div>
-          ))}
-        </div>
+      {/* DESKTOP GRID (>= md) - SHOWS ALL REVIEWS SIDE BY SIDE */}
+      <div className="hidden md:grid md:grid-cols-3 gap-5">
+        {reviews.slice(0, 3).map((rev) => (
+          <ReviewCard key={rev.id} review={rev} />
+        ))}
       </div>
     </section>
   );
 }
 
 function ReviewCard({ review }) {
-  const avatarSrc = review.avatarUrl || review.avatar || '/customers/srinivas.webp';
-  const commentText = review.comment || review.quote || '';
   const starCount = Math.max(1, Math.min(5, Math.round(Number(review.rating) || 5)));
 
   return (
-    <div className="bg-[#f3e8cc] border border-[#d9ca9d] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-all h-full min-h-[190px] sm:min-h-[210px] flex items-stretch text-left group">
-      {/* LEFT: Review content, customer name, verified, rating */}
-      <div className="flex-1 p-4 xs:p-5 flex flex-col justify-between space-y-3">
+    <div className="bg-[#f3e8cc] border border-[#d9ca9d] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-all h-full min-h-[180px] sm:min-h-[200px] flex items-stretch text-left group">
+      {/* LEFT 67%: Review text content, name, rating */}
+      <div className="w-[67%] p-4 xs:p-5 sm:p-5 flex flex-col justify-between space-y-3">
         <div className="space-y-1.5">
           <div>
-            <h3 className="font-urbanist font-extrabold text-sm xs:text-base text-[#103b1d] leading-snug flex items-center gap-1.5">
+            <h3 className="font-urbanist font-extrabold text-sm xs:text-base sm:text-base text-[#103b1d] leading-snug flex items-center gap-1.5">
               <span>{review.name}</span>
-              {review.verified !== false && (
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#18542a] shrink-0" title="Verified Customer" />
-              )}
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#18542a] shrink-0" title="Verified Customer" />
             </h3>
             {review.location && (
               <p className="text-[11px] text-[#556b54] font-medium tracking-tight">
@@ -144,23 +178,23 @@ function ReviewCard({ review }) {
         </div>
 
         {/* Review Quote Text */}
-        <p className="text-xs sm:text-[13px] text-[#556b54] font-medium leading-relaxed italic line-clamp-3">
-          "{commentText}"
+        <p className="text-xs sm:text-[13px] text-[#556b54] font-medium leading-relaxed italic line-clamp-4">
+          "{review.quote}"
         </p>
       </div>
 
-      {/* RIGHT: Customer Avatar Portrait */}
-      <div className="w-[110px] xs:w-[130px] sm:w-[150px] shrink-0 relative overflow-hidden bg-[#e6dec9] border-l border-[#d9ca9d]/80">
+      {/* RIGHT 33%: Full-height image of the person */}
+      <div className="w-[33%] shrink-0 relative overflow-hidden bg-[#e6dec9] border-l border-[#d9ca9d]/80">
         <img 
-          src={avatarSrc} 
+          src={review.avatar} 
           alt={review.name} 
-          width="150"
-          height="210"
+          width="160"
+          height="200"
           loading="lazy"
           decoding="async"
           className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" 
         />
-        {/* Soft edge blend gradient */}
+        {/* Subtle left-side shade for soft transition into beige */}
         <div className="absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-[#d9ca9d]/30 to-transparent pointer-events-none" />
       </div>
     </div>

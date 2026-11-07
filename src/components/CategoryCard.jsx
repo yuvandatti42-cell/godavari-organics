@@ -1,6 +1,16 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 
+export const getCategoryCleanImage = (cat) => {
+  const name = (cat?.name || cat?.id || '').toLowerCase();
+  if (name.includes('rice')) return '/categories/rice.webp';
+  if (name.includes('millet')) return '/categories/millet.webp';
+  if (name.includes('spice')) return '/categories/spices.webp';
+  if (name.includes('ghee') || name.includes('cow')) return '/categories/desi_cow_ghee.webp';
+  if (name.includes('oil')) return '/categories/oil.webp';
+  return cat?.imageUrl || cat?.image || '/categories/oil.webp';
+};
+
 export default function CategoryCard({ category }) {
   const { setCurrentPage, setSelectedCategoryFilter } = useCart();
 
@@ -11,6 +21,8 @@ export default function CategoryCard({ category }) {
     setCurrentPage('shop');
   };
 
+  const imageSrc = getCategoryCleanImage(category);
+
   return (
     <div 
       onClick={handleClick}
@@ -19,13 +31,13 @@ export default function CategoryCard({ category }) {
       {/* Soft Organic Warm Beige Rounded Card Frame (Godavari Brand Color Palette) */}
       <div className="w-full aspect-square bg-[#f3e8cc] hover:bg-[#e6dec9] border border-[#d9ca9d] hover:border-[#18542a]/60 rounded-[24px] xs:rounded-[28px] sm:rounded-[34px] p-2 xs:p-2.5 sm:p-3 flex items-center justify-center transition-all duration-300 group-hover:shadow-md overflow-hidden">
         <img 
-          src={category.imageUrl || category.image || '/categories/oil.webp'} 
+          src={imageSrc} 
           alt={category.name}
           width="200"
           height="200"
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-contain transform-gpu group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-contain transform-gpu group-hover:scale-105 transition-transform duration-500"
           style={{ imageRendering: 'high-quality' }}
         />
       </div>

@@ -747,14 +747,48 @@ export function CartProvider({ children }) {
   useEffect(() => {
     const unsubProducts = subscribeToStorefrontProducts((liveProducts) => {
       if (liveProducts && liveProducts.length > 0) {
-        setProducts(liveProducts);
+        setProducts(() => {
+          const productMap = new Map();
+          INITIAL_PRODUCTS.forEach(p => productMap.set(p.id, { ...p }));
+          liveProducts.forEach(lp => {
+            const existing = productMap.get(lp.id) || Array.from(productMap.values()).find(p => p.name?.toLowerCase() === lp.name?.toLowerCase());
+            if (existing) {
+              productMap.set(existing.id, {
+                ...existing,
+                ...lp,
+                image: (lp.image && lp.image !== '/categories/oil.webp') ? lp.image : existing.image
+              });
+            } else {
+              productMap.set(lp.id, lp);
+            }
+          });
+          return Array.from(productMap.values());
+        });
         setFirebaseConnected(true);
       }
     });
 
     const unsubCategories = subscribeToStorefrontCategories((liveCategories) => {
       if (liveCategories && liveCategories.length > 0) {
-        setCategories(liveCategories);
+        setCategories(() => {
+          const catMap = new Map();
+          CATEGORIES.forEach(c => catMap.set(c.name.toLowerCase(), { ...c }));
+          liveCategories.forEach(lc => {
+            const keyLower = (lc.name || '').toLowerCase();
+            const existing = Array.from(catMap.values()).find(c => c.name?.toLowerCase() === keyLower);
+            if (existing) {
+              catMap.set(keyLower, {
+                ...existing,
+                ...lc,
+                image: lc.image || existing.image,
+                imageUrl: lc.imageUrl || existing.imageUrl
+              });
+            } else {
+              catMap.set(keyLower, lc);
+            }
+          });
+          return Array.from(catMap.values());
+        });
       }
     });
 

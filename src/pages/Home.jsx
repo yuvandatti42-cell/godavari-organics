@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { useCart } from '../context/CartContext';
 import HeroSlider from '../components/HeroSlider';
 import CategoryCard from '../components/CategoryCard';
@@ -7,54 +7,18 @@ import FeaturedHarvestProducts from '../components/FeaturedHarvestProducts';
 import WhyChooseArma from '../components/WhyChooseArma';
 import CustomerReviews from '../components/CustomerReviews';
 import StoreLocation from '../components/StoreLocation';
-import { 
-  ArrowRight, 
-  PhoneCall, 
-  ChevronLeft, 
-  ChevronRight 
-} from 'lucide-react';
-
-const DEFAULT_BADGES = [
-  { id: 'b-1', name: 'FSSAI Certified', subtitle: 'Govt. Reg #10123028000419', imageUrl: '/fssai.webp' },
-  { id: 'b-2', name: 'USDA Organic', subtitle: '100% NPOP Bio-Certified', imageUrl: '/USDA.gif' },
-  { id: 'b-3', name: 'SGS Bio-Verified', subtitle: 'Zero Chemical Pesticides', imageUrl: '/SGS.webp' },
-  { id: 'b-4', name: 'APEDA Pure', subtitle: 'Traceable Farm Harvest', imageUrl: '/apeda-pure.webp' },
-];
+import { ArrowRight, PhoneCall } from 'lucide-react';
 
 export default function Home() {
   const { 
     setCurrentPage, 
     products, 
     categories, 
-    storeContent, 
     showToast, 
     setSelectedCategoryFilter 
   } = useCart();
 
-  const categoryScrollRef = useRef(null);
-
-  // Mouse wheel horizontal scrolling for Categories (strictly manual, no auto-scroll)
-  const handleCategoryWheel = (e) => {
-    if (categoryScrollRef.current) {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        categoryScrollRef.current.scrollLeft += e.deltaY;
-      }
-    }
-  };
-
-  const handleScrollCategory = (direction) => {
-    if (categoryScrollRef.current) {
-      const scrollAmount = direction === 'left' ? -320 : 320;
-      categoryScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
-
   const popularProducts = products.filter(p => p.isPopular);
-
-  // Active Trust Badges strictly from Admin panel with fallback
-  const activeBadges = (storeContent?.trustBadges && storeContent.trustBadges.length > 0)
-    ? storeContent.trustBadges.filter(b => b.active !== false)
-    : DEFAULT_BADGES;
 
   return (
     <div className="w-full font-sans bg-[#faf5ea] text-[#103b1d]">
@@ -66,82 +30,74 @@ export default function Home() {
       {/* Main Page Body Container */}
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 pt-6 sm:pt-10 pb-2">
 
-        {/* 2. CATEGORY SECTION — SIDE BY SIDE WITH SMOOTH MOUSE WHEEL & HORIZONTAL SCROLL (NO AUTO SCROLL) */}
+        {/* 2. CATEGORY SECTION (Matches reference screenshot layout) */}
         <section className="space-y-4 sm:space-y-6 pt-2 pb-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight">
-                Our Harvest Categories
-              </h2>
-              <p className="text-xs sm:text-sm text-[#556b54] font-medium mt-0.5">
-                Scroll side-by-side to explore all organic harvest collections
-              </p>
-            </div>
-
-            {/* Left / Right scroll navigation buttons */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleScrollCategory('left')}
-                className="p-2 rounded-full border border-[#d9ca9d] bg-white text-[#103b1d] hover:bg-[#18542a] hover:text-white transition-colors cursor-pointer shadow-xs active:scale-95"
-                aria-label="Scroll categories left"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => handleScrollCategory('right')}
-                className="p-2 rounded-full border border-[#d9ca9d] bg-white text-[#103b1d] hover:bg-[#18542a] hover:text-white transition-colors cursor-pointer shadow-xs active:scale-95"
-                aria-label="Scroll categories right"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+            <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight">
+              Our Harvest Categories
+            </h2>
           </div>
 
-          {/* Side by side horizontal scroll container (NO auto-scroll, mouse-wheel supported) */}
-          <div
-            ref={categoryScrollRef}
-            onWheel={handleCategoryWheel}
-            className="flex items-stretch gap-3 xs:gap-4 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-3 pt-1"
-          >
-            {categories.map((cat) => (
-              <div 
-                key={cat.id} 
-                className="w-36 xs:w-44 sm:w-56 md:w-64 shrink-0"
-              >
-                <CategoryCard category={cat} />
-              </div>
+          {/* 4-column equal frame row matching reference screenshot */}
+          <div className="grid grid-cols-4 gap-3 xs:gap-4 sm:gap-6 lg:gap-8 items-stretch">
+            {categories.slice(0, 4).map((cat) => (
+              <CategoryCard key={cat.id} category={cat} />
             ))}
           </div>
         </section>
 
-        {/* 3. CERTIFIED QUALITY STANDARDS & TRUST BADGES — SIDE BY SIDE WITH CONTINUOUS AUTO SCROLL */}
-        <div className="mt-2 sm:mt-4 mb-3 sm:mb-5 py-2 overflow-hidden bg-white/70 border border-[#d9ca9d]/60 rounded-2xl sm:rounded-3xl shadow-2xs">
-          <div className="w-full overflow-hidden relative">
-            <div className="animate-marquee whitespace-nowrap flex items-center space-x-8 sm:space-x-12 py-1.5">
-              {[...activeBadges, ...activeBadges, ...activeBadges, ...activeBadges].map((badge, idx) => (
-                <div key={`${badge.id}-${idx}`} className="flex items-center space-x-3 shrink-0 px-2 group cursor-pointer">
-                  <div className="h-12 sm:h-14 w-auto flex items-center justify-center p-1.5 bg-[#faf5ea] rounded-xl border border-[#d9ca9d]/50">
-                    <img
-                      src={badge.imageUrl}
-                      alt={badge.name}
-                      width="100"
-                      height="48"
-                      className="h-9 sm:h-11 w-auto max-w-[120px] object-contain group-hover:scale-105 transition-transform"
-                    />
-                  </div>
-                  <div className="text-left">
-                    <p className="font-urbanist font-extrabold text-xs sm:text-sm text-[#103b1d] leading-tight">
-                      {badge.name}
-                    </p>
-                    {badge.subtitle && (
-                      <p className="text-[10px] sm:text-[11px] text-[#556b54] font-medium leading-tight">
-                        {badge.subtitle}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
+        {/* STANDALONE CERTIFIED QUALITY STANDARDS BADGES */}
+        {/* Desktop: One single horizontal line | Mobile: Continuous smooth right-to-left marquee scroll */}
+        <div className="mt-2 sm:mt-4 mb-3 sm:mb-5 py-1.5 sm:py-2 overflow-hidden">
+          {/* Mobile continuous right-to-left marquee scroll (< sm) */}
+          <div className="block sm:hidden w-full overflow-hidden relative">
+            <div className="animate-marquee whitespace-nowrap flex items-center space-x-8 py-1.5">
+              <div className="flex items-center space-x-8 shrink-0">
+                <img src="/fssai.webp" alt="FSSAI Certified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/USDA.gif" alt="USDA Organic" width="48" height="40" className="h-10 w-auto object-contain" />
+                <img src="/SGS.webp" alt="SGS Bio-Verified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/apeda-pure.webp" alt="APEDA Pure" width="90" height="40" className="h-10 w-auto object-contain" />
+              </div>
+              {/* Duplicated set for seamless continuous right-to-left marquee loop on mobile */}
+              <div className="flex items-center space-x-8 shrink-0">
+                <img src="/fssai.webp" alt="FSSAI Certified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/USDA.gif" alt="USDA Organic" width="48" height="40" className="h-10 w-auto object-contain" />
+                <img src="/SGS.webp" alt="SGS Bio-Verified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/apeda-pure.webp" alt="APEDA Pure" width="90" height="40" className="h-10 w-auto object-contain" />
+              </div>
             </div>
+          </div>
+
+          {/* Desktop floating logos row (>= sm) */}
+          <div className="hidden sm:flex items-center justify-around gap-6 md:gap-10 lg:gap-14 py-2 px-4 max-w-4xl mx-auto">
+            <img 
+              src="/fssai.webp" 
+              alt="FSSAI Certified" 
+              width="110"
+              height="48"
+              className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+            <img 
+              src="/USDA.gif" 
+              alt="USDA Organic" 
+              width="58"
+              height="48"
+              className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+            <img 
+              src="/SGS.webp" 
+              alt="SGS Bio-Verified" 
+              width="110"
+              height="48"
+              className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+            <img 
+              src="/apeda-pure.webp" 
+              alt="APEDA Pure" 
+              width="110"
+              height="48"
+              className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
           </div>
         </div>
 
