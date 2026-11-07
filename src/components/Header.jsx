@@ -235,10 +235,10 @@ export default function Header() {
             {/* Account Icon / Customer Profile Pill */}
             {user ? (
               <button
-                onClick={() => setAuthModalOpen(true)}
+                onClick={() => setCurrentPage('profile')}
                 className="hidden sm:flex items-center space-x-1.5 py-1 px-2.5 sm:px-3 bg-[#18542a]/10 hover:bg-[#18542a]/20 border border-[#18542a]/30 rounded-xl text-xs font-bold text-[#18542a] transition-all cursor-pointer shadow-xs active:scale-95"
-                title={`Signed in as ${user.name}`}
-                aria-label={`Signed in as ${user.name}`}
+                title={`View profile for ${user.name}`}
+                aria-label={`View profile for ${user.name}`}
               >
                 <div className="w-5 h-5 rounded-full bg-[#18542a] text-white flex items-center justify-center text-[10px] uppercase font-black">
                   {user.name ? user.name.charAt(0) : 'U'}
@@ -338,7 +338,14 @@ export default function Header() {
           {/* Mobile Customer Sign In / Account Button */}
           <div className="pt-2">
             <button
-              onClick={() => { setAuthModalOpen(true); setMobileMenuOpen(false); }}
+              onClick={() => {
+                if (user) {
+                  setCurrentPage('profile');
+                } else {
+                  setAuthModalOpen(true);
+                }
+                setMobileMenuOpen(false);
+              }}
               className="w-full p-3 rounded-xl border border-[#18542a]/30 bg-white hover:bg-amber-50 text-left font-bold flex items-center justify-between text-[#18542a] text-xs transition-colors shadow-2xs"
             >
               <div className="flex items-center space-x-2">
@@ -346,7 +353,7 @@ export default function Header() {
                 <span>{user ? `Signed in: ${user.name}` : 'Customer Sign In'}</span>
               </div>
               <span className="text-[10px] text-[#8c7355] font-semibold">
-                {user ? 'View Account →' : 'Log In / Register →'}
+                {user ? 'View Account & Orders →' : 'Log In / Register →'}
               </span>
             </button>
           </div>

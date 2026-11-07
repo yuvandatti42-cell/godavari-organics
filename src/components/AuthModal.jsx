@@ -412,9 +412,20 @@ export default function AuthModal() {
               <button
                 onClick={() => {
                   setAuthModalOpen(false);
+                  setCurrentPage('profile');
+                }}
+                className="w-full py-2.5 bg-[#18542a] hover:bg-[#103b1d] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
+              >
+                <User className="w-4 h-4" />
+                <span>Open Customer Profile</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setAuthModalOpen(false);
                   setCurrentPage('shop');
                 }}
-                className="w-full py-3 bg-[#18542a] hover:bg-[#103b1d] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
+                className="w-full py-2.5 bg-white hover:bg-amber-50 text-[#18542a] border border-[#18542a]/30 font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-2 cursor-pointer"
               >
                 <span>Continue Shopping</span>
                 <ArrowRight className="w-4 h-4" />

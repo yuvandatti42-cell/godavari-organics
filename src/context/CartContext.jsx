@@ -785,8 +785,16 @@ export function CartProvider({ children }) {
     };
   }, []);
   const [currentPage, setCurrentPageState] = useState(() => {
-    const hash = window.location.hash.replace('#/', '');
-    return hash || 'home';
+    try {
+      const hash = (window.location.hash || '').replace(/^#\/?/, '').split('?')[0].toLowerCase();
+      const path = (window.location.pathname || '').replace(/^\//, '').split('/')[0].split('?')[0].toLowerCase();
+      const candidate = hash || path;
+      const validPages = ['home', 'shop', 'product', 'cart', 'checkout', 'order-success', 'profile'];
+      if (validPages.includes(candidate)) {
+        return candidate;
+      }
+    } catch (e) {}
+    return 'home';
   });
   const [selectedProductId, setSelectedProductId] = useState('p_oil_groundnut');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
@@ -900,7 +908,11 @@ export function CartProvider({ children }) {
   // Listen for browser popstate (browser back/forward button clicks)
   useEffect(() => {
     if (!window.history.state) {
-      const initialPage = window.location.hash.replace('#/', '') || 'home';
+      const hash = (window.location.hash || '').replace(/^#\/?/, '').split('?')[0].toLowerCase();
+      const path = (window.location.pathname || '').replace(/^\//, '').split('/')[0].split('?')[0].toLowerCase();
+      const candidate = hash || path;
+      const validPages = ['home', 'shop', 'product', 'cart', 'checkout', 'order-success', 'profile'];
+      const initialPage = validPages.includes(candidate) ? candidate : 'home';
       window.history.replaceState({ page: initialPage, productId: selectedProductId }, '', `#/${initialPage}`);
     }
 
@@ -911,8 +923,11 @@ export function CartProvider({ children }) {
           setSelectedProductId(event.state.productId);
         }
       } else {
-        const hash = window.location.hash.replace('#/', '');
-        setCurrentPageState(hash || 'home');
+        const hash = (window.location.hash || '').replace(/^#\/?/, '').split('?')[0].toLowerCase();
+        const path = (window.location.pathname || '').replace(/^\//, '').split('/')[0].split('?')[0].toLowerCase();
+        const candidate = hash || path;
+        const validPages = ['home', 'shop', 'product', 'cart', 'checkout', 'order-success', 'profile'];
+        setCurrentPageState(validPages.includes(candidate) ? candidate : 'home');
       }
     };
 
