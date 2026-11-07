@@ -36,10 +36,19 @@ export function loadRazorpayScript() {
   });
 }
 
-export function getRazorpayKey() {
-  if (typeof window !== 'undefined' && window.__RAZORPAY_KEY_ID__) {
+export function getRazorpayKey(customKey) {
+  if (customKey && typeof customKey === 'string' && customKey.trim().startsWith('rzp_')) {
+    return customKey.trim();
+  }
+  if (typeof window !== 'undefined' && window.__RAZORPAY_KEY_ID__ && window.__RAZORPAY_KEY_ID__.startsWith('rzp_')) {
     return window.__RAZORPAY_KEY_ID__;
   }
+  try {
+    const cached = localStorage.getItem('gof_razorpay_key_id');
+    if (cached && cached.startsWith('rzp_') && cached !== 'rzp_test_placeholder') {
+      return cached;
+    }
+  } catch (e) {}
   const envKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
   if (envKey && envKey.startsWith('rzp_') && envKey !== 'rzp_test_placeholder') {
     return envKey;
@@ -48,8 +57,11 @@ export function getRazorpayKey() {
 }
 
 export function setRazorpayRuntimeKey(key) {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && key) {
     window.__RAZORPAY_KEY_ID__ = key;
+    try {
+      localStorage.setItem('gof_razorpay_key_id', key);
+    } catch (e) {}
   }
 }
 
@@ -59,6 +71,8 @@ export function setRazorpayRuntimeKey(key) {
 export async function initiateRazorpayPayment({
   orderPayload,
   preferredMethod = 'upi',
+  razorpayKeyId,
+  merchantName,
   onSuccess,
   onFailure,
   onDismiss
@@ -72,7 +86,10 @@ export async function initiateRazorpayPayment({
     return;
   }
 
-  const key = getRazorpayKey();
+  const key = getRazorpayKey(razorpayKeyId);
+  if (key && key.startsWith('rzp_')) {
+    setRazorpayRuntimeKey(key);
+  }
   const amountInPaise = Math.round(Number(orderPayload.total) * 100);
 
   // Map method to Razorpay config
@@ -82,7 +99,7 @@ export async function initiateRazorpayPayment({
     key: key,
     amount: amountInPaise,
     currency: 'INR',
-    name: 'Godavari Organic Foods',
+    name: merchantName || 'Godavari Organic Foods',
     description: `Order #${orderPayload.id} - Traditional Harvest`,
     image: '/logo-circle.webp',
     handler: function (response) {
