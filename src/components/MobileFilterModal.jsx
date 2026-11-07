@@ -9,6 +9,7 @@ export default function MobileFilterModal({
   setSelectedCategories,
   priceRange,
   setPriceRange,
+  setIsPriceFilterActive,
   selectedRatings,
   setSelectedRatings,
   sortBy,
@@ -283,7 +284,7 @@ export default function MobileFilterModal({
                     return (
                       <label 
                         key={idx}
-                        onClick={() => setPriceRange([tier.min, tier.max])}
+                        onClick={() => { setPriceRange([tier.min, tier.max]); if (setIsPriceFilterActive) setIsPriceFilterActive(true); }}
                         className="flex items-center space-x-3 cursor-pointer text-xs sm:text-sm text-[#103b1d] font-medium select-none"
                       >
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
@@ -313,7 +314,7 @@ export default function MobileFilterModal({
                     max="1000" 
                     step="50"
                     value={priceRange[1]} 
-                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                    onChange={(e) => { setPriceRange([priceRange[0], parseInt(e.target.value)]); if (setIsPriceFilterActive) setIsPriceFilterActive(true); }}
                     className="w-full accent-[#18542a] cursor-pointer"
                   />
                 </div>

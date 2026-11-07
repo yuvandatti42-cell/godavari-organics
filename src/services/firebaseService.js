@@ -57,8 +57,15 @@ export function subscribeToStorefrontProducts(callback, onError) {
       const items = [];
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        // Skip archived items for customer storefront
-        if (data.status === 'Archived') return;
+        // Skip archived or draft items for customer storefront
+        if (data.status === 'Archived' || data.status === 'Draft') return;
+
+        // Only show products that have been added to the storefront ("On Store")
+        const isExplicitlyOnStore = data.onStore === true || data.isLiveOnStore === true || data.featured === true;
+        const isExplicitlyOffStore = data.onStore === false || data.isLiveOnStore === false;
+        
+        if (isExplicitlyOffStore) return;
+        if (!isExplicitlyOnStore && data.featured === false) return;
 
         let mainImage = data.imageUrl || data.image || '/categories/oil.webp';
         if (data.id === 'prod-spice-chilli' || data.id === 'p_spice_chilli' || data.name?.toLowerCase().includes('chilli')) {

@@ -3,7 +3,12 @@ import { useCart } from '../context/CartContext';
 import { Mail, Phone, MapPin, Leaf } from 'lucide-react';
 
 export default function Footer() {
-  const { setCurrentPage, showToast } = useCart();
+  const { setCurrentPage, setSelectedCategoryFilter, showToast } = useCart();
+
+  const navigateToCategory = (cat = '') => {
+    if (setSelectedCategoryFilter) setSelectedCategoryFilter(cat);
+    setCurrentPage('shop');
+  };
 
   return (
     <footer className="w-full font-sans mt-12 sm:mt-16">
@@ -42,17 +47,17 @@ export default function Footer() {
             </h4>
             <ul className="space-y-1.5 text-xs text-[#f3e8cc] font-medium">
               <li>
-                <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <button onClick={() => navigateToCategory()} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Organic Rice
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <button onClick={() => navigateToCategory()} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Organic Spices
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <button onClick={() => navigateToCategory()} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Traditional Foods
                 </button>
               </li>
@@ -66,7 +71,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-1.5 text-xs text-[#f3e8cc] font-medium">
               <li>
-                <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <button onClick={() => navigateToCategory()} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Our Farms
                 </button>
               </li>
@@ -242,7 +247,7 @@ export default function Footer() {
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <button onClick={() => navigateToCategory()} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Shop Harvest Catalog
                 </button>
               </li>
@@ -271,27 +276,27 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-xs text-[#f3e8cc]">
               <li>
-                <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <button onClick={() => navigateToCategory()} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Organic Aged Basmati & Red Rice
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <button onClick={() => navigateToCategory()} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Cold Pressed Oils & A2 Ghee
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <button onClick={() => navigateToCategory()} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Stone Ground Spices & Turmeric
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <button onClick={() => navigateToCategory()} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Unpolished Dals & Legumes
                 </button>
               </li>
               <li>
-                <button onClick={() => setCurrentPage('shop')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <button onClick={() => navigateToCategory()} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Unrefined Cane Jaggery & Raw Honey
                 </button>
               </li>

@@ -299,7 +299,7 @@ export default function Header() {
               <span>Home Page</span>
             </button>
             <button 
-              onClick={() => { setCurrentPage('shop'); setMobileMenuOpen(false); }}
+              onClick={() => { if (setSelectedCategoryFilter) setSelectedCategoryFilter(''); setCurrentPage('shop'); setMobileMenuOpen(false); }}
               className={`p-3 rounded-xl border text-left font-bold flex items-center space-x-2 ${currentPage === 'shop' ? 'bg-[#18542a] text-white border-[#18542a]' : 'bg-white text-[#18542a] border-[#e2d5b5]'}`}
             >
               <ShoppingBag className="w-4 h-4 flex-shrink-0" />

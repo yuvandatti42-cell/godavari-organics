@@ -7,8 +7,9 @@ export default function FilterSidebar({
   setSelectedCategories, 
   priceRange, 
   setPriceRange,
-  selectedRatings,
-  setSelectedRatings,
+  setIsPriceFilterActive,
+  selectedRatings, 
+  setSelectedRatings, 
   onReset
 }) {
   const { categories } = useCart();
@@ -39,7 +40,7 @@ export default function FilterSidebar({
         </div>
         <button
           onClick={onReset}
-          className="text-xs text-[#18542a] hover:text-[#f96015] font-extrabold flex items-center space-x-1 hover:underline"
+          className="text-xs text-[#18542a] hover:text-[#f96015] font-extrabold flex items-center space-x-1 hover:underline cursor-pointer"
         >
           <RotateCcw className="w-3 h-3 text-[#f96015]" />
           <span>Reset</span>
@@ -81,11 +82,14 @@ export default function FilterSidebar({
         <div className="space-y-2">
           <input 
             type="range" 
-            min="100" 
-            max="1000" 
+            min="0" 
+            max="5000" 
             step="50"
             value={priceRange[1]} 
-            onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+            onChange={(e) => {
+              setPriceRange([priceRange[0], parseInt(e.target.value)]);
+              if (setIsPriceFilterActive) setIsPriceFilterActive(true);
+            }}
             className="w-full accent-[#18542a] cursor-pointer"
           />
           <div className="flex items-center justify-between text-xs text-[#18542a] font-extrabold">
@@ -107,7 +111,7 @@ export default function FilterSidebar({
             return (
               <label key={stars} className="flex items-center space-x-2 cursor-pointer select-none text-[#18542a]">
                 <input 
-                  type="checkbox"
+                  type="checkbox" 
                   checked={isChecked}
                   onChange={() => handleRatingToggle(stars)}
                   className="w-4 h-4 rounded border-gray-300 accent-[#18542a]"
@@ -136,4 +140,3 @@ export default function FilterSidebar({
     </aside>
   );
 }
-

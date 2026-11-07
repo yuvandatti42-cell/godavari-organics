@@ -10,7 +10,7 @@ import StoreLocation from '../components/StoreLocation';
 import { ArrowRight, ArrowUpRight, ShieldCheck, Users, HeartHandshake, Sprout, CheckCircle2, Award, Leaf, Truck, Sparkles, MapPin, Gift, Image, PhoneCall } from 'lucide-react';
 
 export default function Home() {
-  const { setCurrentPage, products, categories, showToast } = useCart();
+  const { setCurrentPage, products, categories, showToast, setSelectedCategoryFilter } = useCart();
 
   const popularProducts = products.filter(p => p.isPopular);
 
@@ -157,7 +157,7 @@ export default function Home() {
             Popular Products
           </h2>
           <button 
-            onClick={() => setCurrentPage('shop')}
+            onClick={() => { if (setSelectedCategoryFilter) setSelectedCategoryFilter(''); setCurrentPage('shop'); }}
             aria-label="Explore Full Store harvest catalog"
             className="inline-flex items-center space-x-1 font-urbanist font-extrabold text-xs sm:text-sm text-[#103b1d] hover:text-[#18542a] underline underline-offset-4 transition-colors cursor-pointer"
           >

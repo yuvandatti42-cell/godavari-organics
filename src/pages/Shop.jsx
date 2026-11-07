@@ -6,21 +6,14 @@ import FilterSidebar from '../components/FilterSidebar';
 import MobileFilterModal from '../components/MobileFilterModal';
 import { SlidersHorizontal, ArrowUpDown, ChevronLeft, ChevronRight, X, Search, Sparkles } from 'lucide-react';
 
-const QUICK_CATEGORIES = [
-  { id: 'all', label: 'All Items', category: '' },
-  { id: 'oils', label: 'Oils & Ghee', category: 'Oils' },
-  { id: 'rice', label: 'Organic Rice', category: 'Organic Rice' },
-  { id: 'millets', label: 'Siridhanya Millets', category: 'Organic Millets' },
-  { id: 'spices', label: 'Farm Spices', category: 'Organic Spices' },
-];
-
 export default function Shop() {
-  const { products, showToast, goBack, selectedCategoryFilter, setSelectedCategoryFilter } = useCart();
+  const { products, categories, showToast, goBack, selectedCategoryFilter, setSelectedCategoryFilter } = useCart();
   
   const [selectedCategories, setSelectedCategories] = useState(
     selectedCategoryFilter ? [selectedCategoryFilter] : []
   );
-  const [priceRange, setPriceRange] = useState([50, 2000]);
+  const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [isPriceFilterActive, setIsPriceFilterActive] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -28,6 +21,37 @@ export default function Shop() {
   const [inShopSearch, setInShopSearch] = useState('');
   const [currentPageNum, setCurrentPageNum] = useState(1);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  // Dynamic quick category list created from actual categories and product categories
+  const quickCategories = useMemo(() => {
+    const list = [{ id: 'all', label: 'All Items', category: '' }];
+    
+    if (Array.isArray(categories)) {
+      categories.forEach(cat => {
+        if (cat.name && !list.some(item => item.category?.toLowerCase() === cat.name?.toLowerCase())) {
+          list.push({
+            id: cat.id || cat.slug || cat.name,
+            label: cat.name,
+            category: cat.name,
+          });
+        }
+      });
+    }
+
+    if (Array.isArray(products)) {
+      products.forEach(p => {
+        if (p.category && !list.some(item => item.category?.toLowerCase() === p.category?.toLowerCase())) {
+          list.push({
+            id: `cat-${p.category.toLowerCase().replace(/\s+/g, '-')}`,
+            label: p.category,
+            category: p.category,
+          });
+        }
+      });
+    }
+
+    return list;
+  }, [categories, products]);
 
   // Category Ribbon Scroll & Drag State
   const categoryScrollRef = useRef(null);
@@ -49,7 +73,12 @@ export default function Shop() {
   // Dynamic category product counter
   const getCategoryCount = (catName) => {
     if (!catName) return products.length;
-    return products.filter(p => p.category === catName).length;
+    const catLower = catName.toLowerCase();
+    return products.filter(p => {
+      const pCat = (p.category || '').toLowerCase();
+      const pCatId = (p.categoryId || '').toLowerCase();
+      return pCat === catLower || pCatId === catLower || pCat.includes(catLower) || catLower.includes(pCat);
+    }).length;
   };
 
   // Check overflow and scroll positions for arrow buttons
@@ -113,13 +142,26 @@ export default function Shop() {
   // Filter products logic
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      // Category filter
-      if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
-        return false;
+      // Category filter (flexible and case-insensitive)
+      if (selectedCategories.length > 0) {
+        const matchesCategory = selectedCategories.some(catFilter => {
+          if (!catFilter) return true;
+          const filterLower = catFilter.toLowerCase();
+          const prodCat = (product.category || '').toLowerCase();
+          const prodCatId = (product.categoryId || '').toLowerCase();
+          return prodCat === filterLower || 
+                 prodCatId === filterLower ||
+                 prodCat.includes(filterLower) || 
+                 filterLower.includes(prodCat);
+        });
+        if (!matchesCategory) return false;
       }
-      // Price range filter
-      if (product.price < priceRange[0] || product.price > priceRange[1]) {
-        return false;
+      // Price range filter (only applied if price filter is activated or modified)
+      if (isPriceFilterActive) {
+        const pPrice = Number(product.price) || 0;
+        if (pPrice < priceRange[0] || pPrice > priceRange[1]) {
+          return false;
+        }
       }
       // Rating filter
       if (selectedRatings.length > 0) {
@@ -137,7 +179,7 @@ export default function Shop() {
       }
       return true;
     });
-  }, [products, selectedCategories, priceRange, selectedRatings, inShopSearch]);
+  }, [products, selectedCategories, isPriceFilterActive, priceRange, selectedRatings, inShopSearch]);
 
   // Sorting
   const sortedProducts = useMemo(() => {
@@ -152,7 +194,8 @@ export default function Shop() {
   const handleReset = () => {
     setSelectedCategories([]);
     if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
-    setPriceRange([50, 2000]);
+    setPriceRange([0, 10000]);
+    setIsPriceFilterActive(false);
     setSelectedRatings([]);
     setSelectedTags([]);
     setSelectedBrands([]);
@@ -254,9 +297,9 @@ export default function Shop() {
           className="flex items-center space-x-2 overflow-x-auto py-1 px-1 no-scrollbar touch-pan-x cursor-grab active:cursor-grabbing select-none w-full scroll-smooth"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
-          {QUICK_CATEGORIES.map((cat) => {
+          {quickCategories.map((cat) => {
             const isSelected = (!cat.category && selectedCategories.length === 0) ||
-              (cat.category && selectedCategories.length === 1 && selectedCategories[0] === cat.category);
+              (cat.category && selectedCategories.some(c => c.toLowerCase() === cat.category.toLowerCase()));
             const count = getCategoryCount(cat.category);
 
             return (
@@ -349,6 +392,7 @@ export default function Shop() {
             setSelectedCategories={setSelectedCategories}
             priceRange={priceRange}
             setPriceRange={setPriceRange}
+            setIsPriceFilterActive={setIsPriceFilterActive}
             selectedRatings={selectedRatings}
             setSelectedRatings={setSelectedRatings}
             onReset={handleReset}
@@ -363,6 +407,7 @@ export default function Shop() {
           setSelectedCategories={setSelectedCategories}
           priceRange={priceRange}
           setPriceRange={setPriceRange}
+          setIsPriceFilterActive={setIsPriceFilterActive}
           selectedRatings={selectedRatings}
           setSelectedRatings={setSelectedRatings}
           sortBy={sortBy}

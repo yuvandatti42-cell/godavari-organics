@@ -4,7 +4,7 @@ import ProductCard from './ProductCard';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function FeaturedHarvestProducts() {
-  const { products, setCurrentPage } = useCart();
+  const { products, setCurrentPage, setSelectedCategoryFilter } = useCart();
 
   // Select top featured products across categories from the shop
   const featuredList = products.filter(p => p.isBestseller || p.isPopular).slice(0, 8);
@@ -23,7 +23,7 @@ export default function FeaturedHarvestProducts() {
         </div>
         
         <button 
-          onClick={() => setCurrentPage('shop')}
+          onClick={() => { if (setSelectedCategoryFilter) setSelectedCategoryFilter(''); setCurrentPage('shop'); }}
           aria-label={`View all ${products.length} featured harvest products`}
           className="inline-flex items-center space-x-1 font-urbanist font-extrabold text-xs sm:text-sm text-[#103b1d] hover:text-[#18542a] underline underline-offset-4 transition-colors cursor-pointer"
         >
