@@ -1040,6 +1040,7 @@ export function CartProvider({ children }) {
   const isFreeShipping = cartSubtotal >= freeShippingThreshold && cartSubtotal > 0;
   // Shipping fee is 0 (free delivery option only; no arbitrary fixed charge)
   const shippingFee = 0;
+  const standardDeliveryCharge = 0;
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - cartSubtotal);
   const freeShippingProgress = Math.min(100, Math.round((cartSubtotal / freeShippingThreshold) * 100));
   const taxFee = 0;
