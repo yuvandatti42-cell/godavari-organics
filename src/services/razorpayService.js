@@ -6,8 +6,8 @@
  * Dynamically prioritizes UPI & QR Code when selected by customer.
  */
 
-// Official public Razorpay test key from Razorpay docs for instant sandbox testing
-const DEFAULT_TEST_KEY = 'rzp_test_1DP5mmOlF5G5ag';
+// Official Live Production Razorpay Key ID for Godavari Organic Foods
+export const LIVE_RAZORPAY_KEY = 'rzp_live_TxEroHWhWBTnwr';
 
 export function loadRazorpayScript() {
   if (typeof window === 'undefined') return Promise.resolve(false);
@@ -40,6 +40,10 @@ export function getRazorpayKey(customKey) {
   if (customKey && typeof customKey === 'string' && customKey.trim().startsWith('rzp_')) {
     return customKey.trim();
   }
+  const envKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+  if (envKey && envKey.startsWith('rzp_') && envKey !== 'rzp_test_placeholder') {
+    return envKey;
+  }
   if (typeof window !== 'undefined' && window.__RAZORPAY_KEY_ID__ && window.__RAZORPAY_KEY_ID__.startsWith('rzp_')) {
     return window.__RAZORPAY_KEY_ID__;
   }
@@ -49,11 +53,7 @@ export function getRazorpayKey(customKey) {
       return cached;
     }
   } catch (e) {}
-  const envKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
-  if (envKey && envKey.startsWith('rzp_') && envKey !== 'rzp_test_placeholder') {
-    return envKey;
-  }
-  return DEFAULT_TEST_KEY;
+  return LIVE_RAZORPAY_KEY;
 }
 
 export function setRazorpayRuntimeKey(key) {

@@ -153,7 +153,7 @@ export default function Checkout() {
 
     // Directly launch official Razorpay Checkout Gateway
     try {
-      const activeRazorpayKey = storeSettings?.payment?.razorpayKeyId || undefined;
+      const activeRazorpayKey = storeSettings?.payment?.razorpayKeyId || 'rzp_live_TxEroHWhWBTnwr';
       const merchantTitle = storeSettings?.payment?.merchantName || 'Godavari Organic Foods';
 
       await initiateRazorpayPayment({
