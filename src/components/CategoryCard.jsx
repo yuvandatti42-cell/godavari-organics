@@ -19,7 +19,7 @@ export default function CategoryCard({ category }) {
       {/* Soft Organic Warm Beige Rounded Card Frame (Godavari Brand Color Palette) */}
       <div className="w-full aspect-square bg-[#f3e8cc] hover:bg-[#e6dec9] border border-[#d9ca9d] hover:border-[#18542a]/60 rounded-[24px] xs:rounded-[28px] sm:rounded-[34px] p-2 xs:p-2.5 sm:p-3 flex items-center justify-center transition-all duration-300 group-hover:shadow-md overflow-hidden">
         <img 
-          src={category.image} 
+          src={category.imageUrl || category.image || '/categories/oil.webp'} 
           alt={category.name}
           width="200"
           height="200"

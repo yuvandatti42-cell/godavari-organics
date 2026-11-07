@@ -135,13 +135,17 @@ export function subscribeToStorefrontCategories(callback, onError) {
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         if (data.visibility === 'Hidden') return;
+        const catImage = data.imageUrl || data.image || '/categories/oil.webp';
         items.push({
           id: docSnap.id,
           name: data.name,
+          slug: data.slug || docSnap.id,
+          description: data.description || '',
           subtext: data.description || data.subtext || '',
           count: data.count || 0,
           bgTint: data.bgTint || 'bg-[#f3e8cc]',
-          image: data.imageUrl || data.image || '/categories/oil.webp',
+          image: catImage,
+          imageUrl: catImage,
           displayOrder: data.displayOrder || 0
         });
       });

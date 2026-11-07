@@ -692,36 +692,44 @@ export const INITIAL_PRODUCTS = [
 
 export const CATEGORIES = [
   { 
-    id: 'c1', 
+    id: 'cat-oils', 
     name: 'Oils', 
     subtext: 'Cold pressed pure organic oils & ghee', 
     count: 10,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/oil.webp'
+    image: '/categories/oil.webp',
+    imageUrl: '/categories/oil.webp',
+    displayOrder: 1
   },
   { 
-    id: 'c2', 
+    id: 'cat-rice', 
     name: 'Organic Rice', 
     subtext: 'Red, black & traditional sona masoori rice', 
     count: 3,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/rice.webp'
+    image: '/categories/rice.webp',
+    imageUrl: '/categories/rice.webp',
+    displayOrder: 2
   },
   { 
-    id: 'c3', 
+    id: 'cat-millets', 
     name: 'Organic Millets', 
     subtext: 'Unpolished native Siridhanya millets', 
     count: 5,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/millet.webp'
+    image: '/categories/millet.webp',
+    imageUrl: '/categories/millet.webp',
+    displayOrder: 3
   },
   { 
-    id: 'c4', 
+    id: 'cat-spices', 
     name: 'Organic Spices', 
     subtext: 'Pure stone ground turmeric & red chilli', 
     count: 2,
     bgTint: 'bg-[#f3e8cc]',
-    image: '/categories/spices.webp'
+    image: '/categories/spices.webp',
+    imageUrl: '/categories/spices.webp',
+    displayOrder: 4
   }
 ];
 
