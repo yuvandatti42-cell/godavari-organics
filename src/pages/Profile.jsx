@@ -15,7 +15,8 @@ import {
   Clock,
   ArrowRight,
   LogIn,
-  Truck
+  Truck,
+  ExternalLink
 } from 'lucide-react';
 
 export default function Profile() {
@@ -239,8 +240,40 @@ export default function Profile() {
                 <div className="text-xs text-[#556b54] flex items-start space-x-2">
                   <MapPin className="w-4 h-4 text-[#8c7355] shrink-0 mt-0.5" />
                   <span>
-                    Delivering to: {lastOrder.shippingAddress.address}, {lastOrder.shippingAddress.city}, {lastOrder.shippingAddress.pincode}
+                    Delivering to: {lastOrder.shippingAddress.address || lastOrder.shippingAddress.street}, {lastOrder.shippingAddress.city}, {lastOrder.shippingAddress.pincode}
                   </span>
+                </div>
+              )}
+
+              {/* Shiprocket Live Tracking */}
+              {lastOrder.shiprocketAwb ? (
+                <div className="pt-2 border-t border-[#dfd5bf]/60 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center space-x-2">
+                    <Truck className="w-4 h-4 text-[#18542a]" />
+                    <span className="font-semibold text-[#18542a]">
+                      Shiprocket AWB: <strong className="font-mono">{lastOrder.shiprocketAwb}</strong>
+                    </span>
+                    {lastOrder.shiprocketCourierName && (
+                      <span className="text-[11px] text-[#556b54]">({lastOrder.shiprocketCourierName})</span>
+                    )}
+                  </div>
+                  <a
+                    href={`https://shiprocket.co//tracking/${lastOrder.shiprocketAwb}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center space-x-1 font-bold text-[#18542a] hover:underline"
+                  >
+                    <span>Track Delivery</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              ) : (
+                <div className="pt-2 border-t border-[#dfd5bf]/60 flex items-center justify-between text-[11px] text-[#8c7355]">
+                  <span className="flex items-center space-x-1.5">
+                    <Truck className="w-3.5 h-3.5 text-[#18542a]" />
+                    <span>Courier: Shiprocket Express Partner Network</span>
+                  </span>
+                  <span className="font-medium text-[#18542a]">Standard Farm Dispatch</span>
                 </div>
               )}
             </div>

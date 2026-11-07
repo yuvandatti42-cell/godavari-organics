@@ -49,6 +49,14 @@ export default function OrderConfirmation() {
             <span className="font-bold text-[#103b1d]">3 - 4 Days (Express Farm Dispatch)</span>
           </div>
 
+          <div className="flex justify-between items-center border-b border-[#c8b894]/60 pb-2">
+            <span className="text-[#556b54] flex items-center gap-1.5">
+              <Leaf className="w-3.5 h-3.5 text-[#18542a]" />
+              <span>Logistics Partner:</span>
+            </span>
+            <span className="font-bold text-[#18542a]">Shiprocket Express (Delhivery / Blue Dart)</span>
+          </div>
+
           <div className="flex justify-between items-start border-b border-[#c8b894]/60 pb-2">
             <span className="text-[#556b54] flex items-center gap-1.5 shrink-0">
               <MapPin className="w-3.5 h-3.5" />
