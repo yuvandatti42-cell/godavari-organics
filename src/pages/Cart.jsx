@@ -14,22 +14,38 @@ export default function Cart() {
     cartCount,
     setCurrentPage, 
     goBack,
-    showToast 
+    showToast,
+    appliedCoupon,
+    applyCoupon,
+    removeCoupon,
+    discountAmount,
+    user,
+    setAuthModalOpen
   } = useCart();
 
-  const [couponCode, setCouponCode] = useState('');
-  const [couponApplied, setCouponApplied] = useState(false);
+  const [couponInput, setCouponInput] = useState('');
 
   const handleApplyCoupon = (e) => {
     e.preventDefault();
-    if (couponCode.trim()) {
-      setCouponApplied(true);
-      showToast(`Coupon "${couponCode.toUpperCase()}" applied!`);
+    if (!couponInput.trim()) {
+      showToast("Please enter a valid coupon code");
+      return;
+    }
+    const res = applyCoupon(couponInput);
+    showToast(res.message);
+    if (res.success) {
+      setCouponInput('');
     }
   };
 
-  const discountAmount = couponApplied ? Math.round(cartSubtotal * 0.10) : 0;
-  const finalTotal = cartTotal - discountAmount;
+  const handleProceedToCheckout = () => {
+    if (!user || !user.isLoggedIn) {
+      setAuthModalOpen(true);
+      showToast("Please log in to proceed to checkout");
+      return;
+    }
+    setCurrentPage('checkout');
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-4 md:py-8 space-y-6 font-sans">
@@ -177,10 +193,25 @@ export default function Cart() {
                 <span className="font-extrabold text-stone-900">₹{shippingFee}</span>
               </div>
 
-              {couponApplied && (
+              {appliedCoupon && discountAmount > 0 && (
                 <div className="flex justify-between items-center text-emerald-700 font-bold">
-                  <span>Discount (10%)</span>
-                  <span>-₹{discountAmount.toLocaleString('en-IN')}</span>
+                  <div className="flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Coupon ({appliedCoupon.code})</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>-₹{discountAmount.toLocaleString('en-IN')}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        removeCoupon();
+                        showToast('Coupon removed');
+                      }}
+                      className="text-[11px] text-red-600 hover:underline font-semibold cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -189,7 +220,7 @@ export default function Cart() {
             <div className="border-t border-stone-200/90 pt-4 flex justify-between items-center text-base sm:text-lg font-extrabold text-stone-900">
               <span>Total Amount</span>
               <span className="text-xl sm:text-2xl font-urbanist font-extrabold text-[#103b1d]">
-                ₹{finalTotal.toLocaleString('en-IN')}
+                ₹{cartTotal.toLocaleString('en-IN')}
               </span>
             </div>
 
@@ -198,10 +229,10 @@ export default function Cart() {
               <div className="flex space-x-2">
                 <input 
                   type="text" 
-                  placeholder="Enter Promo Code"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  className="flex-1 px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:bg-white focus:border-[#103b1d] focus:ring-1 focus:ring-[#103b1d] placeholder-stone-400 text-stone-900 font-medium transition-all"
+                  placeholder="Enter Store Coupon (e.g. GODAVARI10)"
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
+                  className="flex-1 px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:bg-white focus:border-[#103b1d] focus:ring-1 focus:ring-[#103b1d] placeholder-stone-400 text-stone-900 font-medium transition-all uppercase"
                 />
                 <button 
                   type="submit"
@@ -210,17 +241,19 @@ export default function Cart() {
                   Apply
                 </button>
               </div>
-              {couponApplied && (
-                <div className="text-xs text-emerald-700 font-semibold flex items-center space-x-1.5 pt-2">
-                  <Tag className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Coupon "{couponCode.toUpperCase()}" applied (10% OFF)!</span>
+              {appliedCoupon && (
+                <div className="text-xs text-emerald-700 font-semibold flex items-center justify-between pt-2">
+                  <span className="flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Coupon "{appliedCoupon.code}" active ({appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% OFF` : `₹${appliedCoupon.discountValue} OFF`})</span>
+                  </span>
                 </div>
               )}
             </form>
 
             {/* Proceed to Checkout CTA */}
             <button
-              onClick={() => setCurrentPage('checkout')}
+              onClick={handleProceedToCheckout}
               className="w-full py-3.5 sm:py-4 bg-[#103b1d] hover:bg-[#0c2d16] text-white font-urbanist font-extrabold text-base rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.99] text-center flex items-center justify-center gap-2 tracking-wide"
             >
               <span>Proceed to Checkout</span>

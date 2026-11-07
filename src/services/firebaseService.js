@@ -14,9 +14,39 @@ export const COLLECTIONS = {
   CATEGORIES: 'categories',
   ORDERS: 'orders',
   CUSTOMERS: 'customers',
+  PROMOTIONS: 'promotions',
   STORE_CONTENT: 'storeContent',
   NOTIFICATIONS: 'notifications'
 };
+
+// Real-time listener for live promotions & coupons synced from Admin
+export function subscribeToStorefrontPromotions(callback, onError) {
+  const q = query(collection(db, COLLECTIONS.PROMOTIONS));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const items = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        items.push({
+          id: docSnap.id,
+          ...data,
+          code: (data.code || '').toUpperCase().trim(),
+          discountType: data.discountType || 'percentage',
+          discountValue: Number(data.discountValue) || 0,
+          minOrderValue: Number(data.minOrderValue) || 0,
+          maxDiscount: data.maxDiscount ? Number(data.maxDiscount) : undefined,
+          status: data.status || 'Active'
+        });
+      });
+      callback(items);
+    },
+    (err) => {
+      console.warn('Storefront promotions subscription warning:', err);
+      if (onError) onError(err);
+    }
+  );
+}
 
 // Real-time listener for live products synced from Admin
 export function subscribeToStorefrontProducts(callback, onError) {

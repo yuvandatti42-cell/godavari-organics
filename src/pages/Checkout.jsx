@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
-import { ArrowLeft, Smartphone, CreditCard, Landmark, Truck, ShieldCheck, Lock } from 'lucide-react';
+import { ArrowLeft, CreditCard, ShieldCheck, Lock, CheckCircle2 } from 'lucide-react';
 import { initiateRazorpayPayment, loadRazorpayScript } from '../services/razorpayService';
 
 export default function Checkout() {
@@ -12,9 +12,12 @@ export default function Checkout() {
     goBack,
     showToast,
     user,
+    setAuthModalOpen,
     placeOrder,
     cartSubtotal,
-    shippingFee
+    shippingFee,
+    appliedCoupon,
+    discountAmount
   } = useCart();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +27,6 @@ export default function Checkout() {
     loadRazorpayScript();
   }, []);
 
-  const [paymentMethod, setPaymentMethod] = useState('upi');
   const [formData, setFormData] = useState({
     fullName: user?.name || '',
     phone: user?.phone || '',
@@ -37,6 +39,51 @@ export default function Checkout() {
     saveAddress: true
   });
 
+  // Keep user fields in sync if user logs in while on checkout
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: prev.fullName || user.name || '',
+        phone: prev.phone || user.phone || '',
+        email: prev.email || user.email || ''
+      }));
+    }
+  }, [user]);
+
+  // If user is not logged in, require login before checkout/payment
+  if (!user || !user.isLoggedIn) {
+    return (
+      <div className="w-full max-w-lg mx-auto px-4 py-16 text-center space-y-6 bg-white min-h-[70vh] flex flex-col justify-center items-center font-sans">
+        <div className="w-16 h-16 rounded-2xl bg-[#e8f0eb] text-[#18542a] flex items-center justify-center mx-auto shadow-xs">
+          <Lock className="w-8 h-8 stroke-[2.2]" />
+        </div>
+        <div className="space-y-2 max-w-sm">
+          <h2 className="font-urbanist font-extrabold text-2xl text-[#103b1d]">Login Required for Checkout</h2>
+          <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
+            Please sign in with your phone or email to access saved delivery addresses and secure online payments via Razorpay.
+          </p>
+        </div>
+        <div className="pt-2 flex flex-col gap-3 w-full max-w-xs">
+          <button
+            type="button"
+            onClick={() => setAuthModalOpen(true)}
+            className="w-full py-3.5 bg-[#18542a] hover:bg-[#124020] text-white font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+          >
+            <span>Login / Register to Continue</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrentPage('cart')}
+            className="w-full py-2.5 text-xs text-gray-600 hover:text-black font-semibold cursor-pointer"
+          >
+            ← Back to Cart
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -44,6 +91,16 @@ export default function Checkout() {
       [name]: type === 'checkbox' ? checked : value
     });
   };
+
+  // Demo fallback items matching catalog if cart is empty
+  const displayItems = cartItems.length > 0 ? cartItems : [
+    { id: 'p_oil_groundnut', name: 'Cold Pressed Groundnut Oil', selectedSize: '1 Litre', quantity: 1, price: 399 },
+    { id: 'p_spice_turmeric', name: 'High-Curcumin Turmeric Powder', selectedSize: '250g', quantity: 1, price: 120 }
+  ];
+
+  const finalPayableTotal = cartItems.length > 0 
+    ? cartTotal 
+    : displayItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
@@ -71,24 +128,18 @@ export default function Checkout() {
       imageUrl: item.image
     }));
 
-    const methodLabels = {
-      upi: "UPI (GPay / PhonePe / Razorpay)",
-      card: "Credit / Debit Card (Razorpay)",
-      netbanking: "Net Banking (Razorpay)",
-      cod: "Cash on Delivery"
-    };
-
     const orderPayload = {
       id: "GOF-" + Math.floor(100000 + Math.random() * 900000),
       customerName: formData.fullName.trim(),
       customerPhone: formData.phone.trim(),
       customerEmail: formData.email.trim() || (formData.phone.trim() + "@customer.godavariorganics.com"),
       items: orderItems,
-      subtotal: cartSubtotal || finalDisplayTotal,
+      subtotal: cartSubtotal,
       deliveryCharge: shippingFee || 0,
-      discount: 0,
-      total: finalDisplayTotal,
-      paymentMethod: methodLabels[paymentMethod] || "Razorpay (Online)",
+      discount: discountAmount || 0,
+      couponCode: appliedCoupon?.code || null,
+      total: finalPayableTotal,
+      paymentMethod: "Razorpay (Online)",
       shippingAddress: {
         street: (formData.address1 + " " + (formData.address2 || "")).trim(),
         city: formData.city.trim(),
@@ -97,30 +148,11 @@ export default function Checkout() {
       }
     };
 
-    // If Cash on Delivery, place order directly without gateway modal
-    if (paymentMethod === 'cod') {
-      try {
-        orderPayload.paymentStatus = 'Pending';
-        await placeOrder(orderPayload);
-        showToast("Order #" + orderPayload.id + " placed! Cash on delivery selected.");
-        setTimeout(() => {
-          setCurrentPage("order-success");
-        }, 500);
-      } catch (err) {
-        console.error(err);
-        showToast("Order #" + orderPayload.id + " placed successfully!");
-        setCurrentPage("order-success");
-      } finally {
-        setIsSubmitting(false);
-      }
-      return;
-    }
-
-    // Directly launch the official Razorpay Checkout Gateway!
+    // Directly launch official Razorpay Checkout Gateway
     try {
       await initiateRazorpayPayment({
         orderPayload,
-        preferredMethod: paymentMethod,
+        preferredMethod: 'upi',
         onSuccess: async (rzpRes) => {
           try {
             const finalOrder = {
@@ -128,7 +160,7 @@ export default function Checkout() {
               paymentId: rzpRes.paymentId,
               razorpayOrderId: rzpRes.orderId || null,
               paymentStatus: 'Paid',
-              paymentMethod: rzpRes.method || methodLabels[paymentMethod] || 'Razorpay Online'
+              paymentMethod: rzpRes.method || 'Razorpay (Online)'
             };
             await placeOrder(finalOrder);
             showToast(`Payment successful! Order #${orderPayload.id} confirmed.`);
@@ -149,7 +181,7 @@ export default function Checkout() {
         },
         onDismiss: () => {
           setIsSubmitting(false);
-          showToast("Payment window closed. You can retry or choose Cash on Delivery.");
+          showToast("Payment window closed. Please complete payment to confirm your order.");
         }
       });
     } catch (err) {
@@ -159,27 +191,27 @@ export default function Checkout() {
     }
   };
 
-  // Demo fallback items matching catalog if cart is empty
-  const displayItems = cartItems.length > 0 ? cartItems : [
-    { id: 'p_oil_groundnut', name: 'Cold Pressed Groundnut Oil', selectedSize: '1 Litre', quantity: 1, price: 399 },
-    { id: 'p_spice_turmeric', name: 'High-Curcumin Turmeric Powder', selectedSize: '250g', quantity: 1, price: 120 }
-  ];
-
-  const finalDisplayTotal = cartItems.length > 0 
-    ? cartTotal 
-    : displayItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-
   return (
     <div className="w-full max-w-lg mx-auto px-4 py-4 md:py-6 font-sans text-slate-900 bg-white min-h-screen">
       
       {/* Header Bar */}
       <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-gray-100">
-        <h1 className="font-bold text-lg sm:text-xl text-[#103b1d] tracking-tight">
-          Checkout
-        </h1>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => goBack()}
+            className="p-1 text-gray-500 hover:text-black rounded-lg cursor-pointer"
+            aria-label="Back to Cart"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="font-bold text-lg sm:text-xl text-[#103b1d] tracking-tight">
+            Checkout
+          </h1>
+        </div>
 
-        <span className="px-3 py-1 bg-gray-100 text-gray-700 font-medium text-xs rounded-full">
-          Step 1 of 3
+        <span className="px-3 py-1 bg-emerald-50 text-[#18542a] font-bold text-xs rounded-full border border-emerald-200">
+          Secure Razorpay Payment
         </span>
       </div>
 
@@ -199,7 +231,7 @@ export default function Checkout() {
                 id="checkout-fullName"
                 name="fullName"
                 autoComplete="name"
-                placeholder="e.g. Anand Kumar"
+                placeholder="e.g. Anand Varma"
                 value={formData.fullName}
                 onChange={handleChange}
                 className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-slate-800 text-slate-900"
@@ -207,13 +239,13 @@ export default function Checkout() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="checkout-phone" className="font-bold text-slate-800 block text-xs">Phone Number</label>
+              <label htmlFor="checkout-phone" className="font-bold text-slate-800 block text-xs">Phone Number (Required for Delivery & SMS)</label>
               <input 
                 type="tel" 
                 id="checkout-phone"
                 name="phone"
                 autoComplete="tel"
-                placeholder="e.g. +91 90100 88063"
+                placeholder="e.g. 9848022338"
                 value={formData.phone}
                 onChange={handleChange}
                 className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-slate-800 text-slate-900"
@@ -221,7 +253,7 @@ export default function Checkout() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="checkout-email" className="font-bold text-slate-800 block text-xs">Email Address</label>
+              <label htmlFor="checkout-email" className="font-bold text-slate-800 block text-xs">Email Address (Optional for Invoice)</label>
               <input 
                 type="email" 
                 id="checkout-email"
@@ -281,7 +313,7 @@ export default function Checkout() {
                   id="checkout-city"
                   name="city"
                   autoComplete="address-level2"
-                  placeholder="City Name"
+                  placeholder="e.g. Rajahmundry"
                   value={formData.city}
                   onChange={handleChange}
                   className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-slate-800 text-slate-900"
@@ -289,29 +321,29 @@ export default function Checkout() {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="checkout-state" className="font-bold text-slate-800 block text-xs">State</label>
+                <label htmlFor="checkout-pincode" className="font-bold text-slate-800 block text-xs">PIN Code</label>
                 <input 
                   type="text" 
-                  id="checkout-state"
-                  name="state"
-                  autoComplete="address-level1"
-                  placeholder="Select State"
-                  value={formData.state}
+                  id="checkout-pincode"
+                  name="pincode"
+                  autoComplete="postal-code"
+                  placeholder="e.g. 533101"
+                  value={formData.pincode}
                   onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-slate-800 text-slate-900"
+                  className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-slate-800 text-slate-900 font-mono"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="checkout-pincode" className="font-bold text-slate-800 block text-xs">PIN Code</label>
+              <label htmlFor="checkout-state" className="font-bold text-slate-800 block text-xs">State</label>
               <input 
                 type="text" 
-                id="checkout-pincode"
-                name="pincode"
-                autoComplete="postal-code"
-                placeholder="6-digit PIN code"
-                value={formData.pincode}
+                id="checkout-state"
+                name="state"
+                autoComplete="address-level1"
+                placeholder="Andhra Pradesh / Telangana"
+                value={formData.state}
                 onChange={handleChange}
                 className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-slate-800 text-slate-900"
               />
@@ -319,7 +351,7 @@ export default function Checkout() {
 
             <div className="flex items-center space-x-2 pt-1">
               <input 
-                type="checkbox"
+                type="checkbox" 
                 id="saveAddress"
                 name="saveAddress"
                 checked={formData.saveAddress}
@@ -335,46 +367,50 @@ export default function Checkout() {
 
         <hr className="border-gray-200 my-4" />
 
-        {/* Section 3: Items Summary */}
+        {/* Section 3: Items & Price Breakdown */}
         <section className="space-y-3">
           <h2 className="font-bold text-sm sm:text-base text-slate-900">
-            Items Summary
+            Order & Price Summary
           </h2>
 
           <div className="space-y-2 text-xs sm:text-sm font-medium">
-            {cartItems.length > 0 ? (
-              cartItems.map((item, index) => (
-                <div key={item.id} className="flex justify-between items-center text-slate-800">
-                  <span className="truncate pr-2">
-                    {index + 1}. {item.name} ({item.selectedSize}{item.quantity > 1 ? ` x ${item.quantity}` : ''})
-                  </span>
-                  <span className="font-bold text-slate-900 shrink-0">
-                    ₹{(item.price * item.quantity).toLocaleString('en-IN')}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <>
-                <div className="flex justify-between items-center text-slate-800">
-                  <span>1. Organic Basmati Rice (500g)</span>
-                  <span className="font-bold text-slate-900">₹299</span>
-                </div>
-                <div className="flex justify-between items-center text-slate-800">
-                  <span>2. Turmeric Powder (200g x 2)</span>
-                  <span className="font-bold text-slate-900">₹298</span>
-                </div>
-                <div className="flex justify-between items-center text-slate-800">
-                  <span>3. Cold Pressed Oil (1L)</span>
-                  <span className="font-bold text-slate-900">₹499</span>
-                </div>
-              </>
+            {cartItems.map((item, index) => (
+              <div key={`${item.id}-${item.selectedSize || ''}`} className="flex justify-between items-center text-slate-800">
+                <span className="truncate pr-2">
+                  {index + 1}. {item.name} ({item.selectedSize || item.weight}{item.quantity > 1 ? ` × ${item.quantity}` : ''})
+                </span>
+                <span className="font-bold text-slate-900 shrink-0">
+                  ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-3 border-t border-gray-200 space-y-1.5 text-xs text-gray-600 font-medium">
+            <div className="flex justify-between">
+              <span>Items Subtotal</span>
+              <span className="font-bold text-slate-900">₹{cartSubtotal.toLocaleString('en-IN')}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Delivery Charge</span>
+              <span className="font-bold text-slate-900">{shippingFee === 0 ? 'FREE' : `₹${shippingFee}`}</span>
+            </div>
+            {appliedCoupon && discountAmount > 0 && (
+              <div className="flex justify-between text-emerald-700 font-bold">
+                <span>Coupon Discount ({appliedCoupon.code})</span>
+                <span>-₹{discountAmount.toLocaleString('en-IN')}</span>
+              </div>
             )}
+            <div className="flex justify-between text-sm sm:text-base font-extrabold text-[#103b1d] pt-2 border-t border-gray-200">
+              <span>Final Total to Pay</span>
+              <span>₹{finalPayableTotal.toLocaleString('en-IN')}</span>
+            </div>
           </div>
         </section>
 
         <hr className="border-gray-200 my-4" />
 
-        {/* Section 4: Payment Method */}
+        {/* Section 4: Payment Method (Razorpay Online Only) */}
         <section className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
             <h2 className="font-bold text-sm sm:text-base text-slate-900">
@@ -386,110 +422,23 @@ export default function Checkout() {
             </div>
           </div>
 
-          <div className="space-y-2.5 text-xs sm:text-sm font-semibold">
-            {/* UPI */}
-            <label 
-              className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                paymentMethod === 'upi' 
-                  ? 'border-2 border-[#18542a] bg-[#f8faf8] shadow-xs' 
-                  : 'border border-gray-200 bg-white hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-3 text-slate-900">
-                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-[#18542a] flex items-center justify-center shrink-0">
-                  <Smartphone className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="block font-bold">UPI (GPay, PhonePe, Paytm, QR)</span>
-                  <span className="text-[11px] font-normal text-gray-500">Fast 1-tap payment via Razorpay</span>
-                </div>
+          {/* Single Razorpay Online Payment Option */}
+          <div className="p-4 rounded-xl border-2 border-[#18542a] bg-[#f8faf8] shadow-xs flex items-center justify-between">
+            <div className="flex items-center space-x-3.5 text-slate-900">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-[#18542a] flex items-center justify-center shrink-0">
+                <CreditCard className="w-5 h-5 stroke-[2.2]" />
               </div>
-              <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                paymentMethod === 'upi' ? 'border-[#18542a]' : 'border-gray-300'
-              }`}>
-                {paymentMethod === 'upi' && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#18542a]"></div>
-                )}
-              </div>
-            </label>
-
-            {/* Credit / Debit Card */}
-            <label 
-              className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                paymentMethod === 'card' 
-                  ? 'border-2 border-[#18542a] bg-[#f8faf8] shadow-xs' 
-                  : 'border border-gray-200 bg-white hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-3 text-slate-900">
-                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-[#18542a] flex items-center justify-center shrink-0">
-                  <CreditCard className="w-5 h-5" />
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="block font-bold text-sm text-[#103b1d]">Razorpay Online Payment</span>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#18542a] text-white">Secure</span>
                 </div>
-                <div>
-                  <span className="block font-bold">Credit / Debit Card</span>
-                  <span className="text-[11px] font-normal text-gray-500">Visa, Mastercard, RuPay, Amex</span>
-                </div>
+                <span className="text-[11px] text-gray-500 block mt-0.5">UPI (GPay / PhonePe / Paytm / QR), Debit/Credit Cards & Net Banking</span>
               </div>
-              <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                paymentMethod === 'card' ? 'border-[#18542a]' : 'border-gray-300'
-              }`}>
-                {paymentMethod === 'card' && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#18542a]"></div>
-                )}
-              </div>
-            </label>
-
-            {/* Net Banking */}
-            <label 
-              className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                paymentMethod === 'netbanking' 
-                  ? 'border-2 border-[#18542a] bg-[#f8faf8] shadow-xs' 
-                  : 'border border-gray-200 bg-white hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-3 text-slate-900">
-                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-[#18542a] flex items-center justify-center shrink-0">
-                  <Landmark className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="block font-bold">Net Banking</span>
-                  <span className="text-[11px] font-normal text-gray-500">SBI, HDFC, ICICI, Axis & 50+ Banks</span>
-                </div>
-              </div>
-              <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                paymentMethod === 'netbanking' ? 'border-[#18542a]' : 'border-gray-300'
-              }`}>
-                {paymentMethod === 'netbanking' && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#18542a]"></div>
-                )}
-              </div>
-            </label>
-
-            {/* Cash on Delivery */}
-            <label 
-              className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                paymentMethod === 'cod' 
-                  ? 'border-2 border-[#18542a] bg-[#f8faf8] shadow-xs' 
-                  : 'border border-gray-200 bg-white hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-3 text-slate-900">
-                <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
-                  <Truck className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="block font-bold">Cash on Delivery</span>
-                  <span className="text-[11px] font-normal text-gray-500">Pay cash upon doorstep delivery</span>
-                </div>
-              </div>
-              <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                paymentMethod === 'cod' ? 'border-[#18542a]' : 'border-gray-300'
-              }`}>
-                {paymentMethod === 'cod' && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#18542a]"></div>
-                )}
-              </div>
-            </label>
+            </div>
+            <div className="w-5 h-5 rounded-full border-2 border-[#18542a] flex items-center justify-center shrink-0">
+              <div className="w-2.5 h-2.5 rounded-full bg-[#18542a]"></div>
+            </div>
           </div>
         </section>
 
@@ -505,19 +454,17 @@ export default function Checkout() {
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 Opening Razorpay Gateway...
               </span>
-            ) : paymentMethod === 'cod' ? (
-              <span>Confirm Order (Cash on Delivery) — ₹{finalDisplayTotal.toLocaleString("en-IN")}</span>
             ) : (
               <span className="flex items-center gap-2">
                 <Lock className="w-4 h-4" />
-                <span>Pay ₹{finalDisplayTotal.toLocaleString("en-IN")} via Razorpay</span>
+                <span>Pay ₹{finalPayableTotal.toLocaleString("en-IN")} via Razorpay</span>
               </span>
             )}
           </button>
 
           <p className="text-center text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
             <Lock className="w-3 h-3 text-[#18542a]" />
-            <span>End-to-end encrypted • Certified by Razorpay & RBI regulations</span>
+            <span>100% Encrypted • Powered by Razorpay & RBI Regulations</span>
           </p>
         </div>
 

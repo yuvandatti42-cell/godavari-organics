@@ -2,14 +2,46 @@ import {
   subscribeToStorefrontProducts,
   subscribeToStorefrontCategories,
   subscribeToStorefrontContent,
+  subscribeToStorefrontPromotions,
   placeStorefrontOrder,
   syncStorefrontCustomer
 } from "../services/firebaseService.js";
 import { auth } from "../firebase.js";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 const CartContext = createContext();
+
+export const INITIAL_PROMOTIONS = [
+  {
+    id: 'promo-1',
+    code: 'GODAVARI10',
+    description: '10% discount on all organic harvest items',
+    discountType: 'percentage',
+    discountValue: 10,
+    minOrderValue: 999,
+    maxDiscount: 300,
+    status: 'Active',
+  },
+  {
+    id: 'promo-2',
+    code: 'FARMREADY200',
+    description: 'Flat ₹200 off on orders above ₹1,999',
+    discountType: 'fixed',
+    discountValue: 200,
+    minOrderValue: 1999,
+    status: 'Active',
+  },
+  {
+    id: 'promo-3',
+    code: 'BILONAGHEE',
+    description: 'Special ₹150 concession on Vedic A2 Gir Cow Ghee',
+    discountType: 'fixed',
+    discountValue: 150,
+    minOrderValue: 1450,
+    status: 'Active',
+  },
+];
 
 export const INITIAL_PRODUCTS = [
   // -------------------------------------------------------------
@@ -697,6 +729,7 @@ export function CartProvider({ children }) {
   const [products, setProducts] = useState(INITIAL_PRODUCTS);
   const [categories, setCategories] = useState(CATEGORIES);
   const [storeContent, setStoreContent] = useState(null);
+  const [promotions, setPromotions] = useState(INITIAL_PROMOTIONS);
   const [firebaseConnected, setFirebaseConnected] = useState(false);
   const [lastOrder, setLastOrder] = useState(null);
 
@@ -721,10 +754,17 @@ export function CartProvider({ children }) {
       }
     });
 
+    const unsubPromotions = subscribeToStorefrontPromotions((livePromos) => {
+      if (livePromos && livePromos.length > 0) {
+        setPromotions(livePromos);
+      }
+    });
+
     return () => {
       unsubProducts();
       unsubCategories();
       unsubContent();
+      unsubPromotions();
     };
   }, []);
   const [currentPage, setCurrentPageState] = useState(() => {
@@ -958,7 +998,61 @@ export function CartProvider({ children }) {
   const cartSubtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   const shippingFee = cartSubtotal > 1500 || cartSubtotal === 0 ? 0 : 50;
   const taxFee = 0; // Simplified to match wireframe directly (Subtotal + Delivery Charge)
-  const cartTotal = cartSubtotal + shippingFee;
+
+  // Promotion / Coupon state & application
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+
+  const applyCoupon = useCallback((code) => {
+    if (!code || !code.trim()) {
+      return { success: false, message: 'Please enter a coupon code.' };
+    }
+    const clean = code.trim().toUpperCase();
+    const promo = promotions.find(p => (p.code || '').toUpperCase() === clean);
+    if (!promo || promo.status !== 'Active') {
+      return { success: false, message: `Invalid coupon code "${clean}". Only admin published coupons are accepted.` };
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    if (promo.startDate && promo.startDate > today) {
+      return { success: false, message: `Coupon "${clean}" is not active yet.` };
+    }
+    if (promo.endDate && promo.endDate < today) {
+      return { success: false, message: `Coupon "${clean}" has expired.` };
+    }
+
+    if (promo.minOrderValue && cartSubtotal < promo.minOrderValue) {
+      return { 
+        success: false, 
+        message: `Coupon "${clean}" requires a minimum order of ₹${promo.minOrderValue.toLocaleString('en-IN')}.` 
+      };
+    }
+
+    setAppliedCoupon(promo);
+    return { success: true, message: `Coupon "${clean}" applied successfully!`, promo };
+  }, [promotions, cartSubtotal]);
+
+  const removeCoupon = useCallback(() => {
+    setAppliedCoupon(null);
+  }, []);
+
+  const discountAmount = useMemo(() => {
+    if (!appliedCoupon) return 0;
+    if (appliedCoupon.minOrderValue && cartSubtotal < appliedCoupon.minOrderValue) {
+      return 0;
+    }
+    let amount = 0;
+    if (appliedCoupon.discountType === 'percentage') {
+      amount = Math.round((cartSubtotal * appliedCoupon.discountValue) / 100);
+      if (appliedCoupon.maxDiscount && amount > appliedCoupon.maxDiscount) {
+        amount = appliedCoupon.maxDiscount;
+      }
+    } else {
+      amount = Number(appliedCoupon.discountValue) || 0;
+    }
+    return Math.min(amount, cartSubtotal);
+  }, [appliedCoupon, cartSubtotal]);
+
+  const cartTotal = Math.max(0, cartSubtotal + shippingFee - discountAmount);
 
   const navigateToProduct = (productId) => {
     setSelectedProductId(productId);
@@ -1025,6 +1119,11 @@ export function CartProvider({ children }) {
       shippingFee,
       taxFee,
       cartTotal,
+      promotions,
+      appliedCoupon,
+      applyCoupon,
+      removeCoupon,
+      discountAmount,
       notification,
       showToast,
       products,
