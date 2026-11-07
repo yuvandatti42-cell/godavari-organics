@@ -16,6 +16,8 @@ export default function Checkout() {
     placeOrder,
     cartSubtotal,
     shippingFee,
+    freeShippingThreshold = 1000,
+    isFreeShipping = false,
     appliedCoupon,
     discountAmount
   } = useCart();

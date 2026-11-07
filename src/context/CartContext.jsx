@@ -1014,26 +1014,20 @@ export function CartProvider({ children }) {
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const cartSubtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
-  // Dynamic Free Shipping & Delivery Fee calculation configured in Admin
+  // Dynamic Free Shipping threshold configured in Admin (default: 1000)
   const freeShippingThreshold = useMemo(() => {
     const fromSettings = storeSettings?.shipping?.freeShippingThreshold;
     const fromContent = storeContent?.shipping?.freeShippingThreshold;
     const val = Number(fromSettings !== undefined ? fromSettings : fromContent);
-    return !isNaN(val) && val > 0 ? val : 1500;
+    return !isNaN(val) && val > 0 ? val : 1000;
   }, [storeSettings, storeContent]);
 
-  const standardDeliveryCharge = useMemo(() => {
-    const fromSettings = storeSettings?.shipping?.standardDeliveryCharge;
-    const fromContent = storeContent?.shipping?.standardDeliveryCharge;
-    const val = Number(fromSettings !== undefined ? fromSettings : fromContent);
-    return !isNaN(val) && val >= 0 ? val : 50;
-  }, [storeSettings, storeContent]);
-
-  const isFreeShipping = cartSubtotal >= freeShippingThreshold || cartSubtotal === 0;
-  const shippingFee = isFreeShipping ? 0 : standardDeliveryCharge;
+  const isFreeShipping = cartSubtotal >= freeShippingThreshold && cartSubtotal > 0;
+  // Shipping fee is 0 (free delivery option only; no arbitrary fixed charge)
+  const shippingFee = 0;
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - cartSubtotal);
   const freeShippingProgress = Math.min(100, Math.round((cartSubtotal / freeShippingThreshold) * 100));
-  const taxFee = 0; // Simplified to match wireframe directly (Subtotal + Delivery Charge)
+  const taxFee = 0;
 
   // Promotion / Coupon state & application
   const [appliedCoupon, setAppliedCoupon] = useState(null);

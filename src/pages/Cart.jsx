@@ -245,12 +245,14 @@ export default function Cart() {
 
               <div className="flex justify-between items-center">
                 <span>Delivery Charge</span>
-                {isFreeShipping || shippingFee === 0 ? (
+                {isFreeShipping ? (
                   <span className="font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded text-xs border border-emerald-200">
                     FREE
                   </span>
                 ) : (
-                  <span className="font-extrabold text-stone-900">₹{shippingFee}</span>
+                  <span className="text-xs font-semibold text-emerald-800">
+                    FREE above ₹{freeShippingThreshold.toLocaleString('en-IN')}
+                  </span>
                 )}
               </div>
 

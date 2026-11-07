@@ -100,6 +100,16 @@ body {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+.animate-marquee-slow {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+
+.animate-marquee-slow:hover {
+  animation-play-state: paused;
+}
+
 
 /* Editorial Beige Frame Card */
 .editorial-card {
