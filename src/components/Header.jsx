@@ -29,7 +29,8 @@ export default function Header() {
     navigateToProduct,
     selectedCategoryFilter,
     setSelectedCategoryFilter,
-    products
+    products,
+    freeShippingThreshold
   } = useCart();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -61,7 +62,7 @@ export default function Header() {
           <div className="flex items-center space-x-4 text-[#f3e8cc]">
             <span className="hidden md:inline text-[#ffc926] font-bold flex items-center">
               <Truck className="w-3.5 h-3.5 inline mr-1 text-[#ffc926]" />
-              Free Shipping over ₹999
+              Free Shipping over ₹{(freeShippingThreshold || 1000).toLocaleString('en-IN')}
             </span>
             <span className="hidden md:inline opacity-40">|</span>
             <a 

@@ -1034,7 +1034,19 @@ export function CartProvider({ children }) {
     const fromSettings = storeSettings?.shipping?.freeShippingThreshold;
     const fromContent = storeContent?.shipping?.freeShippingThreshold;
     const val = Number(fromSettings !== undefined ? fromSettings : fromContent);
-    return !isNaN(val) && val > 0 ? val : 1000;
+    if (!isNaN(val) && val > 0) {
+      try {
+        localStorage.setItem('gof_free_shipping_threshold', String(val));
+      } catch (e) {}
+      return val;
+    }
+    try {
+      const cached = localStorage.getItem('gof_free_shipping_threshold');
+      if (cached && !isNaN(Number(cached)) && Number(cached) > 0) {
+        return Number(cached);
+      }
+    } catch (e) {}
+    return 1000;
   }, [storeSettings, storeContent]);
 
   const isFreeShipping = cartSubtotal >= freeShippingThreshold && cartSubtotal > 0;

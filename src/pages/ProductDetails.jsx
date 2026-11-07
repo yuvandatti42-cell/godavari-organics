@@ -27,7 +27,8 @@ export default function ProductDetails() {
     cartCount, 
     setSearchModalOpen,
     navigateToProduct,
-    showToast 
+    showToast,
+    freeShippingThreshold 
   } = useCart();
 
   const [selectedSize, setSelectedSize] = useState(
@@ -292,7 +293,7 @@ export default function ProductDetails() {
               <div className="grid grid-cols-3 gap-2 pt-4 border-t border-stone-100">
                 <div className="flex items-center space-x-2 text-[11px] font-bold text-[#556b54]">
                   <Truck className="w-4 h-4 text-[#18542a] shrink-0" />
-                  <span>Free Delivery &gt; ₹999</span>
+                  <span>Free Delivery &gt; ₹{(freeShippingThreshold || 1000).toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex items-center space-x-2 text-[11px] font-bold text-[#556b54]">
                   <ShieldCheck className="w-4 h-4 text-[#18542a] shrink-0" />

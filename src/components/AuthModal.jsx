@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 
 export default function AuthModal() {
-  const { authModalOpen, setAuthModalOpen, user, loginUser, logoutUser, showToast, cartCount, setCurrentPage } = useCart();
+  const { authModalOpen, setAuthModalOpen, user, loginUser, logoutUser, showToast, cartCount, setCurrentPage, freeShippingThreshold } = useCart();
   
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -911,7 +911,7 @@ export default function AuthModal() {
               <span className="text-[#d9ca9d]">•</span>
               <div className="flex items-center space-x-1">
                 <Truck className="w-3.5 h-3.5 text-[#9abc05] shrink-0" />
-                <span>Free Ship ₹999+</span>
+                <span>Free Ship ₹{(freeShippingThreshold || 1000).toLocaleString('en-IN')}+</span>
               </div>
               <span className="text-[#d9ca9d]">•</span>
               <div className="flex items-center space-x-1">
