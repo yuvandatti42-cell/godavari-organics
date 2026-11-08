@@ -771,24 +771,35 @@ export function CartProvider({ children }) {
     const unsubCategories = subscribeToStorefrontCategories((liveCategories) => {
       if (liveCategories && liveCategories.length > 0) {
         setCategories(() => {
-          const liveMap = new Map();
+          const catMap = new Map();
+          CATEGORIES.forEach(c => catMap.set(c.name.toLowerCase().trim(), { ...c }));
+
           liveCategories.forEach(lc => {
             const key = (lc.name || lc.id || '').toLowerCase().trim();
-            liveMap.set(key, {
-              ...lc,
-              image: lc.imageUrl || lc.image,
-              imageUrl: lc.imageUrl || lc.image,
-            });
-          });
+            const existing = Array.from(catMap.values()).find(c => 
+              c.name?.toLowerCase().trim() === key || 
+              c.id?.toLowerCase().trim() === key ||
+              key.includes(c.name.toLowerCase().trim())
+            );
 
-          CATEGORIES.forEach(c => {
-            const key = c.name.toLowerCase().trim();
-            if (!liveMap.has(key)) {
-              liveMap.set(key, { ...c });
+            if (existing) {
+              catMap.set(existing.name.toLowerCase().trim(), {
+                ...existing,
+                ...lc,
+                name: existing.name,
+                image: (lc.image && !lc.image.includes('unsplash.com')) ? lc.image : existing.image,
+                imageUrl: (lc.imageUrl && !lc.imageUrl.includes('unsplash.com')) ? lc.imageUrl : existing.imageUrl,
+              });
+            } else if (!key.includes('sample') && !key.includes('test')) {
+              catMap.set(key, {
+                ...lc,
+                image: lc.imageUrl || lc.image || '/categories/oil.webp',
+                imageUrl: lc.imageUrl || lc.image || '/categories/oil.webp',
+              });
             }
           });
 
-          const result = Array.from(liveMap.values());
+          const result = Array.from(catMap.values());
           result.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
           return result;
         });

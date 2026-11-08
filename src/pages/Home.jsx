@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import HeroSlider from '../components/HeroSlider';
 import CategoryCard from '../components/CategoryCard';
@@ -7,7 +7,7 @@ import FeaturedHarvestProducts from '../components/FeaturedHarvestProducts';
 import WhyChooseArma from '../components/WhyChooseArma';
 import CustomerReviews from '../components/CustomerReviews';
 import StoreLocation from '../components/StoreLocation';
-import { ArrowRight, PhoneCall, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, PhoneCall } from 'lucide-react';
 import { addCallbackRequest } from '../services/firebaseService';
 
 export default function Home() {
@@ -20,45 +20,6 @@ export default function Home() {
   } = useCart();
 
   const [isSubmittingCallback, setIsSubmittingCallback] = useState(false);
-  const categoryScrollRef = useRef(null);
-  const [isCategoryDragging, setIsCategoryDragging] = useState(false);
-  const [catStartX, setCatStartX] = useState(0);
-  const [catScrollLeft, setCatScrollLeft] = useState(0);
-
-  const handleCategoryMouseDown = (e) => {
-    if (!categoryScrollRef.current) return;
-    setIsCategoryDragging(true);
-    setCatStartX(e.pageX - categoryScrollRef.current.offsetLeft);
-    setCatScrollLeft(categoryScrollRef.current.scrollLeft);
-  };
-
-  const handleCategoryMouseLeave = () => {
-    setIsCategoryDragging(false);
-  };
-
-  const handleCategoryMouseUp = () => {
-    setIsCategoryDragging(false);
-  };
-
-  const handleCategoryMouseMove = (e) => {
-    if (!isCategoryDragging || !categoryScrollRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - categoryScrollRef.current.offsetLeft;
-    const walk = (x - catStartX) * 1.5;
-    categoryScrollRef.current.scrollLeft = catScrollLeft - walk;
-  };
-
-  const handleScrollCatLeft = () => {
-    if (categoryScrollRef.current) {
-      categoryScrollRef.current.scrollBy({ left: -320, behavior: 'smooth' });
-    }
-  };
-
-  const handleScrollCatRight = () => {
-    if (categoryScrollRef.current) {
-      categoryScrollRef.current.scrollBy({ left: 320, behavior: 'smooth' });
-    }
-  };
 
   const popularProducts = products.filter(p => p.isPopular);
 
@@ -78,47 +39,70 @@ export default function Home() {
             <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight">
               Our Harvest Categories
             </h2>
-            {/* Scroll navigation arrows for side-by-side categories */}
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handleScrollCatLeft}
-                aria-label="Scroll categories left"
-                className="w-8 h-8 rounded-full border border-[#d9ca9d] bg-white/80 hover:bg-[#18542a] text-[#18542a] hover:text-white flex items-center justify-center transition-colors shadow-2xs cursor-pointer active:scale-95"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={handleScrollCatRight}
-                aria-label="Scroll categories right"
-                className="w-8 h-8 rounded-full border border-[#d9ca9d] bg-white/80 hover:bg-[#18542a] text-[#18542a] hover:text-white flex items-center justify-center transition-colors shadow-2xs cursor-pointer active:scale-95"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
           </div>
 
-          {/* Dynamic Side-by-Side Category Ribbon: Mouse Drag on Laptop, Touch Swipe on Mobile */}
-          <div
-            ref={categoryScrollRef}
-            onMouseDown={handleCategoryMouseDown}
-            onMouseLeave={handleCategoryMouseLeave}
-            onMouseUp={handleCategoryMouseUp}
-            onMouseMove={handleCategoryMouseMove}
-            className={`flex items-stretch gap-3 xs:gap-4 sm:gap-6 lg:gap-8 overflow-x-auto no-scrollbar scroll-smooth py-2 select-none ${
-              isCategoryDragging ? 'cursor-grabbing' : 'cursor-grab'
-            }`}
-            style={{ WebkitOverflowScrolling: 'touch' }}
-          >
-            {categories.map((cat) => (
-              <div
-                key={cat.id}
-                className="shrink-0 w-[140px] xs:w-[160px] sm:w-[190px] md:w-[220px] lg:flex-1 lg:min-w-[200px]"
-              >
-                <CategoryCard category={cat} />
-              </div>
+          {/* 4-column equal frame row matching reference screenshot */}
+          <div className="grid grid-cols-4 gap-3 xs:gap-4 sm:gap-6 lg:gap-8 items-stretch">
+            {categories.slice(0, 4).map((cat) => (
+              <CategoryCard key={cat.id} category={cat} />
             ))}
           </div>
         </section>
+
+        {/* STANDALONE CERTIFIED QUALITY STANDARDS BADGES */}
+        {/* Desktop: One single horizontal line | Mobile: Continuous smooth right-to-left marquee scroll */}
+        <div className="mt-2 sm:mt-4 mb-3 sm:mb-5 py-1.5 sm:py-2 overflow-hidden">
+          {/* Mobile continuous right-to-left marquee scroll (< sm) */}
+          <div className="block sm:hidden w-full overflow-hidden relative">
+            <div className="animate-marquee whitespace-nowrap flex items-center space-x-8 py-1.5">
+              <div className="flex items-center space-x-8 shrink-0">
+                <img src="/fssai.webp" alt="FSSAI Certified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/USDA.gif" alt="USDA Organic" width="48" height="40" className="h-10 w-auto object-contain" />
+                <img src="/SGS.webp" alt="SGS Bio-Verified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/apeda-pure.webp" alt="APEDA Pure" width="90" height="40" className="h-10 w-auto object-contain" />
+              </div>
+              {/* Duplicated set for seamless continuous right-to-left marquee loop on mobile */}
+              <div className="flex items-center space-x-8 shrink-0">
+                <img src="/fssai.webp" alt="FSSAI Certified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/USDA.gif" alt="USDA Organic" width="48" height="40" className="h-10 w-auto object-contain" />
+                <img src="/SGS.webp" alt="SGS Bio-Verified" width="90" height="36" className="h-9 w-auto object-contain" />
+                <img src="/apeda-pure.webp" alt="APEDA Pure" width="90" height="40" className="h-10 w-auto object-contain" />
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop floating logos row (>= sm) */}
+          <div className="hidden sm:flex items-center justify-around gap-6 md:gap-10 lg:gap-14 py-2 px-4 max-w-4xl mx-auto">
+            <img 
+              src="/fssai.webp" 
+              alt="FSSAI Certified" 
+              width="110"
+              height="48"
+              className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+            <img 
+              src="/USDA.gif" 
+              alt="USDA Organic" 
+              width="58"
+              height="48"
+              className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+            <img 
+              src="/SGS.webp" 
+              alt="SGS Bio-Verified" 
+              width="110"
+              height="48"
+              className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+            <img 
+              src="/apeda-pure.webp" 
+              alt="APEDA Pure" 
+              width="110"
+              height="48"
+              className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
+            />
+          </div>
+        </div>
 
       </div>
 

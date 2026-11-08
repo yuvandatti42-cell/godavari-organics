@@ -10,8 +10,9 @@ export const HERO_SLIDES = [
     headlineMain: 'Know your oil.',
     headlineSub: 'Trust every meal.',
     subtitle: 'Discover the flavour. Explore the traditional slow wooden pressing process.',
-    title: '100% Pure Cold Pressed Natural Oils',
+    title: 'Pure Cold Pressed Natural Oils',
     bannerImage: '/banners/banner_oil.webp',
+    desktopImage: '/banners/hero_oil_editorial.webp',
     buttonText: 'Shop Oils',
     buttonTextColor: 'text-[#18542a]'
   },
@@ -24,6 +25,7 @@ export const HERO_SLIDES = [
     subtitle: 'Slow simmered bilona ghee handcrafted from cultured curd of grass-fed desi cows.',
     title: 'Pure Vedic Bilona Desi Cow A2 Ghee',
     bannerImage: '/banners/banner_ghee.webp',
+    desktopImage: '/banners/hero_ghee_editorial.webp',
     buttonText: 'Shop Ghee',
     buttonTextColor: 'text-[#92400e]'
   },
@@ -35,7 +37,8 @@ export const HERO_SLIDES = [
     headlineSub: 'Pure daily energy.',
     subtitle: 'Unpolished traditional grains sourced directly from fertile Godavari river delta farms.',
     title: 'Wholesome Millet Power & Siridhanya',
-    bannerImage: '/hero.webp',
+    bannerImage: '/banners/hero_millets_editorial.webp',
+    desktopImage: '/banners/hero_millets_editorial.webp',
     buttonText: 'Shop Millets',
     buttonTextColor: 'text-[#18542a]'
   },
@@ -48,6 +51,7 @@ export const HERO_SLIDES = [
     subtitle: 'Naturally grown red, black & aged sona masoori rice harvested from native heirloom seeds.',
     title: 'Traditional Godavari Heritage Rice',
     bannerImage: '/banners/banner_rice.webp',
+    desktopImage: '/banners/hero_rice_editorial.webp',
     buttonText: 'Shop Rice',
     buttonTextColor: 'text-[#991b1b]'
   },
@@ -60,6 +64,7 @@ export const HERO_SLIDES = [
     subtitle: 'Hand-picked turmeric, chillies, and aromatic whole spices with zero adulteration.',
     title: 'Pure Stone Ground Spices & Turmeric',
     bannerImage: '/banners/banner_spices.webp',
+    desktopImage: '/banners/hero_spices_editorial.webp',
     buttonText: 'Shop Spices',
     buttonTextColor: 'text-[#78350f]'
   }
@@ -68,18 +73,19 @@ export const HERO_SLIDES = [
 export default function HeroSlider() {
   const { setCurrentPage, navigateToProduct, heroSlides, setSelectedCategoryFilter } = useCart();
 
-  const effectiveSlides = (heroSlides && heroSlides.filter(s => s.active !== false).length > 0)
-    ? heroSlides.filter(s => s.active !== false).map((s, idx) => ({
+  const effectiveSlides = (heroSlides && heroSlides.filter(s => s.active !== false && s.imageUrl && !s.imageUrl.includes('unsplash.com')).length > 0)
+    ? heroSlides.filter(s => s.active !== false && s.imageUrl && !s.imageUrl.includes('unsplash.com')).map((s, idx) => ({
         id: s.id || ("slide-" + idx),
         productId: s.productId || s.link || s.ctaLink || HERO_SLIDES[idx % HERO_SLIDES.length]?.productId || "p_oil_groundnut",
-        eyebrow: (s.badgeText || "CERTIFIED ORGANIC").replace(/100%\s*ORGANIC/gi, "CERTIFIED ORGANIC"),
-        headlineMain: s.title || "Pure Organic Harvest",
-        headlineSub: "",
-        subtitle: s.subtitle || "",
-        title: s.title || "Godavari Organic Foods",
-        bannerImage: s.imageUrl || "/banners/banner_oil.webp",
-        buttonText: s.ctaText || "Shop Now",
-        buttonTextColor: "text-[#18542a]"
+        eyebrow: (s.badgeText || HERO_SLIDES[idx % HERO_SLIDES.length]?.eyebrow || "CERTIFIED ORGANIC").replace(/100%\s*ORGANIC/gi, "CERTIFIED ORGANIC"),
+        headlineMain: s.title || HERO_SLIDES[idx % HERO_SLIDES.length]?.headlineMain,
+        headlineSub: s.subtitle || HERO_SLIDES[idx % HERO_SLIDES.length]?.headlineSub,
+        subtitle: s.description || HERO_SLIDES[idx % HERO_SLIDES.length]?.subtitle,
+        title: s.title || HERO_SLIDES[idx % HERO_SLIDES.length]?.title,
+        bannerImage: s.imageUrl || HERO_SLIDES[idx % HERO_SLIDES.length]?.bannerImage,
+        desktopImage: s.imageUrl || HERO_SLIDES[idx % HERO_SLIDES.length]?.desktopImage,
+        buttonText: s.ctaText || HERO_SLIDES[idx % HERO_SLIDES.length]?.buttonText || "Shop Collection",
+        buttonTextColor: HERO_SLIDES[idx % HERO_SLIDES.length]?.buttonTextColor || "text-[#18542a]"
       }))
     : HERO_SLIDES;
 
@@ -498,7 +504,7 @@ export default function HeroSlider() {
               {effectiveSlides.map((slide, idx) => (
                 <img
                   key={slide.id}
-                  src={slide.bannerImage}
+                  src={slide.desktopImage || slide.bannerImage}
                   alt={slide.title}
                   width="800"
                   height="500"
