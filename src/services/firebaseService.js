@@ -103,13 +103,25 @@ export function subscribeToStorefrontProducts(callback, onError) {
           ? `${Math.round(((origPrice - price) / origPrice) * 100)}% OFF` 
           : (data.discount || '');
 
+        const catName = data.category || data.categoryName || 'General';
+        let catId = data.categoryId;
+        if (!catId) {
+          const lower = catName.toLowerCase();
+          if (lower.includes('rice')) catId = 'cat-rice';
+          else if (lower.includes('oil') || lower.includes('ghee')) catId = 'cat-oils';
+          else if (lower.includes('millet')) catId = 'cat-millets';
+          else if (lower.includes('spice')) catId = 'cat-spices';
+          else catId = `cat-${lower.replace(/\s+/g, '-')}`;
+        }
+
         items.push({
           id: docSnap.id,
           name: data.name,
           shortName: data.shortName || data.name,
           subtitle: data.subtitle || data.description?.slice(0, 60) || '',
-          category: data.category || data.categoryName || 'General',
-          categoryId: data.categoryId,
+          category: catName,
+          categoryName: catName,
+          categoryId: catId,
           packSizes: Array.isArray(data.packSizes) && data.packSizes.length > 0 ? data.packSizes : [unit],
           weight: unit,
           price: price,
@@ -154,13 +166,14 @@ export function subscribeToStorefrontCategories(callback, onError) {
         const data = docSnap.data();
         if (data.visibility === 'Hidden') return;
         let catImage = data.imageUrl || data.image;
-        const nameLower = (data.name || docSnap.id).toLowerCase();
-        if (nameLower.includes('rice')) catImage = '/categories/rice.webp';
-        else if (nameLower.includes('millet')) catImage = '/categories/millet.webp';
-        else if (nameLower.includes('spice')) catImage = '/categories/spices.webp';
-        else if (nameLower.includes('ghee') || nameLower.includes('cow')) catImage = '/categories/desi_cow_ghee.webp';
-        else if (nameLower.includes('oil')) catImage = '/categories/oil.webp';
-        else if (!catImage) catImage = '/categories/oil.webp';
+        if (!catImage) {
+          const nameLower = (data.name || docSnap.id).toLowerCase();
+          if (nameLower.includes('rice')) catImage = '/categories/rice.webp';
+          else if (nameLower.includes('millet')) catImage = '/categories/millet.webp';
+          else if (nameLower.includes('spice')) catImage = '/categories/spices.webp';
+          else if (nameLower.includes('ghee') || nameLower.includes('cow')) catImage = '/categories/desi_cow_ghee.webp';
+          else catImage = '/categories/oil.webp';
+        }
         items.push({
           id: docSnap.id,
           name: data.name,

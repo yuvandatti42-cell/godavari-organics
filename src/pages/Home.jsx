@@ -46,61 +46,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* STANDALONE CERTIFIED QUALITY STANDARDS BADGES */}
-        {/* Desktop: One single horizontal line | Mobile: Continuous smooth right-to-left marquee scroll */}
-        <div className="mt-2 sm:mt-4 mb-3 sm:mb-5 py-1.5 sm:py-2 overflow-hidden">
-          {/* Mobile continuous right-to-left marquee scroll (< sm) */}
-          <div className="block sm:hidden w-full overflow-hidden relative">
-            <div className="animate-marquee whitespace-nowrap flex items-center space-x-8 py-1.5">
-              <div className="flex items-center space-x-8 shrink-0">
-                <img src="/fssai.webp" alt="FSSAI Certified" width="90" height="36" className="h-9 w-auto object-contain" />
-                <img src="/USDA.gif" alt="USDA Organic" width="48" height="40" className="h-10 w-auto object-contain" />
-                <img src="/SGS.webp" alt="SGS Bio-Verified" width="90" height="36" className="h-9 w-auto object-contain" />
-                <img src="/apeda-pure.webp" alt="APEDA Pure" width="90" height="40" className="h-10 w-auto object-contain" />
-              </div>
-              {/* Duplicated set for seamless continuous right-to-left marquee loop on mobile */}
-              <div className="flex items-center space-x-8 shrink-0">
-                <img src="/fssai.webp" alt="FSSAI Certified" width="90" height="36" className="h-9 w-auto object-contain" />
-                <img src="/USDA.gif" alt="USDA Organic" width="48" height="40" className="h-10 w-auto object-contain" />
-                <img src="/SGS.webp" alt="SGS Bio-Verified" width="90" height="36" className="h-9 w-auto object-contain" />
-                <img src="/apeda-pure.webp" alt="APEDA Pure" width="90" height="40" className="h-10 w-auto object-contain" />
-              </div>
-            </div>
-          </div>
-
-          {/* Desktop floating logos row (>= sm) */}
-          <div className="hidden sm:flex items-center justify-around gap-6 md:gap-10 lg:gap-14 py-2 px-4 max-w-4xl mx-auto">
-            <img 
-              src="/fssai.webp" 
-              alt="FSSAI Certified" 
-              width="110"
-              height="48"
-              className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
-            />
-            <img 
-              src="/USDA.gif" 
-              alt="USDA Organic" 
-              width="58"
-              height="48"
-              className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
-            />
-            <img 
-              src="/SGS.webp" 
-              alt="SGS Bio-Verified" 
-              width="110"
-              height="48"
-              className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
-            />
-            <img 
-              src="/apeda-pure.webp" 
-              alt="APEDA Pure" 
-              width="110"
-              height="48"
-              className="h-12 sm:h-13 md:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer" 
-            />
-          </div>
-        </div>
-
       </div>
 
       {/* 4. FULL-WIDTH TICKER MARQUEE BAR */}

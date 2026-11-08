@@ -70,14 +70,22 @@ export default function Shop() {
     }
   }, [selectedCategoryFilter]);
 
-  // Dynamic category product counter
+  // Dynamic category product counter (Robust keyword & semantic matching)
   const getCategoryCount = (catName) => {
     if (!catName) return products.length;
-    const catLower = catName.toLowerCase();
+    const catLower = catName.toLowerCase().trim();
     return products.filter(p => {
-      const pCat = (p.category || '').toLowerCase();
-      const pCatId = (p.categoryId || '').toLowerCase();
-      return pCat === catLower || pCatId === catLower || pCat.includes(catLower) || catLower.includes(pCat);
+      const pCat = (p.category || p.categoryName || '').toLowerCase().trim();
+      const pCatId = (p.categoryId || '').toLowerCase().trim();
+      const pName = (p.name || '').toLowerCase();
+      if (pCat === catLower || pCatId === catLower) return true;
+      const keywords = ['rice', 'oil', 'millet', 'spice', 'ghee'];
+      for (const kw of keywords) {
+        if (catLower.includes(kw) && (pCat.includes(kw) || pCatId.includes(kw) || pName.includes(kw))) {
+          return true;
+        }
+      }
+      return pCat.includes(catLower) || catLower.includes(pCat);
     }).length;
   };
 
@@ -142,17 +150,25 @@ export default function Shop() {
   // Filter products logic
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      // Category filter (flexible and case-insensitive)
+      // Category filter (flexible, semantic and keyword-aware)
       if (selectedCategories.length > 0) {
         const matchesCategory = selectedCategories.some(catFilter => {
           if (!catFilter) return true;
-          const filterLower = catFilter.toLowerCase();
-          const prodCat = (product.category || '').toLowerCase();
-          const prodCatId = (product.categoryId || '').toLowerCase();
-          return prodCat === filterLower || 
-                 prodCatId === filterLower ||
-                 prodCat.includes(filterLower) || 
-                 filterLower.includes(prodCat);
+          const filterLower = catFilter.toLowerCase().trim();
+          const prodCat = (product.category || product.categoryName || '').toLowerCase().trim();
+          const prodCatId = (product.categoryId || '').toLowerCase().trim();
+          const prodName = (product.name || '').toLowerCase();
+          
+          if (prodCat === filterLower || prodCatId === filterLower) return true;
+          
+          const keywords = ['rice', 'oil', 'millet', 'spice', 'ghee'];
+          for (const kw of keywords) {
+            if (filterLower.includes(kw) && (prodCat.includes(kw) || prodCatId.includes(kw) || prodName.includes(kw))) {
+              return true;
+            }
+          }
+          
+          return prodCat.includes(filterLower) || filterLower.includes(prodCat);
         });
         if (!matchesCategory) return false;
       }
