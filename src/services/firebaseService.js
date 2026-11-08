@@ -17,7 +17,8 @@ export const COLLECTIONS = {
   PROMOTIONS: 'promotions',
   STORE_CONTENT: 'storeContent',
   NOTIFICATIONS: 'notifications',
-  SETTINGS: 'settings'
+  SETTINGS: 'settings',
+  CALLBACKS: 'callbackRequests'
 };
 
 // Real-time listener for live promotions & coupons synced from Admin
@@ -395,5 +396,44 @@ export async function syncStorefrontCustomer(userData) {
     }
   } catch (e) {
     console.warn('Sync customer non-blocking error:', e);
+  }
+}
+
+// Push a customer callback request to Firestore
+export async function addCallbackRequest(phone, source = 'Website Quick Callback') {
+  if (!phone || !phone.trim()) return false;
+  const cleanPhone = phone.trim();
+  const id = `cb-${Date.now()}`;
+  const now = new Date().toISOString();
+  try {
+    const cbRef = doc(db, COLLECTIONS.CALLBACKS, id);
+    await setDoc(cbRef, {
+      id,
+      phone: cleanPhone,
+      timestamp: now,
+      status: 'Pending',
+      source,
+      notes: ''
+    });
+
+    // Also push a live notification to admin notifications collection
+    try {
+      const notifRef = doc(db, COLLECTIONS.NOTIFICATIONS, `notif-cb-${Date.now()}`);
+      await setDoc(notifRef, {
+        id: `notif-cb-${Date.now()}`,
+        title: 'New Callback Request',
+        message: `Customer requested a callback at ${cleanPhone}`,
+        timestamp: now,
+        type: 'customer',
+        read: false,
+        link: '/dashboard'
+      });
+    } catch (nErr) {
+      console.warn('Admin notification creation warning:', nErr);
+    }
+    return true;
+  } catch (err) {
+    console.error('Failed to save callback request to Firestore:', err);
+    throw err;
   }
 }

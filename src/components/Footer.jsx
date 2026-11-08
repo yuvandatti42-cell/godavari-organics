@@ -311,18 +311,6 @@ export default function Footer() {
             <p className="text-xs text-[#f3e8cc] leading-relaxed">
               Every product is batch-tested for zero synthetic chemical residues and certified under NPOP Jaivik Bharat organic norms.
             </p>
-
-            <div className="pt-2 space-y-2">
-              <span className="text-[11px] font-bold text-[#ffc926] block">Accepted Safe Payments:</span>
-              <div className="flex flex-wrap gap-1.5 text-[10px] font-bold text-white">
-                <span className="bg-white/15 px-2.5 py-1 rounded-full border border-white/10">UPI</span>
-                <span className="bg-white/15 px-2.5 py-1 rounded-full border border-white/10">GPay</span>
-                <span className="bg-white/15 px-2.5 py-1 rounded-full border border-white/10">PhonePe</span>
-                <span className="bg-white/15 px-2.5 py-1 rounded-full border border-white/10">Paytm</span>
-                <span className="bg-white/15 px-2.5 py-1 rounded-full border border-white/10">Cards</span>
-                <span className="bg-[#d52518] px-2.5 py-1 rounded-full">COD</span>
-              </div>
-            </div>
           </div>
 
         </div>

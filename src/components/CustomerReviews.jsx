@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
-import { Star, CheckCircle2 } from 'lucide-react';
+import { Star, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const DEFAULT_REVIEWS = [
   {
@@ -32,28 +32,29 @@ const DEFAULT_REVIEWS = [
 export default function CustomerReviews() {
   const { storeContent } = useCart();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [desktopIndex, setDesktopIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Touch swipe refs
+  // Touch swipe refs for mobile
   const touchStartX = useRef(null);
   const touchEndX = useRef(null);
   const minSwipeDistance = 40;
 
   // Use testimonials from admin if present, else fallback
-  const rawReviews = (storeContent?.testimonials && storeContent.testimonials.length > 0)
+  const rawReviews = (storeContent?.testimonials && Array.isArray(storeContent.testimonials) && storeContent.testimonials.length > 0)
     ? storeContent.testimonials
     : DEFAULT_REVIEWS;
 
-  const reviews = rawReviews.slice(0, 6).map((rev, idx) => ({
+  const reviews = rawReviews.map((rev, idx) => ({
     id: rev.id || `rev-${idx}`,
-    name: rev.name || 'Verified Customer',
-    location: rev.location || 'Andhra Pradesh',
+    name: rev.name || rev.customerName || 'Verified Customer',
+    location: rev.location || rev.role || 'Andhra Pradesh',
     rating: Number(rev.rating) || 5,
-    quote: rev.quote || rev.comment || '',
-    avatar: rev.avatar || rev.avatarUrl || DEFAULT_REVIEWS[idx % DEFAULT_REVIEWS.length].avatar
+    quote: rev.quote || rev.comment || rev.content || '',
+    avatar: rev.avatar || rev.avatarUrl || rev.image || rev.imageUrl || DEFAULT_REVIEWS[idx % DEFAULT_REVIEWS.length].avatar
   }));
 
-  // Auto-slide effect for mobile
+  // Auto-slide effect for mobile (1 card at a time)
   useEffect(() => {
     if (isPaused) return;
 
@@ -63,6 +64,27 @@ export default function CustomerReviews() {
 
     return () => clearInterval(interval);
   }, [isPaused, reviews.length]);
+
+  // Rotating motion for desktop when reviews > 3
+  const maxDesktopIndex = Math.max(0, reviews.length - 3);
+
+  useEffect(() => {
+    if (isPaused || reviews.length <= 3) return;
+
+    const interval = setInterval(() => {
+      setDesktopIndex((prev) => (prev >= maxDesktopIndex ? 0 : prev + 1));
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, reviews.length, maxDesktopIndex]);
+
+  const handlePrevDesktop = () => {
+    setDesktopIndex((prev) => (prev <= 0 ? maxDesktopIndex : prev - 1));
+  };
+
+  const handleNextDesktop = () => {
+    setDesktopIndex((prev) => (prev >= maxDesktopIndex ? 0 : prev + 1));
+  };
 
   const handleTouchStart = (e) => {
     touchEndX.current = null;
@@ -88,9 +110,31 @@ export default function CustomerReviews() {
 
   return (
     <section className="space-y-4 sm:space-y-6">
-      <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight text-left">
-        What Our Customers Say
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight text-left">
+          What Our Customers Say
+        </h2>
+
+        {/* Desktop Controls (visible only when reviews > 3) */}
+        {reviews.length > 3 && (
+          <div className="hidden md:flex items-center space-x-2">
+            <button
+              onClick={handlePrevDesktop}
+              aria-label="Previous customer review"
+              className="w-8 h-8 rounded-full border border-[#d9ca9d] bg-white/80 hover:bg-[#18542a] text-[#18542a] hover:text-white flex items-center justify-center transition-colors shadow-2xs cursor-pointer active:scale-95"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={handleNextDesktop}
+              aria-label="Next customer review"
+              className="w-8 h-8 rounded-full border border-[#d9ca9d] bg-white/80 hover:bg-[#18542a] text-[#18542a] hover:text-white flex items-center justify-center transition-colors shadow-2xs cursor-pointer active:scale-95"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* MOBILE RESPONSIVE SLIDER (< md) - SHOWS 1 REVIEW AT A TIME WITH SLIDING */}
       <div className="block md:hidden">
@@ -131,11 +175,51 @@ export default function CustomerReviews() {
         </div>
       </div>
 
-      {/* DESKTOP GRID (>= md) - SHOWS ALL REVIEWS SIDE BY SIDE */}
-      <div className="hidden md:grid md:grid-cols-3 gap-5">
-        {reviews.slice(0, 3).map((rev) => (
-          <ReviewCard key={rev.id} review={rev} />
-        ))}
+      {/* DESKTOP VIEW (>= md) - SIDE BY SIDE WITH ROTATION MOTION WHEN > 3 */}
+      <div 
+        className="hidden md:block relative"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        {reviews.length <= 3 ? (
+          <div className="grid grid-cols-3 gap-5">
+            {reviews.map((rev) => (
+              <ReviewCard key={rev.id} review={rev} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {/* Sliding Carousel Rail Showing 3 Reviews Side-by-Side */}
+            <div className="overflow-hidden rounded-3xl py-1">
+              <div 
+                className="flex transition-transform duration-700 ease-in-out -mx-2.5"
+                style={{ transform: `translateX(-${desktopIndex * (100 / 3)}%)` }}
+              >
+                {reviews.map((rev) => (
+                  <div key={rev.id} className="w-1/3 shrink-0 px-2.5">
+                    <ReviewCard review={rev} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Indicator dots for desktop carousel */}
+            <div className="flex items-center justify-center space-x-1.5 pt-2">
+              {Array.from({ length: maxDesktopIndex + 1 }).map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setDesktopIndex(idx)}
+                  aria-label={`Go to reviews group ${idx + 1}`}
+                  className={`transition-all duration-300 rounded-full cursor-pointer ${
+                    desktopIndex === idx 
+                      ? 'w-6 h-2 bg-[#18542a]' 
+                      : 'w-2 h-2 bg-[#d9ca9d] hover:bg-[#b8a77a]'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

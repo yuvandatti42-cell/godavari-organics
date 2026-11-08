@@ -771,23 +771,26 @@ export function CartProvider({ children }) {
     const unsubCategories = subscribeToStorefrontCategories((liveCategories) => {
       if (liveCategories && liveCategories.length > 0) {
         setCategories(() => {
-          const catMap = new Map();
-          CATEGORIES.forEach(c => catMap.set(c.name.toLowerCase(), { ...c }));
+          const liveMap = new Map();
           liveCategories.forEach(lc => {
-            const keyLower = (lc.name || '').toLowerCase();
-            const existing = Array.from(catMap.values()).find(c => c.name?.toLowerCase() === keyLower);
-            if (existing) {
-              catMap.set(keyLower, {
-                ...existing,
-                ...lc,
-                image: lc.image || existing.image,
-                imageUrl: lc.imageUrl || existing.imageUrl
-              });
-            } else {
-              catMap.set(keyLower, lc);
+            const key = (lc.name || lc.id || '').toLowerCase().trim();
+            liveMap.set(key, {
+              ...lc,
+              image: lc.imageUrl || lc.image,
+              imageUrl: lc.imageUrl || lc.image,
+            });
+          });
+
+          CATEGORIES.forEach(c => {
+            const key = c.name.toLowerCase().trim();
+            if (!liveMap.has(key)) {
+              liveMap.set(key, { ...c });
             }
           });
-          return Array.from(catMap.values());
+
+          const result = Array.from(liveMap.values());
+          result.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+          return result;
         });
       }
     });

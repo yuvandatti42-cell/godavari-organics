@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import HeroSlider from '../components/HeroSlider';
 import CategoryCard from '../components/CategoryCard';
@@ -7,7 +7,8 @@ import FeaturedHarvestProducts from '../components/FeaturedHarvestProducts';
 import WhyChooseArma from '../components/WhyChooseArma';
 import CustomerReviews from '../components/CustomerReviews';
 import StoreLocation from '../components/StoreLocation';
-import { ArrowRight, PhoneCall } from 'lucide-react';
+import { ArrowRight, PhoneCall, ChevronLeft, ChevronRight } from 'lucide-react';
+import { addCallbackRequest } from '../services/firebaseService';
 
 export default function Home() {
   const { 
@@ -17,6 +18,47 @@ export default function Home() {
     showToast, 
     setSelectedCategoryFilter 
   } = useCart();
+
+  const [isSubmittingCallback, setIsSubmittingCallback] = useState(false);
+  const categoryScrollRef = useRef(null);
+  const [isCategoryDragging, setIsCategoryDragging] = useState(false);
+  const [catStartX, setCatStartX] = useState(0);
+  const [catScrollLeft, setCatScrollLeft] = useState(0);
+
+  const handleCategoryMouseDown = (e) => {
+    if (!categoryScrollRef.current) return;
+    setIsCategoryDragging(true);
+    setCatStartX(e.pageX - categoryScrollRef.current.offsetLeft);
+    setCatScrollLeft(categoryScrollRef.current.scrollLeft);
+  };
+
+  const handleCategoryMouseLeave = () => {
+    setIsCategoryDragging(false);
+  };
+
+  const handleCategoryMouseUp = () => {
+    setIsCategoryDragging(false);
+  };
+
+  const handleCategoryMouseMove = (e) => {
+    if (!isCategoryDragging || !categoryScrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - categoryScrollRef.current.offsetLeft;
+    const walk = (x - catStartX) * 1.5;
+    categoryScrollRef.current.scrollLeft = catScrollLeft - walk;
+  };
+
+  const handleScrollCatLeft = () => {
+    if (categoryScrollRef.current) {
+      categoryScrollRef.current.scrollBy({ left: -320, behavior: 'smooth' });
+    }
+  };
+
+  const handleScrollCatRight = () => {
+    if (categoryScrollRef.current) {
+      categoryScrollRef.current.scrollBy({ left: 320, behavior: 'smooth' });
+    }
+  };
 
   const popularProducts = products.filter(p => p.isPopular);
 
@@ -30,18 +72,50 @@ export default function Home() {
       {/* Main Page Body Container */}
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 pt-6 sm:pt-10 pb-2">
 
-        {/* 2. CATEGORY SECTION (Matches reference screenshot layout) */}
+        {/* 2. CATEGORY SECTION */}
         <section className="space-y-4 sm:space-y-6 pt-2 pb-4">
           <div className="flex items-center justify-between">
             <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight">
               Our Harvest Categories
             </h2>
+            {/* Scroll navigation arrows for side-by-side categories */}
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={handleScrollCatLeft}
+                aria-label="Scroll categories left"
+                className="w-8 h-8 rounded-full border border-[#d9ca9d] bg-white/80 hover:bg-[#18542a] text-[#18542a] hover:text-white flex items-center justify-center transition-colors shadow-2xs cursor-pointer active:scale-95"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleScrollCatRight}
+                aria-label="Scroll categories right"
+                className="w-8 h-8 rounded-full border border-[#d9ca9d] bg-white/80 hover:bg-[#18542a] text-[#18542a] hover:text-white flex items-center justify-center transition-colors shadow-2xs cursor-pointer active:scale-95"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
-          {/* 4-column equal frame row matching reference screenshot */}
-          <div className="grid grid-cols-4 gap-3 xs:gap-4 sm:gap-6 lg:gap-8 items-stretch">
-            {categories.slice(0, 4).map((cat) => (
-              <CategoryCard key={cat.id} category={cat} />
+          {/* Dynamic Side-by-Side Category Ribbon: Mouse Drag on Laptop, Touch Swipe on Mobile */}
+          <div
+            ref={categoryScrollRef}
+            onMouseDown={handleCategoryMouseDown}
+            onMouseLeave={handleCategoryMouseLeave}
+            onMouseUp={handleCategoryMouseUp}
+            onMouseMove={handleCategoryMouseMove}
+            className={`flex items-stretch gap-3 xs:gap-4 sm:gap-6 lg:gap-8 overflow-x-auto no-scrollbar scroll-smooth py-2 select-none ${
+              isCategoryDragging ? 'cursor-grabbing' : 'cursor-grab'
+            }`}
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
+            {categories.map((cat) => (
+              <div
+                key={cat.id}
+                className="shrink-0 w-[140px] xs:w-[160px] sm:w-[190px] md:w-[220px] lg:flex-1 lg:min-w-[200px]"
+              >
+                <CategoryCard category={cat} />
+              </div>
             ))}
           </div>
         </section>
@@ -132,15 +206,24 @@ export default function Home() {
             </div>
 
             <form 
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 const form = e.target;
                 const phone = form.clientPhone.value.trim();
-                if (phone) {
-                  showToast(`Thank you! We'll call you at ${phone} shortly.`);
-                  form.reset();
-                } else {
+                if (!phone) {
                   showToast('Please enter your phone number.');
+                  return;
+                }
+                setIsSubmittingCallback(true);
+                try {
+                  await addCallbackRequest(phone, 'Website Quick Callback');
+                  showToast(`Thank you! We've received your request and will call you at ${phone} shortly.`);
+                  form.reset();
+                } catch (err) {
+                  console.error('Error submitting callback request:', err);
+                  showToast('Unable to submit request right now. Please try calling us directly.');
+                } finally {
+                  setIsSubmittingCallback(false);
                 }
               }}
               className="flex items-center w-full max-w-md mx-auto bg-white border border-[#d9ca9d] rounded-full p-1 sm:p-1.5 pl-4 sm:pl-5 shadow-xs focus-within:border-[#18542a] focus-within:ring-2 focus-within:ring-[#18542a]/20 transition-all"
@@ -152,14 +235,16 @@ export default function Home() {
                 name="clientPhone"
                 aria-label="Enter your phone number for callback"
                 required
+                disabled={isSubmittingCallback}
                 placeholder="Enter your phone number..."
                 className="flex-1 bg-transparent border-none text-xs sm:text-sm text-[#103b1d] placeholder-[#556b54]/60 focus:outline-none font-medium min-w-0"
               />
               <button 
                 type="submit"
-                className="px-4 sm:px-5 py-2 sm:py-2.5 bg-[#18542a] hover:bg-[#103b1d] text-white text-xs sm:text-sm font-bold rounded-full shadow-xs transition-all flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer"
+                disabled={isSubmittingCallback}
+                className="px-4 sm:px-5 py-2 sm:py-2.5 bg-[#18542a] hover:bg-[#103b1d] text-white text-xs sm:text-sm font-bold rounded-full shadow-xs transition-all flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer disabled:opacity-60"
               >
-                <span>Request Call</span>
+                <span>{isSubmittingCallback ? 'Submitting...' : 'Request Call'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </form>

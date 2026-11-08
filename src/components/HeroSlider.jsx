@@ -66,7 +66,7 @@ export const HERO_SLIDES = [
 ];
 
 export default function HeroSlider() {
-  const { setCurrentPage, navigateToProduct, heroSlides } = useCart();
+  const { setCurrentPage, navigateToProduct, heroSlides, setSelectedCategoryFilter } = useCart();
 
   const effectiveSlides = (heroSlides && heroSlides.filter(s => s.active !== false).length > 0)
     ? heroSlides.filter(s => s.active !== false).map((s, idx) => ({
@@ -213,12 +213,54 @@ export default function HeroSlider() {
     handleInteractionEnd();
   };
 
-  const handleSlideClick = (target) => {
+  const handleSlideClick = (slideOrTarget) => {
+    let buttonText = '';
+    let target = slideOrTarget;
+    if (typeof slideOrTarget === 'object' && slideOrTarget !== null) {
+      buttonText = (slideOrTarget.buttonText || slideOrTarget.title || '').toLowerCase();
+      target = slideOrTarget.productId || slideOrTarget.link;
+    } else if (typeof slideOrTarget === 'string') {
+      buttonText = slideOrTarget.toLowerCase();
+    }
+
+    if (buttonText.includes('millet')) {
+      if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Millets');
+      setCurrentPage('shop');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (buttonText.includes('oil')) {
+      if (setSelectedCategoryFilter) setSelectedCategoryFilter('Oils');
+      setCurrentPage('shop');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (buttonText.includes('ghee')) {
+      if (setSelectedCategoryFilter) setSelectedCategoryFilter('Oils');
+      setCurrentPage('shop');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (buttonText.includes('rice')) {
+      if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Rice');
+      setCurrentPage('shop');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (buttonText.includes('spice')) {
+      if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Spices');
+      setCurrentPage('shop');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     if (!target) {
+      if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
       setCurrentPage('shop');
       return;
     }
     if (typeof target === 'string' && (target.startsWith('/') || target.includes('shop') || target.includes('collections'))) {
+      if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
       setCurrentPage('shop');
       return;
     }
@@ -299,7 +341,7 @@ export default function HeroSlider() {
           {currentExtendedSlides.map((slide, index) => (
             <div 
               key={`${slide.id}-${index}`}
-              onClick={() => handleSlideClick(slide.productId)}
+              onClick={() => handleSlideClick(slide)}
               className="shrink-0 snap-center relative rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-lg hover:shadow-2xl border border-black/10 cursor-pointer transition-all duration-300 transform active:scale-[0.99] aspect-[16/10] w-[90vw] max-w-[420px]"
             >
               <img 
@@ -322,7 +364,7 @@ export default function HeroSlider() {
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSlideClick(slide.productId);
+                    handleSlideClick(slide);
                   }}
                   aria-label={`Shop ${slide.title}`}
                   className={`px-5 py-2.5 sm:px-6 sm:py-3 bg-white hover:bg-amber-50 ${slide.buttonTextColor || 'text-slate-900'} text-[11px] sm:text-xs font-black uppercase tracking-wider rounded-full shadow-lg border border-white/80 active:scale-95 transition-all inline-flex items-center space-x-1.5 cursor-pointer`}
@@ -388,7 +430,7 @@ export default function HeroSlider() {
             {/* CTA Dual Buttons */}
             <div className="flex items-center space-x-3 lg:space-x-4 pt-1 sm:pt-2">
               <button 
-                onClick={() => handleSlideClick(activeDesktopSlide.productId)}
+                onClick={() => handleSlideClick(activeDesktopSlide)}
                 className="h-11 lg:h-12 px-6 lg:px-7 bg-[#18542a] hover:bg-[#103b1d] text-white font-bold text-xs lg:text-sm rounded-lg transition-all shadow-sm hover:shadow-md flex items-center space-x-2 group cursor-pointer active:scale-95"
               >
                 <span>{activeDesktopSlide.buttonText}</span>
@@ -450,7 +492,7 @@ export default function HeroSlider() {
           {/* Right Column: Original Hero Banner Images */}
           <div className="md:col-span-7 flex items-center justify-center">
             <div 
-              onClick={() => handleSlideClick(activeDesktopSlide.productId)}
+              onClick={() => handleSlideClick(activeDesktopSlide)}
               className="relative w-full aspect-[16/10] overflow-hidden cursor-pointer group select-none"
             >
               {effectiveSlides.map((slide, idx) => (
