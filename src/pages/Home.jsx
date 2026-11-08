@@ -192,7 +192,7 @@ export default function Home() {
                 const form = e.target;
                 const phone = form.clientPhone.value.trim();
                 if (phone) {
-                  showToast(`Thank you! We\'ll call you at ${phone} shortly.`);
+                  showToast(`Thank you! We'll call you at ${phone} shortly.`);
                   form.reset();
                 } else {
                   showToast('Please enter your phone number.');

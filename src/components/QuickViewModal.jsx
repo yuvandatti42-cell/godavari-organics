@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import QuantitySelector from './QuantitySelector';
-import { X, Star, ShoppingBag, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { X, Star, ShoppingBag } from 'lucide-react';
 
 export default function QuickViewModal() {
   const { quickViewProduct, setQuickViewProduct, addToCart, navigateToProduct } = useCart();

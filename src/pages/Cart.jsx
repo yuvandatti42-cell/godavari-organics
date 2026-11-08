@@ -19,7 +19,6 @@ export default function Cart() {
     updateQuantity, 
     removeFromCart, 
     cartSubtotal, 
-    shippingFee, 
     cartTotal, 
     cartCount,
     setCurrentPage, 

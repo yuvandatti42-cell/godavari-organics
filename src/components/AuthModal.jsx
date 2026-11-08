@@ -26,8 +26,7 @@ import {
   KeyRound,
   Loader2,
   AlertCircle,
-  ExternalLink,
-  HelpCircle
+  ExternalLink
 } from 'lucide-react';
 
 export default function AuthModal() {

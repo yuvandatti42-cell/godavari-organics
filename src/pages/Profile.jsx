@@ -1,7 +1,6 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 import {
-  User,
   Mail,
   Phone,
   MapPin,
@@ -12,7 +11,6 @@ import {
   ChevronRight,
   ShieldCheck,
   CheckCircle2,
-  Clock,
   ArrowRight,
   LogIn,
   Truck,
