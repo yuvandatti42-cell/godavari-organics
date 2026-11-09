@@ -2,14 +2,17 @@ import React from 'react';
 import { useCart } from '../context/CartContext';
 
 export const getCategoryCleanImage = (cat) => {
+  const customImg = cat?.imageUrl || cat?.image;
+  // If the admin provided/uploaded a custom image, use it directly (skip only generic unsplash placeholders)
+  if (customImg && !customImg.includes('unsplash.com')) {
+    return customImg;
+  }
   const name = (cat?.name || cat?.id || '').toLowerCase();
   if (name.includes('rice')) return '/categories/rice.webp';
   if (name.includes('millet')) return '/categories/millet.webp';
   if (name.includes('spice')) return '/categories/spices.webp';
   if (name.includes('ghee') || name.includes('cow')) return '/categories/desi_cow_ghee.webp';
   if (name.includes('oil')) return '/categories/oil.webp';
-  if (cat?.imageUrl && !cat.imageUrl.includes('unsplash.com')) return cat.imageUrl;
-  if (cat?.image && !cat.image.includes('unsplash.com')) return cat.image;
   return '/categories/oil.webp';
 };
 

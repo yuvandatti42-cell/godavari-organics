@@ -73,17 +73,17 @@ export const HERO_SLIDES = [
 export default function HeroSlider() {
   const { setCurrentPage, navigateToProduct, heroSlides, setSelectedCategoryFilter } = useCart();
 
-  const effectiveSlides = (heroSlides && heroSlides.filter(s => s.active !== false && s.imageUrl && !s.imageUrl.includes('unsplash.com')).length > 0)
-    ? heroSlides.filter(s => s.active !== false && s.imageUrl && !s.imageUrl.includes('unsplash.com')).map((s, idx) => ({
+  const effectiveSlides = (heroSlides && heroSlides.filter(s => s.active !== false).length > 0)
+    ? heroSlides.filter(s => s.active !== false).map((s, idx) => ({
         id: s.id || ("slide-" + idx),
         productId: s.productId || s.link || s.ctaLink || HERO_SLIDES[idx % HERO_SLIDES.length]?.productId || "p_oil_groundnut",
         eyebrow: (s.badgeText || HERO_SLIDES[idx % HERO_SLIDES.length]?.eyebrow || "CERTIFIED ORGANIC").replace(/100%\s*ORGANIC/gi, "CERTIFIED ORGANIC"),
         headlineMain: s.title || HERO_SLIDES[idx % HERO_SLIDES.length]?.headlineMain,
         headlineSub: s.subtitle || HERO_SLIDES[idx % HERO_SLIDES.length]?.headlineSub,
-        subtitle: s.description || HERO_SLIDES[idx % HERO_SLIDES.length]?.subtitle,
+        subtitle: s.description || s.subtitle || HERO_SLIDES[idx % HERO_SLIDES.length]?.subtitle,
         title: s.title || HERO_SLIDES[idx % HERO_SLIDES.length]?.title,
-        bannerImage: s.imageUrl || HERO_SLIDES[idx % HERO_SLIDES.length]?.bannerImage,
-        desktopImage: s.imageUrl || HERO_SLIDES[idx % HERO_SLIDES.length]?.desktopImage,
+        bannerImage: s.imageUrl || s.bannerImage || HERO_SLIDES[idx % HERO_SLIDES.length]?.bannerImage,
+        desktopImage: s.imageUrl || s.desktopImage || HERO_SLIDES[idx % HERO_SLIDES.length]?.desktopImage,
         buttonText: s.ctaText || HERO_SLIDES[idx % HERO_SLIDES.length]?.buttonText || "Shop Collection",
         buttonTextColor: HERO_SLIDES[idx % HERO_SLIDES.length]?.buttonTextColor || "text-[#18542a]"
       }))

@@ -41,9 +41,9 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* 4-column equal frame row matching reference screenshot */}
+          {/* Category grid (4-column row matching reference layout) */}
           <div className="grid grid-cols-4 gap-3 xs:gap-4 sm:gap-6 lg:gap-8 items-stretch">
-            {categories.slice(0, 4).map((cat) => (
+            {categories.map((cat) => (
               <CategoryCard key={cat.id} category={cat} />
             ))}
           </div>
