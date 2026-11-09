@@ -182,7 +182,11 @@ export default function CustomerReviews() {
         onMouseLeave={() => setIsPaused(false)}
       >
         {reviews.length <= 3 ? (
-          <div className="grid grid-cols-3 gap-5">
+          <div className={`grid gap-5 ${
+            reviews.length === 1 ? 'grid-cols-1 max-w-md mx-auto' :
+            reviews.length === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto' :
+            'grid-cols-1 md:grid-cols-3'
+          }`}>
             {reviews.map((rev) => (
               <ReviewCard key={rev.id} review={rev} />
             ))}

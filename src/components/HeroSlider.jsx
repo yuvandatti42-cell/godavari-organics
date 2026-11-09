@@ -242,7 +242,7 @@ export default function HeroSlider() {
       return;
     }
     if (buttonText.includes('ghee')) {
-      if (setSelectedCategoryFilter) setSelectedCategoryFilter('Oils');
+      if (setSelectedCategoryFilter) setSelectedCategoryFilter('Ghee');
       setCurrentPage('shop');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;

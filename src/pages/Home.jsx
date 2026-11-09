@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
 import HeroSlider from '../components/HeroSlider';
 import CategoryCard from '../components/CategoryCard';
@@ -7,7 +7,7 @@ import FeaturedHarvestProducts from '../components/FeaturedHarvestProducts';
 import WhyChooseArma from '../components/WhyChooseArma';
 import CustomerReviews from '../components/CustomerReviews';
 import StoreLocation from '../components/StoreLocation';
-import { ArrowRight, PhoneCall } from 'lucide-react';
+import { ArrowRight, PhoneCall, ChevronLeft, ChevronRight } from 'lucide-react';
 import { addCallbackRequest } from '../services/firebaseService';
 
 export default function Home() {
@@ -20,6 +20,69 @@ export default function Home() {
   } = useCart();
 
   const [isSubmittingCallback, setIsSubmittingCallback] = useState(false);
+
+  // Category horizontal scroll & drag ref
+  const categoryScrollRef = useRef(null);
+  const [canScrollCategories, setCanScrollCategories] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeftStart = useRef(0);
+  const [hasDragged, setHasDragged] = useState(false);
+
+  const checkCategoryScroll = useCallback(() => {
+    const el = categoryScrollRef.current;
+    if (!el) return;
+    const hasOverflow = el.scrollWidth > el.clientWidth + 5;
+    setCanScrollCategories(hasOverflow);
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
+  }, []);
+
+  useEffect(() => {
+    checkCategoryScroll();
+    const el = categoryScrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', checkCategoryScroll, { passive: true });
+    window.addEventListener('resize', checkCategoryScroll);
+    return () => {
+      el.removeEventListener('scroll', checkCategoryScroll);
+      window.removeEventListener('resize', checkCategoryScroll);
+    };
+  }, [checkCategoryScroll, categories]);
+
+  const handleScrollCategories = (direction) => {
+    const el = categoryScrollRef.current;
+    if (!el) return;
+    const scrollAmount = el.clientWidth * 0.7;
+    el.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth'
+    });
+  };
+
+  const handleCategoryMouseDown = (e) => {
+    isDragging.current = true;
+    setHasDragged(false);
+    startX.current = e.pageX - (categoryScrollRef.current?.offsetLeft || 0);
+    scrollLeftStart.current = categoryScrollRef.current?.scrollLeft || 0;
+  };
+
+  const handleCategoryMouseMove = (e) => {
+    if (!isDragging.current || !categoryScrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - (categoryScrollRef.current.offsetLeft || 0);
+    const walk = (x - startX.current) * 1.5;
+    if (Math.abs(walk) > 5) {
+      setHasDragged(true);
+    }
+    categoryScrollRef.current.scrollLeft = scrollLeftStart.current - walk;
+  };
+
+  const handleCategoryMouseUpOrLeave = () => {
+    isDragging.current = false;
+  };
 
   const popularProducts = products.filter(p => p.isPopular);
 
@@ -39,12 +102,59 @@ export default function Home() {
             <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight">
               Our Harvest Categories
             </h2>
+
+            {canScrollCategories && (
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => handleScrollCategories('left')}
+                  disabled={!canScrollLeft}
+                  className="w-8 h-8 rounded-full border border-[#d9ca9d] bg-white/90 hover:bg-[#18542a] text-[#18542a] hover:text-white flex items-center justify-center transition-all shadow-2xs cursor-pointer active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+                  aria-label="Scroll categories left"
+                >
+                  <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleScrollCategories('right')}
+                  disabled={!canScrollRight}
+                  className="w-8 h-8 rounded-full border border-[#d9ca9d] bg-white/90 hover:bg-[#18542a] text-[#18542a] hover:text-white flex items-center justify-center transition-all shadow-2xs cursor-pointer active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+                  aria-label="Scroll categories right"
+                >
+                  <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Category grid (4-column row matching reference layout) */}
-          <div className="grid grid-cols-4 gap-3 xs:gap-4 sm:gap-6 lg:gap-8 items-stretch">
+          {/* Interactive Side-by-Side Category Row with Touch & Mouse Drag */}
+          <div
+            ref={categoryScrollRef}
+            onMouseDown={handleCategoryMouseDown}
+            onMouseMove={handleCategoryMouseMove}
+            onMouseUp={handleCategoryMouseUpOrLeave}
+            onMouseLeave={handleCategoryMouseUpOrLeave}
+            className={`flex items-stretch gap-3 xs:gap-4 sm:gap-6 lg:gap-8 overflow-x-auto no-scrollbar scroll-smooth touch-pan-x select-none py-1.5 ${
+              canScrollCategories ? 'cursor-grab active:cursor-grabbing' : ''
+            }`}
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
             {categories.map((cat) => (
-              <CategoryCard key={cat.id} category={cat} />
+              <div
+                key={cat.id}
+                onClickCapture={(e) => {
+                  if (hasDragged) {
+                    e.stopPropagation();
+                  }
+                }}
+                className={
+                  categories.length <= 4
+                    ? 'flex-1 min-w-[130px] xs:min-w-[150px] sm:min-w-[180px]'
+                    : 'w-[140px] xs:w-[175px] sm:w-[215px] lg:w-[245px] shrink-0'
+                }
+              >
+                <CategoryCard category={cat} />
+              </div>
             ))}
           </div>
         </section>

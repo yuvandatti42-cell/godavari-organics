@@ -3,8 +3,7 @@ import { useCart } from '../context/CartContext';
 
 export const getCategoryCleanImage = (cat) => {
   const customImg = cat?.imageUrl || cat?.image;
-  // If the admin provided/uploaded a custom image, use it directly (skip only generic unsplash placeholders)
-  if (customImg && !customImg.includes('unsplash.com')) {
+  if (customImg) {
     return customImg;
   }
   const name = (cat?.name || cat?.id || '').toLowerCase();
@@ -35,15 +34,15 @@ export default function CategoryCard({ category }) {
       className="flex flex-col items-center cursor-pointer group select-none transition-transform active:scale-98 h-full"
     >
       {/* Soft Organic Warm Beige Rounded Card Frame (Godavari Brand Color Palette) */}
-      <div className="w-full aspect-square bg-[#f3e8cc] hover:bg-[#e6dec9] border border-[#d9ca9d] hover:border-[#18542a]/60 rounded-[24px] xs:rounded-[28px] sm:rounded-[34px] p-2 xs:p-2.5 sm:p-3 flex items-center justify-center transition-all duration-300 group-hover:shadow-md overflow-hidden">
+      <div className="w-full aspect-square bg-[#f3e8cc] hover:bg-[#e6dec9] border border-[#d9ca9d] hover:border-[#18542a]/60 rounded-[24px] xs:rounded-[28px] sm:rounded-[34px] flex items-center justify-center transition-all duration-300 group-hover:shadow-md overflow-hidden relative">
         <img 
           src={imageSrc} 
           alt={category.name}
-          width="200"
-          height="200"
+          width="400"
+          height="400"
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-contain transform-gpu group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover transform-gpu group-hover:scale-105 transition-transform duration-500"
           style={{ imageRendering: 'high-quality' }}
         />
       </div>
