@@ -12,7 +12,7 @@ export const HERO_SLIDES = [
     subtitle: 'Discover the flavour. Explore the traditional slow wooden pressing process.',
     title: 'Pure Cold Pressed Natural Oils',
     bannerImage: '/banners/banner_oil.webp',
-    desktopImage: '/banners/hero_oil_editorial.webp',
+    desktopImage: '/banners/banner_oil.webp',
     buttonText: 'Shop Oils',
     buttonTextColor: 'text-[#18542a]'
   },
@@ -25,7 +25,7 @@ export const HERO_SLIDES = [
     subtitle: 'Slow simmered bilona ghee handcrafted from cultured curd of grass-fed desi cows.',
     title: 'Pure Vedic Bilona Desi Cow A2 Ghee',
     bannerImage: '/banners/banner_ghee.webp',
-    desktopImage: '/banners/hero_ghee_editorial.webp',
+    desktopImage: '/banners/banner_ghee.webp',
     buttonText: 'Shop Ghee',
     buttonTextColor: 'text-[#92400e]'
   },
@@ -37,8 +37,8 @@ export const HERO_SLIDES = [
     headlineSub: 'Pure daily energy.',
     subtitle: 'Unpolished traditional grains sourced directly from fertile Godavari river delta farms.',
     title: 'Wholesome Millet Power & Siridhanya',
-    bannerImage: '/banners/hero_millets_editorial.webp',
-    desktopImage: '/banners/hero_millets_editorial.webp',
+    bannerImage: '/hero.webp',
+    desktopImage: '/hero.webp',
     buttonText: 'Shop Millets',
     buttonTextColor: 'text-[#18542a]'
   },
@@ -51,7 +51,7 @@ export const HERO_SLIDES = [
     subtitle: 'Naturally grown red, black & aged sona masoori rice harvested from native heirloom seeds.',
     title: 'Traditional Godavari Heritage Rice',
     bannerImage: '/banners/banner_rice.webp',
-    desktopImage: '/banners/hero_rice_editorial.webp',
+    desktopImage: '/banners/banner_rice.webp',
     buttonText: 'Shop Rice',
     buttonTextColor: 'text-[#991b1b]'
   },
@@ -64,7 +64,7 @@ export const HERO_SLIDES = [
     subtitle: 'Hand-picked turmeric, chillies, and aromatic whole spices with zero adulteration.',
     title: 'Pure Stone Ground Spices & Turmeric',
     bannerImage: '/banners/banner_spices.webp',
-    desktopImage: '/banners/hero_spices_editorial.webp',
+    desktopImage: '/banners/banner_spices.webp',
     buttonText: 'Shop Spices',
     buttonTextColor: 'text-[#78350f]'
   }
