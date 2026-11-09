@@ -293,16 +293,16 @@ export default function AuthModal() {
     }
   };
 
-  // Instant 1-Click Fast Login for easy testing
-  const handleQuickDemoLogin = () => {
-    const demoUser = {
+  // Fast Login for Yuvan
+  const handleQuickYuvanLogin = () => {
+    const user = {
       name: 'Yuvan',
       phone: '+91 90100 88063',
-      email: 'yuvan@godavariorganics.com',
+      email: 'yuvandatti42@gmail.com',
       isLoggedIn: true,
-      memberSince: 'Oct 2026'
+      memberSince: 'Nov 2026'
     };
-    loginUser(demoUser);
+    loginUser(user);
     showToast('Signed in successfully as Yuvan!');
   };
 
@@ -876,15 +876,15 @@ export default function AuthModal() {
                   )}
                 </button>
 
-                {/* 1-Click Quick Demo Login Button for easy testing */}
+                {/* 1-Click Quick Login Button */}
                 <button
                   type="button"
-                  onClick={handleQuickDemoLogin}
+                  onClick={handleQuickYuvanLogin}
                   disabled={isLoading}
                   className="w-full py-2 bg-amber-50 hover:bg-amber-100 text-[#8c7355] hover:text-[#18542a] border border-[#d9ca9d] rounded-xl text-[11px] font-bold transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-[#f96015]" />
-                  <span>1-Click Fast Login as Yuvan (+91 90100 88063)</span>
+                  <span>Fast Login as Yuvan (+91 90100 88063)</span>
                 </button>
               </div>
 

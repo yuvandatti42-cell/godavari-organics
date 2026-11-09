@@ -95,18 +95,17 @@ export default function Checkout() {
     });
   };
 
-  // Demo fallback items matching catalog if cart is empty
-  const displayItems = cartItems.length > 0 ? cartItems : [
-    { id: 'p_oil_groundnut', name: 'Cold Pressed Groundnut Oil', selectedSize: '1 Litre', quantity: 1, price: 399 },
-    { id: 'p_spice_turmeric', name: 'High-Curcumin Turmeric Powder', selectedSize: '250g', quantity: 1, price: 120 }
-  ];
-
-  const finalPayableTotal = cartItems.length > 0 
-    ? cartTotal 
-    : displayItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const displayItems = cartItems;
+  const finalPayableTotal = cartTotal;
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
+
+    if (cartItems.length === 0) {
+      showToast("Your cart is empty. Please add products to check out.");
+      setCurrentPage('shop');
+      return;
+    }
 
     if (!formData.fullName.trim()) {
       showToast("Please enter your full name");
@@ -122,7 +121,7 @@ export default function Checkout() {
     }
 
     setIsSubmitting(true);
-    const orderItems = (cartItems.length > 0 ? cartItems : displayItems).map(item => ({
+    const orderItems = cartItems.map(item => ({
       productId: item.id,
       productName: item.name,
       quantity: item.quantity,

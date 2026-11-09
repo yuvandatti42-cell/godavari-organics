@@ -66,31 +66,51 @@ export function subscribeToStorefrontProducts(callback, onError) {
         if (data.onStore === false || data.isLiveOnStore === false) return;
 
         let mainImage = data.imageUrl || data.image;
-        if (data.id === 'prod-spice-chilli' || data.id === 'p_spice_chilli' || data.name?.toLowerCase().includes('chilli')) {
-          mainImage = '/products/spices/chilli_powder.webp';
-        } else if (data.id === 'prod-spice-turmeric' || data.id === 'p_spice_turmeric' || data.name?.toLowerCase().includes('turmeric')) {
-          mainImage = '/products/spices/turmeric_powder.webp';
-        } else if (!mainImage) {
+        if (!mainImage) {
           const nameLower = (data.name || '').toLowerCase();
-          if (nameLower.includes('groundnut')) mainImage = '/products/oils/groundnut_oil.webp';
-          else if (nameLower.includes('sesame') && nameLower.includes('black')) mainImage = '/products/oils/black_sesame_oil.webp';
-          else if (nameLower.includes('sesame')) mainImage = '/products/oils/sesame_oil.webp';
-          else if (nameLower.includes('coconut')) mainImage = '/products/oils/coconut_oil.webp';
-          else if (nameLower.includes('sunflower')) mainImage = '/products/oils/sunflower_oil.webp';
-          else if (nameLower.includes('safflower')) mainImage = '/products/oils/safflower_oil.webp';
-          else if (nameLower.includes('mustard')) mainImage = '/products/oils/mustard_oil.webp';
-          else if (nameLower.includes('almond')) mainImage = '/products/oils/almond_oil.webp';
-          else if (nameLower.includes('niger')) mainImage = '/products/oils/niger_oil.webp';
-          else if (nameLower.includes('ghee') || nameLower.includes('cow')) mainImage = '/categories/desi_cow_ghee.webp';
-          else if (nameLower.includes('red rice')) mainImage = '/products/rice/red_rice.webp';
-          else if (nameLower.includes('black rice')) mainImage = '/products/rice/black_rice.webp';
-          else if (nameLower.includes('sona')) mainImage = '/products/rice/sona_masoori_rice.webp';
-          else if (nameLower.includes('foxtail')) mainImage = '/products/millets/foxtail_millet.webp';
-          else if (nameLower.includes('kodo')) mainImage = '/products/millets/kodo_millet.webp';
-          else if (nameLower.includes('little')) mainImage = '/products/millets/little_millet.webp';
-          else if (nameLower.includes('barnyard')) mainImage = '/products/millets/barnyard_millet.webp';
-          else if (nameLower.includes('browntop')) mainImage = '/products/millets/browntop_millet.webp';
-          else mainImage = '/categories/oil.webp';
+          if (data.id === 'prod-spice-chilli' || data.id === 'p_spice_chilli' || nameLower.includes('chilli')) {
+            mainImage = '/products/spices/chilli_powder.webp';
+          } else if (data.id === 'prod-spice-turmeric' || data.id === 'p_spice_turmeric' || nameLower.includes('turmeric')) {
+            mainImage = '/products/spices/turmeric_powder.webp';
+          } else if (nameLower.includes('groundnut')) {
+            mainImage = '/products/oils/groundnut_oil.webp';
+          } else if (nameLower.includes('sesame') && nameLower.includes('black')) {
+            mainImage = '/products/oils/black_sesame_oil.webp';
+          } else if (nameLower.includes('sesame')) {
+            mainImage = '/products/oils/sesame_oil.webp';
+          } else if (nameLower.includes('coconut')) {
+            mainImage = '/products/oils/coconut_oil.webp';
+          } else if (nameLower.includes('sunflower')) {
+            mainImage = '/products/oils/sunflower_oil.webp';
+          } else if (nameLower.includes('safflower')) {
+            mainImage = '/products/oils/safflower_oil.webp';
+          } else if (nameLower.includes('mustard')) {
+            mainImage = '/products/oils/mustard_oil.webp';
+          } else if (nameLower.includes('almond')) {
+            mainImage = '/products/oils/almond_oil.webp';
+          } else if (nameLower.includes('niger')) {
+            mainImage = '/products/oils/niger_oil.webp';
+          } else if (nameLower.includes('ghee') || nameLower.includes('cow')) {
+            mainImage = '/categories/desi_cow_ghee.webp';
+          } else if (nameLower.includes('red rice')) {
+            mainImage = '/products/rice/red_rice.webp';
+          } else if (nameLower.includes('black rice')) {
+            mainImage = '/products/rice/black_rice.webp';
+          } else if (nameLower.includes('sona')) {
+            mainImage = '/products/rice/sona_masoori_rice.webp';
+          } else if (nameLower.includes('foxtail')) {
+            mainImage = '/products/millets/foxtail_millet.webp';
+          } else if (nameLower.includes('kodo')) {
+            mainImage = '/products/millets/kodo_millet.webp';
+          } else if (nameLower.includes('little')) {
+            mainImage = '/products/millets/little_millet.webp';
+          } else if (nameLower.includes('barnyard')) {
+            mainImage = '/products/millets/barnyard_millet.webp';
+          } else if (nameLower.includes('browntop')) {
+            mainImage = '/products/millets/browntop_millet.webp';
+          } else {
+            mainImage = '/categories/oil.webp';
+          }
         }
 
         const gallery = Array.isArray(data.images) && data.images.length > 0 

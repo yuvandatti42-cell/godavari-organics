@@ -15,7 +15,7 @@ const CartContext = createContext();
 
 export const INITIAL_PROMOTIONS = [
   {
-    id: 'promo-1',
+    id: 'promo-1793941342282',
     code: 'GODAVARI10',
     description: '10% discount on all organic harvest items',
     discountType: 'percentage',
@@ -25,21 +25,21 @@ export const INITIAL_PROMOTIONS = [
     status: 'Active',
   },
   {
-    id: 'promo-2',
-    code: 'FARMREADY200',
-    description: 'Flat ₹200 off on orders above ₹1,999',
-    discountType: 'fixed',
-    discountValue: 200,
-    minOrderValue: 1999,
+    id: 'promo-1793941395070',
+    code: 'ADITYA69',
+    description: '15% special privilege discount',
+    discountType: 'percentage',
+    discountValue: 15,
+    minOrderValue: 500,
     status: 'Active',
   },
   {
-    id: 'promo-3',
-    code: 'BILONAGHEE',
-    description: 'Special ₹150 concession on Vedic A2 Gir Cow Ghee',
-    discountType: 'fixed',
-    discountValue: 150,
-    minOrderValue: 1450,
+    id: 'promo-1793941423199',
+    code: 'YUVI50',
+    description: 'Special 50% discount coupon',
+    discountType: 'percentage',
+    discountValue: 50,
+    minOrderValue: 200,
     status: 'Active',
   },
 ];
@@ -747,23 +747,7 @@ export function CartProvider({ children }) {
   useEffect(() => {
     const unsubProducts = subscribeToStorefrontProducts((liveProducts) => {
       if (liveProducts && liveProducts.length > 0) {
-        setProducts(() => {
-          const productMap = new Map();
-          INITIAL_PRODUCTS.forEach(p => productMap.set(p.id, { ...p }));
-          liveProducts.forEach(lp => {
-            const existing = productMap.get(lp.id) || Array.from(productMap.values()).find(p => p.name?.toLowerCase() === lp.name?.toLowerCase());
-            if (existing) {
-              productMap.set(existing.id, {
-                ...existing,
-                ...lp,
-                image: (lp.image && lp.image !== '/categories/oil.webp') ? lp.image : existing.image
-              });
-            } else {
-              productMap.set(lp.id, lp);
-            }
-          });
-          return Array.from(productMap.values());
-        });
+        setProducts(liveProducts);
         setFirebaseConnected(true);
       }
     });
