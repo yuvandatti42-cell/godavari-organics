@@ -74,19 +74,39 @@ export default function HeroSlider() {
   const { setCurrentPage, navigateToProduct, heroSlides, setSelectedCategoryFilter } = useCart();
 
   const effectiveSlides = (heroSlides && heroSlides.filter(s => s.active !== false).length > 0)
-    ? heroSlides.filter(s => s.active !== false).map((s, idx) => ({
-        id: s.id || ("slide-" + idx),
-        productId: s.productId || s.link || s.ctaLink || HERO_SLIDES[idx % HERO_SLIDES.length]?.productId || "p_oil_groundnut",
-        eyebrow: (s.badgeText || HERO_SLIDES[idx % HERO_SLIDES.length]?.eyebrow || "CERTIFIED ORGANIC").replace(/100%\s*ORGANIC/gi, "CERTIFIED ORGANIC"),
-        headlineMain: s.title || HERO_SLIDES[idx % HERO_SLIDES.length]?.headlineMain,
-        headlineSub: s.subtitle || HERO_SLIDES[idx % HERO_SLIDES.length]?.headlineSub,
-        subtitle: s.description || s.subtitle || HERO_SLIDES[idx % HERO_SLIDES.length]?.subtitle,
-        title: s.title || HERO_SLIDES[idx % HERO_SLIDES.length]?.title,
-        bannerImage: s.imageUrl || s.bannerImage || HERO_SLIDES[idx % HERO_SLIDES.length]?.bannerImage,
-        desktopImage: s.imageUrl || s.desktopImage || HERO_SLIDES[idx % HERO_SLIDES.length]?.desktopImage,
-        buttonText: s.ctaText || HERO_SLIDES[idx % HERO_SLIDES.length]?.buttonText || "Shop Collection",
-        buttonTextColor: HERO_SLIDES[idx % HERO_SLIDES.length]?.buttonTextColor || "text-[#18542a]"
-      }))
+    ? heroSlides.filter(s => s.active !== false).map((s, idx) => {
+        const defaultSlide = HERO_SLIDES[idx % HERO_SLIDES.length];
+        const description = s.description || s.subtitle || defaultSlide?.subtitle || '';
+        
+        let headlineMain = s.headlineMain || s.title || defaultSlide?.headlineMain;
+        let headlineSub = '';
+        
+        if (s.headlineSub && s.headlineSub !== description && s.headlineSub !== headlineMain) {
+          headlineSub = s.headlineSub;
+        } else if (!s.title && defaultSlide?.headlineSub) {
+          headlineSub = defaultSlide.headlineSub;
+        }
+
+        // If title matches defaultSlide.title, preserve the paired editorial headline
+        if (defaultSlide && s.title === defaultSlide.title) {
+          headlineMain = defaultSlide.headlineMain;
+          headlineSub = defaultSlide.headlineSub;
+        }
+
+        return {
+          id: s.id || ("slide-" + idx),
+          productId: s.productId || s.link || s.ctaLink || defaultSlide?.productId || "p_oil_groundnut",
+          eyebrow: (s.badgeText || defaultSlide?.eyebrow || "CERTIFIED ORGANIC").replace(/100%\s*ORGANIC/gi, "CERTIFIED ORGANIC"),
+          headlineMain,
+          headlineSub,
+          subtitle: description,
+          title: s.title || defaultSlide?.title,
+          bannerImage: s.imageUrl || defaultSlide?.bannerImage,
+          desktopImage: s.imageUrl || defaultSlide?.desktopImage,
+          buttonText: s.ctaText || defaultSlide?.buttonText || "Shop Collection",
+          buttonTextColor: defaultSlide?.buttonTextColor || "text-[#18542a]"
+        };
+      })
     : HERO_SLIDES;
 
   const currentExtendedSlides = [
@@ -422,16 +442,22 @@ export default function HeroSlider() {
               {activeDesktopSlide.eyebrow}
             </div>
 
-            {/* Serif Headline (Know your oil. Trust every meal.) */}
+            {/* Serif Headline */}
             <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-[#103b1d] font-normal tracking-tight leading-[1.08]">
               <span className="block">{activeDesktopSlide.headlineMain}</span>
-              <span className="block">{activeDesktopSlide.headlineSub}</span>
+              {activeDesktopSlide.headlineSub && 
+               activeDesktopSlide.headlineSub !== activeDesktopSlide.subtitle && 
+               activeDesktopSlide.headlineSub !== activeDesktopSlide.headlineMain && (
+                <span className="block">{activeDesktopSlide.headlineSub}</span>
+              )}
             </h1>
 
             {/* Subtitle / Description */}
-            <p className="text-sm lg:text-base text-[#4a5849] font-medium leading-relaxed max-w-md">
-              {activeDesktopSlide.subtitle}
-            </p>
+            {activeDesktopSlide.subtitle && activeDesktopSlide.subtitle !== activeDesktopSlide.headlineMain && (
+              <p className="text-sm lg:text-base text-[#4a5849] font-medium leading-relaxed max-w-md">
+                {activeDesktopSlide.subtitle}
+              </p>
+            )}
 
             {/* CTA Dual Buttons */}
             <div className="flex items-center space-x-3 lg:space-x-4 pt-1 sm:pt-2">
