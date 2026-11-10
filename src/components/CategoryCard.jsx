@@ -34,7 +34,7 @@ export default function CategoryCard({ category }) {
       className="flex flex-col items-center cursor-pointer group select-none transition-transform active:scale-98 h-full"
     >
       {/* Soft Organic Warm Beige Rounded Card Frame (Godavari Brand Color Palette) */}
-      <div className="w-full aspect-square bg-[#f3e8cc] hover:bg-[#e6dec9] border border-[#d9ca9d] hover:border-[#18542a]/60 rounded-[24px] xs:rounded-[28px] sm:rounded-[34px] flex items-center justify-center transition-all duration-300 group-hover:shadow-md overflow-hidden relative">
+      <div className="w-full aspect-square bg-[#f3e8cc] hover:bg-[#e6dec9] border border-[#d9ca9d] hover:border-[#18542a]/60 rounded-2xl xs:rounded-[22px] sm:rounded-[30px] md:rounded-[34px] flex items-center justify-center transition-all duration-300 group-hover:shadow-md overflow-hidden relative">
         <img 
           src={imageSrc} 
           alt={category.name}
@@ -48,15 +48,10 @@ export default function CategoryCard({ category }) {
       </div>
 
       {/* Centered Category Title Label Underneath Box */}
-      <div className="mt-2.5 sm:mt-3 text-center flex flex-col items-center justify-start min-h-[38px] sm:min-h-[46px] px-1">
-        <h3 className="font-urbanist font-extrabold text-xs xs:text-sm sm:text-base md:text-lg text-[#103b1d] group-hover:text-[#18542a] transition-colors leading-snug tracking-tight">
+      <div className="mt-1.5 xs:mt-2 sm:mt-2.5 text-center flex items-center justify-center px-0.5">
+        <h3 className="font-urbanist font-extrabold text-[11px] xs:text-xs sm:text-base md:text-lg text-[#103b1d] group-hover:text-[#18542a] transition-colors leading-tight tracking-tight text-center">
           {category.name}
         </h3>
-        {category.subtext && (
-          <p className="text-[10px] xs:text-[11px] sm:text-xs text-[#556b54] font-medium leading-tight mt-0.5 max-w-[170px] line-clamp-2">
-            {category.subtext}
-          </p>
-        )}
       </div>
     </div>
   );
