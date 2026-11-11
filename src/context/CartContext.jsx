@@ -816,17 +816,6 @@ export function CartProvider({ children }) {
     }
   });
 
-  const trackOrder = useCallback((orderIdOrAwb) => {
-    if (orderIdOrAwb) {
-      setTrackingQuery(orderIdOrAwb);
-    }
-    setCurrentPageState('track-order');
-    try {
-      window.location.hash = orderIdOrAwb ? `#/track-order?id=${encodeURIComponent(orderIdOrAwb)}` : '#/track-order';
-    } catch {}
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
   // Customer Account & Authentication State (persisted in localStorage)
   const [user, setUser] = useState(() => {
     try {
@@ -896,14 +885,25 @@ export function CartProvider({ children }) {
   // Core navigation function synchronized with browser history
   const changePage = useCallback((page, options = {}) => {
     const targetProductId = options.productId || selectedProductId;
+    const targetTrackingId = options.trackingId || (page === 'track-order' ? options.id || options.orderId : undefined);
 
     if (options.productId) {
       setSelectedProductId(options.productId);
     }
+    if (targetTrackingId) {
+      setTrackingQuery(targetTrackingId);
+    }
+
+    const normalizedPage = (page === 'track' || page === 'track-order') ? 'track-order' : page;
 
     if (!options.fromPopState) {
-      const stateObj = { page, productId: targetProductId };
-      const hashUrl = `#/${page}${page === 'product' ? `?id=${targetProductId}` : ''}`;
+      const stateObj = { page: normalizedPage, productId: targetProductId, trackingId: targetTrackingId };
+      let hashUrl = `#/${normalizedPage}`;
+      if (normalizedPage === 'product') {
+        hashUrl = `#/${normalizedPage}?id=${targetProductId}`;
+      } else if (normalizedPage === 'track-order' && targetTrackingId) {
+        hashUrl = `#/track-order?id=${encodeURIComponent(targetTrackingId)}`;
+      }
       if (options.replace) {
         window.history.replaceState(stateObj, '', hashUrl);
       } else {
@@ -911,12 +911,19 @@ export function CartProvider({ children }) {
       }
     }
 
-    setCurrentPageState(page);
+    setCurrentPageState(normalizedPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [selectedProductId]);
 
   const setCurrentPage = useCallback((page, options = {}) => {
     changePage(page, options);
+  }, [changePage]);
+
+  const trackOrder = useCallback((orderIdOrAwb) => {
+    if (orderIdOrAwb) {
+      setTrackingQuery(orderIdOrAwb);
+    }
+    changePage('track-order', { trackingId: orderIdOrAwb });
   }, [changePage]);
 
   // Unified goBack handler for in-app back buttons and browser back button
@@ -930,27 +937,46 @@ export function CartProvider({ children }) {
 
   // Listen for browser popstate (browser back/forward button clicks)
   useEffect(() => {
+    const VALID_PAGES = ['home', 'shop', 'product', 'cart', 'checkout', 'order-success', 'profile', 'track-order', 'track'];
+    const resolvePage = (candidate) => {
+      if (!candidate) return 'home';
+      const clean = candidate.toLowerCase();
+      if (clean === 'track' || clean === 'track-order') return 'track-order';
+      return VALID_PAGES.includes(clean) ? clean : 'home';
+    };
+
     if (!window.history.state) {
       const hash = (window.location.hash || '').replace(/^#\/?/, '').split('?')[0].toLowerCase();
       const path = (window.location.pathname || '').replace(/^\//, '').split('/')[0].split('?')[0].toLowerCase();
-      const candidate = hash || path;
-      const validPages = ['home', 'shop', 'product', 'cart', 'checkout', 'order-success', 'profile'];
-      const initialPage = validPages.includes(candidate) ? candidate : 'home';
-      window.history.replaceState({ page: initialPage, productId: selectedProductId }, '', `#/${initialPage}`);
+      const initialPage = resolvePage(hash || path);
+      window.history.replaceState({ page: initialPage, productId: selectedProductId }, '', window.location.hash || `#/${initialPage}`);
     }
 
     const handlePopState = (event) => {
       if (event.state && event.state.page) {
-        setCurrentPageState(event.state.page);
+        const page = resolvePage(event.state.page);
+        setCurrentPageState(page);
         if (event.state.productId) {
           setSelectedProductId(event.state.productId);
+        }
+        if (event.state.trackingId) {
+          setTrackingQuery(event.state.trackingId);
         }
       } else {
         const hash = (window.location.hash || '').replace(/^#\/?/, '').split('?')[0].toLowerCase();
         const path = (window.location.pathname || '').replace(/^\//, '').split('/')[0].split('?')[0].toLowerCase();
         const candidate = hash || path;
-        const validPages = ['home', 'shop', 'product', 'cart', 'checkout', 'order-success', 'profile'];
-        setCurrentPageState(validPages.includes(candidate) ? candidate : 'home');
+        const page = resolvePage(candidate);
+        setCurrentPageState(page);
+
+        const hashQuery = (window.location.hash || '').split('?')[1];
+        if (hashQuery) {
+          try {
+            const params = new URLSearchParams(hashQuery);
+            const tId = params.get('id') || params.get('order') || params.get('awb');
+            if (tId) setTrackingQuery(tId);
+          } catch {}
+        }
       }
     };
 
