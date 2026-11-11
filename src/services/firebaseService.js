@@ -334,6 +334,15 @@ export async function syncOrderToShiprocket(order) {
     return created;
   } catch (err) {
     console.warn('[Shiprocket] Instant push warning (order is safe):', err);
+    try {
+      await updateDoc(
+        doc(db, COLLECTIONS.ORDERS, order.id),
+        sanitizeForFirestore({
+          shiprocketError: err.message || 'Authentication or pickup location error in Shiprocket',
+          shiprocketSyncAttemptedAt: new Date().toISOString(),
+        })
+      );
+    } catch {}
     return null;
   }
 }
