@@ -23,21 +23,33 @@ export function formatShiprocketDate(dateStr) {
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
+let lastAuthFailureTime = 0;
+let lastAuthFailureError = '';
+
 export async function getShiprocketToken(creds, forceRefresh = false) {
   const email = creds?.email || SHIPROCKET_CONFIG.DEFAULT_EMAIL;
   const password = creds?.password || SHIPROCKET_CONFIG.DEFAULT_PASSWORD;
 
-  if (!forceRefresh && typeof window !== 'undefined') {
-    try {
-      const cachedToken = localStorage.getItem(SHIPROCKET_CONFIG.TOKEN_STORAGE_KEY);
-      const cachedExpiry = localStorage.getItem(SHIPROCKET_CONFIG.TOKEN_EXPIRY_KEY);
-      const now = Date.now();
-      if (cachedToken && cachedExpiry && now < Number(cachedExpiry)) {
-        return cachedToken;
-      }
-    } catch {
-      // ignore
+  if (!forceRefresh) {
+    if (Date.now() - lastAuthFailureTime < 2 * 60 * 1000) {
+      throw new Error(`Shiprocket API authentication cooling down: ${lastAuthFailureError}`);
     }
+
+    if (typeof window !== 'undefined') {
+      try {
+        const cachedToken = localStorage.getItem(SHIPROCKET_CONFIG.TOKEN_STORAGE_KEY);
+        const cachedExpiry = localStorage.getItem(SHIPROCKET_CONFIG.TOKEN_EXPIRY_KEY);
+        const now = Date.now();
+        if (cachedToken && cachedExpiry && now < Number(cachedExpiry)) {
+          return cachedToken;
+        }
+      } catch {
+        // ignore
+      }
+    }
+  } else {
+    lastAuthFailureTime = 0;
+    lastAuthFailureError = '';
   }
 
   const res = await fetch(`${SHIPROCKET_CONFIG.BASE_URL}/auth/login`, {
@@ -50,8 +62,14 @@ export async function getShiprocketToken(creds, forceRefresh = false) {
 
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.message || `Shiprocket login failed with HTTP ${res.status}`);
+    const message = errData.message || `Shiprocket login failed with HTTP ${res.status}`;
+    lastAuthFailureTime = Date.now();
+    lastAuthFailureError = message;
+    throw new Error(message);
   }
+
+  lastAuthFailureTime = 0;
+  lastAuthFailureError = '';
 
   const data = await res.json();
   if (!data.token) {
