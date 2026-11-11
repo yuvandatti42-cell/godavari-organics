@@ -365,6 +365,21 @@ export async function placeStorefrontOrder(orderData) {
       console.warn('[Shiprocket] Automatic push background notice:', srErr);
     });
 
+    // 3. Instant Branded Order Confirmation Email to Customer (Gmail SMTP)
+    try {
+      if (fullOrder.customerEmail && fullOrder.customerEmail.includes('@') && !fullOrder.customerEmail.includes('@customer.godavariorganics.com')) {
+        fetch('/api/send-order-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(fullOrder)
+        }).catch(mailErr => {
+          console.warn('[Order Email] Non-blocking email trigger notice:', mailErr);
+        });
+      }
+    } catch (e) {
+      console.warn('[Order Email] Trigger error:', e);
+    }
+
     // 2. Log real-time notification for Admin Portal
     try {
       const notifId = `notif-ord-${Date.now()}`;
