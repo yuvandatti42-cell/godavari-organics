@@ -8,6 +8,7 @@ import {
   getDoc
 } from 'firebase/firestore';
 import { db } from '../firebase.js';
+import { createShiprocketOrder } from './shiprocketService.js';
 
 export const COLLECTIONS = {
   PRODUCTS: 'products',
@@ -275,6 +276,64 @@ export function sanitizeForFirestore(obj) {
   return result;
 }
 
+// Instantaneous Background Sync to Shiprocket
+export async function syncOrderToShiprocket(order) {
+  try {
+    let creds = {
+      email: 'api@armafarms.com',
+      password: '7FyvlanWBRvoQRGltSU3@9yk$NSPSj28',
+      pickupLocation: 'Primary'
+    };
+
+    try {
+      const settingsSnap = await getDoc(doc(db, COLLECTIONS.SETTINGS, 'general'));
+      if (settingsSnap.exists() && settingsSnap.data()?.shiprocket) {
+        const sr = settingsSnap.data().shiprocket;
+        if (sr.enabled === false) {
+          console.log('[Shiprocket] Instant sync disabled in settings.');
+          return null;
+        }
+        if (sr.email && sr.password) {
+          creds = {
+            email: sr.email,
+            password: sr.password,
+            pickupLocation: sr.pickupLocation || 'Primary'
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('[Shiprocket] Using default credentials:', e);
+    }
+
+    const created = await createShiprocketOrder(order, {
+      creds,
+      pickupLocation: creds.pickupLocation
+    });
+
+    console.log('[Shiprocket] Order created 100% instantly:', created);
+
+    const updates = {
+      shiprocketOrderId: created.order_id,
+      shiprocketShipmentId: created.shipment_id,
+      shiprocketStatus: created.status || 'NEW',
+      timeline: [
+        ...(order.timeline || []),
+        {
+          status: 'Synced to Shiprocket',
+          timestamp: new Date().toISOString(),
+          note: `Order automatically created in Shiprocket (Order #${created.order_id}, Shipment #${created.shipment_id})`
+        }
+      ]
+    };
+
+    await updateDoc(doc(db, COLLECTIONS.ORDERS, order.id), sanitizeForFirestore(updates));
+    return created;
+  } catch (err) {
+    console.warn('[Shiprocket] Instant push warning (order is safe):', err);
+    return null;
+  }
+}
+
 // Place a new customer order into Firebase Firestore
 export async function placeStorefrontOrder(orderData) {
   try {
@@ -296,6 +355,11 @@ export async function placeStorefrontOrder(orderData) {
 
     // 1. Save order to Firestore
     await setDoc(doc(db, COLLECTIONS.ORDERS, orderId), fullOrder);
+
+    // 2. 100% Instant Automatic Push to Shiprocket
+    syncOrderToShiprocket(fullOrder).catch((srErr) => {
+      console.warn('[Shiprocket] Automatic push background notice:', srErr);
+    });
 
     // 2. Log real-time notification for Admin Portal
     try {
