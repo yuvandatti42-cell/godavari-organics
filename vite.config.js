@@ -10,6 +10,14 @@ export default defineConfig({
   ],
   server: {
     host: true,
+    proxy: {
+      '/api/shiprocket': {
+        target: 'https://apiv2.shiprocket.in/v1/external',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/shiprocket/, ''),
+        secure: true,
+      },
+    },
   },
   build: {
     chunkSizeWarningLimit: 600,

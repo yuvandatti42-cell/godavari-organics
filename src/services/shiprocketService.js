@@ -26,6 +26,25 @@ export function formatShiprocketDate(dateStr) {
 let lastAuthFailureTime = 0;
 let lastAuthFailureError = '';
 
+async function shiprocketFetch(endpoint, options = {}) {
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+
+  if (typeof window !== 'undefined') {
+    try {
+      const proxyUrl = `/api/shiprocket${cleanEndpoint}`;
+      const proxyRes = await fetch(proxyUrl, options);
+      if (proxyRes.status !== 404) {
+        return proxyRes;
+      }
+    } catch (e) {
+      console.warn('[Shiprocket Proxy notice, attempting direct API]', e);
+    }
+  }
+
+  const directUrl = `${SHIPROCKET_CONFIG.BASE_URL}${cleanEndpoint}`;
+  return fetch(directUrl, options);
+}
+
 export async function getShiprocketToken(creds, forceRefresh = false) {
   const email = creds?.email || SHIPROCKET_CONFIG.DEFAULT_EMAIL;
   const password = creds?.password || SHIPROCKET_CONFIG.DEFAULT_PASSWORD;
@@ -52,7 +71,7 @@ export async function getShiprocketToken(creds, forceRefresh = false) {
     lastAuthFailureError = '';
   }
 
-  const res = await fetch(`${SHIPROCKET_CONFIG.BASE_URL}/auth/login`, {
+  const res = await shiprocketFetch('/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -156,7 +175,7 @@ export async function createShiprocketOrder(order, options = {}) {
     weight,
   };
 
-  const res = await fetch(`${SHIPROCKET_CONFIG.BASE_URL}/orders/create/adhoc`, {
+  const res = await shiprocketFetch('/orders/create/adhoc', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

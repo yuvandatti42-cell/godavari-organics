@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/shiprocket/(.*)",
+      "destination": "/api/shiprocket?endpoint=/$1"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/api/:path*"
     },
