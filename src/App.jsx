@@ -9,6 +9,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import Profile from './pages/Profile';
+import TrackOrder from './pages/TrackOrder';
 import QuickViewModal from './components/QuickViewModal';
 import AuthModal from './components/AuthModal';
 import SearchModal from './components/SearchModal';
@@ -33,6 +34,9 @@ function MainLayout() {
         return <OrderConfirmation />;
       case 'profile':
         return <Profile />;
+      case 'track-order':
+      case 'track':
+        return <TrackOrder />;
       default:
         return <Home />;
     }

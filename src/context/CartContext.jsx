@@ -789,9 +789,9 @@ export function CartProvider({ children }) {
       const hash = (window.location.hash || '').replace(/^#\/?/, '').split('?')[0].toLowerCase();
       const path = (window.location.pathname || '').replace(/^\//, '').split('/')[0].split('?')[0].toLowerCase();
       const candidate = hash || path;
-      const validPages = ['home', 'shop', 'product', 'cart', 'checkout', 'order-success', 'profile'];
+      const validPages = ['home', 'shop', 'product', 'cart', 'checkout', 'order-success', 'profile', 'track-order', 'track'];
       if (validPages.includes(candidate)) {
-        return candidate;
+        return candidate === 'track' ? 'track-order' : candidate;
       }
     } catch (e) {}
     return 'home';
@@ -803,6 +803,29 @@ export function CartProvider({ children }) {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Live Order Tracking State
+  const [trackingQuery, setTrackingQuery] = useState(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hashQuery = (window.location.hash || '').split('?')[1];
+      const hashParams = hashQuery ? new URLSearchParams(hashQuery) : null;
+      return urlParams.get('id') || urlParams.get('order') || urlParams.get('awb') || hashParams?.get('id') || hashParams?.get('order') || hashParams?.get('awb') || '';
+    } catch {
+      return '';
+    }
+  });
+
+  const trackOrder = useCallback((orderIdOrAwb) => {
+    if (orderIdOrAwb) {
+      setTrackingQuery(orderIdOrAwb);
+    }
+    setCurrentPageState('track-order');
+    try {
+      window.location.hash = orderIdOrAwb ? `#/track-order?id=${encodeURIComponent(orderIdOrAwb)}` : '#/track-order';
+    } catch {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   // Customer Account & Authentication State (persisted in localStorage)
   const [user, setUser] = useState(() => {
@@ -1197,7 +1220,9 @@ export function CartProvider({ children }) {
       placeOrder,
       lastOrder,
       setLastOrder,
-      
+      trackingQuery,
+      setTrackingQuery,
+      trackOrder,
     }}>
       {children}
     </CartContext.Provider>

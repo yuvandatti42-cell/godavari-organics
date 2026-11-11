@@ -161,3 +161,37 @@ export async function createShiprocketOrder(order, options = {}) {
 export function getShiprocketTrackingUrl(awbCode) {
   return `https://shiprocket.co//tracking/${awbCode}`;
 }
+
+/**
+ * Fetch live courier tracking scans from Shiprocket API
+ */
+export async function fetchShiprocketTracking(awbOrOrderId, creds) {
+  if (!awbOrOrderId) return null;
+  try {
+    const token = await getShiprocketToken(creds);
+    const cleanQuery = String(awbOrOrderId).trim();
+    const isNumOnly = /^\d+$/.test(cleanQuery);
+
+    let url = `${SHIPROCKET_CONFIG.BASE_URL}/courier/track/awb/${encodeURIComponent(cleanQuery)}`;
+    if (!isNumOnly && cleanQuery.toUpperCase().includes('GOF-')) {
+      url = `${SHIPROCKET_CONFIG.BASE_URL}/courier/track?order_id=${encodeURIComponent(cleanQuery)}`;
+    }
+
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.warn('[Shiprocket Tracking] Non-blocking tracking fetch notice:', err);
+    return null;
+  }
+}
+
+

@@ -5,7 +5,11 @@ import {
   updateDoc,
   onSnapshot,
   query,
-  getDoc
+  getDoc,
+  getDocs,
+  where,
+  limit,
+  orderBy
 } from 'firebase/firestore';
 import { db } from '../firebase.js';
 import { createShiprocketOrder } from './shiprocketService.js';
@@ -521,3 +525,73 @@ export async function addCallbackRequest(phone, source = 'Website Quick Callback
     throw err;
   }
 }
+
+/**
+ * Fetch Order for In-House Live Tracking
+ * Supports lookup by Order ID (e.g. GOF-123456), Shiprocket AWB, or Customer Phone
+ */
+export async function getOrderForTracking(searchQuery) {
+  if (!searchQuery) return null;
+  const qStr = String(searchQuery).trim();
+  if (!qStr) return null;
+
+  // 1. Direct document ID match in 'orders'
+  try {
+    const directDoc = await getDoc(doc(db, COLLECTIONS.ORDERS, qStr));
+    if (directDoc.exists()) {
+      return { id: directDoc.id, ...directDoc.data() };
+    }
+  } catch (e) {}
+
+  // 2. Variations (uppercase, with GOF- prefix, or stripped)
+  const variations = [
+    qStr.toUpperCase(),
+    qStr.startsWith('GOF-') ? qStr.toUpperCase() : `GOF-${qStr.toUpperCase()}`,
+    qStr.replace(/^GOF-/i, '')
+  ];
+
+  for (const v of variations) {
+    try {
+      const snap = await getDoc(doc(db, COLLECTIONS.ORDERS, v));
+      if (snap.exists()) {
+        return { id: snap.id, ...snap.data() };
+      }
+    } catch (e) {}
+  }
+
+  // 3. Query by shiprocketAwb, shiprocketOrderId, or phone
+  try {
+    const ordersRef = collection(db, COLLECTIONS.ORDERS);
+
+    // Check shiprocketAwb
+    try {
+      const awbQ = query(ordersRef, where('shiprocketAwb', '==', qStr), limit(1));
+      const awbSnap = await getDocs(awbQ);
+      if (!awbSnap.empty) {
+        const d = awbSnap.docs[0];
+        return { id: d.id, ...d.data() };
+      }
+    } catch (e) {}
+
+    // Check phone number (10 digits)
+    const cleanDigits = qStr.replace(/\D/g, '');
+    if (cleanDigits.length >= 10) {
+      const phoneDigits = cleanDigits.slice(-10);
+      try {
+        const phoneQ = query(ordersRef, where('customerPhone', '==', phoneDigits), limit(5));
+        const phoneSnap = await getDocs(phoneQ);
+        if (!phoneSnap.empty) {
+          const sorted = phoneSnap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+          return sorted[0];
+        }
+      } catch (e) {}
+    }
+  } catch (err) {
+    console.warn('Error querying orders for tracking:', err);
+  }
+
+  return null;
+}
+

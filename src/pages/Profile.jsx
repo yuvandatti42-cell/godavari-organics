@@ -26,6 +26,7 @@ export default function Profile() {
     cartCount,
     lastOrder,
     freeShippingThreshold,
+    trackOrder,
   } = useCart();
 
   // If user is not logged in, show an inviting customer sign-in landing card
@@ -255,15 +256,13 @@ export default function Profile() {
                       <span className="text-[11px] text-[#556b54]">({lastOrder.shiprocketCourierName})</span>
                     )}
                   </div>
-                  <a
-                    href={`https://shiprocket.co//tracking/${lastOrder.shiprocketAwb}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center space-x-1 font-bold text-[#18542a] hover:underline"
+                  <button
+                    onClick={() => trackOrder ? trackOrder(lastOrder.id) : setCurrentPage('track-order')}
+                    className="inline-flex items-center space-x-1 font-bold text-xs bg-[#18542a] text-white px-3 py-1.5 rounded-lg shadow-2xs hover:bg-[#103b1d] transition-colors cursor-pointer"
                   >
-                    <span>Track Delivery</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                    <Truck className="w-3.5 h-3.5 text-[#ffc926]" />
+                    <span>Track Live</span>
+                  </button>
                 </div>
               ) : (
                 <div className="pt-2 border-t border-[#dfd5bf]/60 flex items-center justify-between text-[11px] text-[#8c7355]">
@@ -271,7 +270,13 @@ export default function Profile() {
                     <Truck className="w-3.5 h-3.5 text-[#18542a]" />
                     <span>Courier: Shiprocket Express Partner Network</span>
                   </span>
-                  <span className="font-medium text-[#18542a]">Standard Farm Dispatch</span>
+                  <button
+                    onClick={() => trackOrder ? trackOrder(lastOrder.id) : setCurrentPage('track-order')}
+                    className="font-bold text-[#18542a] hover:underline cursor-pointer flex items-center gap-1"
+                  >
+                    <span>Track Package</span>
+                    <span>&rarr;</span>
+                  </button>
                 </div>
               )}
             </div>

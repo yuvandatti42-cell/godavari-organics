@@ -85,6 +85,11 @@ export default function Footer() {
                   FAQs
                 </button>
               </li>
+              <li>
+                <button onClick={() => { setCurrentPage('track-order'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[#ffc926] hover:text-white font-bold transition-colors cursor-pointer">
+                  Track Your Order
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -244,6 +249,12 @@ export default function Footer() {
               <li>
                 <button onClick={() => setCurrentPage('home')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Home Page
+                </button>
+              </li>
+              <li>
+                <button onClick={() => { setCurrentPage('track-order'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[#ffc926] hover:text-white font-bold transition-colors cursor-pointer flex items-center gap-1.5">
+                  <Leaf className="w-3 h-3 text-[#ffc926]" />
+                  <span>Track Your Order</span>
                 </button>
               </li>
               <li>

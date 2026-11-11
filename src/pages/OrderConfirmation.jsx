@@ -1,9 +1,9 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
-import { CheckCircle2, ShoppingBag, Printer, Leaf, MapPin, CreditCard, Calendar } from 'lucide-react';
+import { CheckCircle2, ShoppingBag, Printer, Leaf, MapPin, CreditCard, Calendar, Truck } from 'lucide-react';
 
 export default function OrderConfirmation() {
-  const { setCurrentPage, showToast, lastOrder } = useCart();
+  const { setCurrentPage, showToast, lastOrder, trackOrder } = useCart();
 
   const orderId = lastOrder?.id || 'GO-2026-98421';
   const totalAmount = lastOrder?.total ? `₹${lastOrder.total.toLocaleString('en-IN')}` : '₹758';
@@ -110,10 +110,18 @@ export default function OrderConfirmation() {
         {/* Action Buttons */}
         <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
           <button
-            onClick={() => setCurrentPage('shop')}
-            className="px-6 py-3 bg-[#18542a] hover:bg-[#103b1d] text-white text-xs font-bold rounded-xl shadow-md transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+            onClick={() => trackOrder ? trackOrder(orderId) : setCurrentPage('track-order')}
+            className="px-6 py-3 bg-[#18542a] hover:bg-[#103b1d] text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer active:scale-95 ring-2 ring-[#ffc926]/50"
           >
-            <ShoppingBag className="w-4 h-4 text-[#ffc926]" />
+            <Truck className="w-4 h-4 text-[#ffc926]" />
+            <span>Track Package Live</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentPage('shop')}
+            className="px-5 py-3 bg-white hover:bg-[#f3e8cc] text-[#103b1d] text-xs font-bold rounded-xl border border-[#c8b894] shadow-xs transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+          >
+            <ShoppingBag className="w-4 h-4 text-[#18542a]" />
             <span>Continue Shopping</span>
           </button>
 
@@ -122,7 +130,7 @@ export default function OrderConfirmation() {
             className="px-5 py-3 bg-[#e6dec9] hover:bg-[#d9ca9d] text-[#103b1d] text-xs font-bold rounded-xl border border-[#c8b894] flex items-center justify-center space-x-2 cursor-pointer"
           >
             <Printer className="w-4 h-4 text-[#18542a]" />
-            <span>Download Invoice Receipt</span>
+            <span>Download Invoice</span>
           </button>
         </div>
 

@@ -144,17 +144,25 @@ export default function Header() {
                   },
                   isActive: currentPage === 'shop' && selectedCategoryFilter === 'Organic Spices',
                 },
+                {
+                  id: 'track-order',
+                  label: 'Track Order',
+                  action: () => setCurrentPage('track-order'),
+                  isActive: currentPage === 'track-order',
+                  hasTruckIcon: true,
+                },
               ].map((item) => (
                 <button
                   key={item.id}
                   onClick={item.action}
-                  className={`transition-all duration-200 cursor-pointer ${
+                  className={`transition-all duration-200 cursor-pointer flex items-center gap-1 ${
                     item.isActive
                       ? 'font-extrabold text-[#18542a] underline underline-offset-4 decoration-[#9abc05] decoration-3'
                       : 'hover:text-[#9abc05]'
-                  }`}
+                  } ${item.hasTruckIcon ? 'bg-[#e8dec5] px-2.5 py-1 rounded-full text-[11px] font-extrabold shadow-2xs hover:bg-[#18542a] hover:text-white' : ''}`}
                 >
-                  {item.label}
+                  {item.hasTruckIcon && <Truck className="w-3.5 h-3.5 text-[#ffc926]" />}
+                  <span>{item.label}</span>
                 </button>
               ))}
             </nav>
@@ -333,6 +341,18 @@ export default function Header() {
             >
               <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
               <span>Confirmation</span>
+            </button>
+            <button 
+              onClick={() => { setCurrentPage('track-order'); setMobileMenuOpen(false); }}
+              className={`col-span-2 p-3 rounded-xl border text-left font-bold flex items-center justify-between shadow-2xs ${currentPage === 'track-order' ? 'bg-[#18542a] text-white border-[#18542a]' : 'bg-[#f8f2e2] text-[#18542a] border-[#d9ca9d]'}`}
+            >
+              <div className="flex items-center space-x-2">
+                <Truck className="w-4 h-4 text-[#ffc926]" />
+                <span>Track Your Order Live</span>
+              </div>
+              <span className="text-[10px] font-extrabold bg-[#18542a] text-[#ffc926] px-2 py-0.5 rounded-full uppercase">
+                Track
+              </span>
             </button>
           </div>
 
