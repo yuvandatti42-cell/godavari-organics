@@ -25,6 +25,18 @@
       "destination": "/return-policy.html"
     },
     {
+      "source": "/privacy-policy",
+      "destination": "/privacy-policy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/terms-of-use",
+      "destination": "/terms.html"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/api/:path*"
     },

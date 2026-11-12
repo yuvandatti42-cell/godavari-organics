@@ -105,14 +105,14 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <button onClick={() => showToast('Privacy Policy')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <a href="/privacy-policy" target="_blank" className="hover:text-[#9abc05] transition-colors cursor-pointer block">
                   Privacy Policy
-                </button>
+                </a>
               </li>
               <li>
-                <button onClick={() => showToast('Terms of Use')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
+                <a href="/terms" target="_blank" className="hover:text-[#9abc05] transition-colors cursor-pointer block">
                   Terms of Use
-                </button>
+                </a>
               </li>
             </ul>
           </div>
