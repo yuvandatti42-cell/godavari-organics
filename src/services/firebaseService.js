@@ -284,8 +284,8 @@ export function sanitizeForFirestore(obj) {
 export async function syncOrderToShiprocket(order) {
   try {
     let creds = {
-      email: 'api@armafarms.com',
-      password: '7FyvlanWBRvoQRGltSU3@9yk$NSPSj28',
+      email: 'nasnaidu01@gmail.com',
+      password: 'vGQJtM%5*sam1YT31o94iB9*qXJd9mf9',
       pickupLocation: 'Primary'
     };
 

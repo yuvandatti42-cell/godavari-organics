@@ -31,9 +31,9 @@ async function shiprocketFetch(endpoint, options = {}) {
 
   if (typeof window !== 'undefined') {
     try {
-      const proxyUrl = `/api/shiprocket${cleanEndpoint}`;
+      const proxyUrl = `/api/shiprocket?endpoint=${encodeURIComponent(cleanEndpoint)}`;
       const proxyRes = await fetch(proxyUrl, options);
-      if (proxyRes.status !== 404) {
+      if (proxyRes.ok || proxyRes.status < 500) {
         return proxyRes;
       }
     } catch (e) {
@@ -49,8 +49,17 @@ export async function getShiprocketToken(creds, forceRefresh = false) {
   const email = creds?.email || SHIPROCKET_CONFIG.DEFAULT_EMAIL;
   const password = creds?.password || SHIPROCKET_CONFIG.DEFAULT_PASSWORD;
 
-  if (!forceRefresh) {
-    if (Date.now() - lastAuthFailureTime < 2 * 60 * 1000) {
+  if (forceRefresh) {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem(SHIPROCKET_CONFIG.TOKEN_STORAGE_KEY);
+        localStorage.removeItem(SHIPROCKET_CONFIG.TOKEN_EXPIRY_KEY);
+      } catch {}
+    }
+    lastAuthFailureTime = 0;
+    lastAuthFailureError = '';
+  } else {
+    if (Date.now() - lastAuthFailureTime < 30 * 1000) {
       throw new Error(`Shiprocket API authentication cooling down: ${lastAuthFailureError}`);
     }
 
@@ -66,9 +75,6 @@ export async function getShiprocketToken(creds, forceRefresh = false) {
         // ignore
       }
     }
-  } else {
-    lastAuthFailureTime = 0;
-    lastAuthFailureError = '';
   }
 
   const res = await shiprocketFetch('/auth/login', {
@@ -97,7 +103,8 @@ export async function getShiprocketToken(creds, forceRefresh = false) {
 
   if (typeof window !== 'undefined') {
     try {
-      const expiryTime = Date.now() + 7 * 24 * 60 * 60 * 1000;
+      // Shiprocket tokens expire in 24 hours. Cache for 10 hours max so tokens are always fresh.
+      const expiryTime = Date.now() + 10 * 60 * 60 * 1000;
       localStorage.setItem(SHIPROCKET_CONFIG.TOKEN_STORAGE_KEY, data.token);
       localStorage.setItem(SHIPROCKET_CONFIG.TOKEN_EXPIRY_KEY, String(expiryTime));
     } catch {
@@ -175,7 +182,7 @@ export async function createShiprocketOrder(order, options = {}) {
     weight,
   };
 
-  const res = await shiprocketFetch('/orders/create/adhoc', {
+  let res = await shiprocketFetch('/orders/create/adhoc', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -184,7 +191,36 @@ export async function createShiprocketOrder(order, options = {}) {
     body: JSON.stringify(payload),
   });
 
-  const data = await res.json();
+  let data = await res.json().catch(() => ({}));
+
+  // Auto-recovery: If token expired, clear cache, fetch fresh token and retry immediately
+  const isAuthError =
+    res.status === 401 ||
+    data?.status_code === 401 ||
+    data?.message === 'token_expired' ||
+    (typeof data?.message === 'string' && (
+      data.message.toLowerCase().includes('token') ||
+      data.message.toLowerCase().includes('unauthorized')
+    ));
+
+  if (isAuthError) {
+    console.warn('[Shiprocket] Token expired or unauthorized. Auto-refreshing token and retrying order creation...');
+    try {
+      const freshToken = await getShiprocketToken(options?.creds, true);
+      res = await shiprocketFetch('/orders/create/adhoc', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${freshToken}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      data = await res.json().catch(() => ({}));
+    } catch (refreshErr) {
+      console.error('[Shiprocket] Token auto-refresh failed:', refreshErr);
+    }
+  }
+
   if (!res.ok || data.status_code >= 400) {
     const errorMsg =
       data.message ||
@@ -205,7 +241,7 @@ export function getShiprocketTrackingUrl(awbCode) {
 export async function fetchShiprocketTracking(awbOrOrderId, creds) {
   if (!awbOrOrderId) return null;
   try {
-    const token = await getShiprocketToken(creds);
+    let token = await getShiprocketToken(creds);
     const cleanQuery = String(awbOrOrderId).trim();
     const isNumOnly = /^\d+$/.test(cleanQuery);
 
@@ -214,13 +250,24 @@ export async function fetchShiprocketTracking(awbOrOrderId, creds) {
       url = `${SHIPROCKET_CONFIG.BASE_URL}/courier/track?order_id=${encodeURIComponent(cleanQuery)}`;
     }
 
-    const res = await fetch(url, {
+    let res = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
+
+    if (res.status === 401) {
+      const freshToken = await getShiprocketToken(creds, true);
+      res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${freshToken}`,
+        },
+      });
+    }
 
     if (!res.ok) return null;
     const data = await res.json();
@@ -230,5 +277,6 @@ export async function fetchShiprocketTracking(awbOrOrderId, creds) {
     return null;
   }
 }
+
 
 
