@@ -17,6 +17,14 @@
       "destination": "/robots.txt"
     },
     {
+      "source": "/return-policy",
+      "destination": "/return-policy.html"
+    },
+    {
+      "source": "/refund-policy",
+      "destination": "/return-policy.html"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/api/:path*"
     },

@@ -100,9 +100,9 @@ export default function Footer() {
             </h4>
             <ul className="space-y-1.5 text-xs text-[#f3e8cc] font-medium">
               <li>
-                <button onClick={() => showToast('Shipping & Returns Policy')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
-                  Shipping & Returns
-                </button>
+                <a href="/return-policy" target="_blank" className="hover:text-[#9abc05] transition-colors cursor-pointer block">
+                  Shipping & Returns Policy
+                </a>
               </li>
               <li>
                 <button onClick={() => showToast('Privacy Policy')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
@@ -266,6 +266,11 @@ export default function Footer() {
                 <button onClick={() => setCurrentPage('product')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
                   Featured Product Details
                 </button>
+              </li>
+              <li>
+                <a href="/return-policy" target="_blank" className="hover:text-[#ffc926] transition-colors cursor-pointer block">
+                  Shipping & Returns Policy
+                </a>
               </li>
               <li>
                 <button onClick={() => showToast('Organic Farming Standards')} className="hover:text-[#9abc05] transition-colors cursor-pointer">
