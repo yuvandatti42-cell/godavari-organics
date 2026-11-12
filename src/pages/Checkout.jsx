@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import SEO from '../components/SEO';
 import { ArrowLeft, CreditCard, ShieldCheck, Lock, CheckCircle2 } from 'lucide-react';
 import { initiateRazorpayPayment, loadRazorpayScript } from '../services/razorpayService';
 
@@ -200,6 +201,7 @@ export default function Checkout() {
 
   return (
     <div className="w-full max-w-lg mx-auto px-4 py-4 md:py-6 font-sans text-slate-900 bg-white min-h-screen">
+      <SEO title="Secure Checkout" noindex={true} url="/#/checkout" />
       
       {/* Header Bar */}
       <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-gray-100">

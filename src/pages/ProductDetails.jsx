@@ -4,6 +4,7 @@ import Breadcrumb from '../components/Breadcrumb';
 import QuantitySelector from '../components/QuantitySelector';
 import Accordion from '../components/Accordion';
 import ProductCard from '../components/ProductCard';
+import SEO from '../components/SEO';
 import { 
   Star, 
   ShoppingBag, 
@@ -91,6 +92,22 @@ export default function ProductDetails() {
 
   return (
     <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 py-4 md:py-8 space-y-6 md:space-y-8 font-sans text-[#103b1d]">
+      <SEO 
+        title={`${selectedProduct.name} (${selectedProduct.craftTag || selectedProduct.subtitle || selectedProduct.category})`}
+        description={`${selectedProduct.description || ''} Origin: ${selectedProduct.origin || 'Godavari Delta, Andhra Pradesh'}. Buy online with express doorstep delivery.`}
+        image={selectedProduct.image || (selectedProduct.images && selectedProduct.images[0])}
+        url={`/#/product?id=${selectedProduct.id}`}
+        product={{
+          ...selectedProduct,
+          price: currentPrice
+        }}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Shop', url: '/#/shop' },
+          { name: selectedProduct.category || 'Organic', url: `/#/shop?category=${encodeURIComponent(selectedProduct.category || '')}` },
+          { name: selectedProduct.name, url: `/#/product?id=${selectedProduct.id}` }
+        ]}
+      />
       
       {/* Breadcrumb Navigation */}
       <Breadcrumb 

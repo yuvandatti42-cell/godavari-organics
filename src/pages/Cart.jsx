@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCart, INITIAL_PRODUCTS } from '../context/CartContext';
 import QuantitySelector from '../components/QuantitySelector';
+import SEO from '../components/SEO';
 import { 
   Trash2, 
   ArrowLeft, 
@@ -69,6 +70,7 @@ export default function Cart() {
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-4 md:py-8 space-y-6 font-sans">
+      <SEO title="Your Shopping Bag" noindex={true} url="/#/cart" />
       
       {/* Header: My Cart with badge count & Continue Shopping */}
       <div className="flex items-center justify-between pb-4 border-b border-stone-200">

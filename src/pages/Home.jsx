@@ -7,6 +7,7 @@ import FeaturedHarvestProducts from '../components/FeaturedHarvestProducts';
 import WhyChooseArma from '../components/WhyChooseArma';
 import CustomerReviews from '../components/CustomerReviews';
 import StoreLocation from '../components/StoreLocation';
+import SEO from '../components/SEO';
 import { ArrowRight, PhoneCall } from 'lucide-react';
 import { addCallbackRequest } from '../services/firebaseService';
 
@@ -25,6 +26,12 @@ export default function Home() {
 
   return (
     <div className="w-full font-sans bg-[#faf5ea] text-[#103b1d]">
+      <SEO 
+        title="Pure, Authentic Farm Harvest"
+        description="Certified Organic Rice, Wood Ghani Cold Pressed Oils, Desi Cow A2 Ghee, Unpolished Siridhanya Millets, and Stone-Ground Spices direct from Godavari River delta farms."
+        url="/"
+        image="/banners/banner1.webp"
+      />
       <h1 className="sr-only">Godavari Organic Foods — Pure, Authentic Farm Harvest Direct to Your Doorstep</h1>
       
       {/* 1. HERO SLIDER SECTION */}

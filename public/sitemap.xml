@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Core Landing Pages -->
+  <url>
+    <loc>https://www.armafarms.com/</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/banners/banner1.webp</image:loc>
+      <image:title>Godavari Organic Foods — Pure Andhra Farm Harvest</image:title>
+      <image:caption>Certified Organic Rice, Wood Ghani Cold Pressed Oils, Millets and Stone Ground Spices from Godavari delta farms.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/shop</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/track-order</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Categories -->
+  <url>
+    <loc>https://www.armafarms.com/#/shop?category=Oils</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/categories/cold_pressed_oils.webp</image:loc>
+      <image:title>Cold Pressed Traditional Wood Ghani Oils</image:title>
+      <image:caption>Pure Cold Pressed Groundnut, Sesame, Virgin Coconut, Mustard, and Desi Gir Cow Ghee.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/shop?category=Organic+Rice</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/categories/organic_rice.webp</image:loc>
+      <image:title>Heirloom Organic Rice from Godavari Basin</image:title>
+      <image:caption>Unpolished Red Rice, Superfood Black Rice, and Aged Sona Masoori Rice.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/shop?category=Organic+Millets</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/categories/millets.webp</image:loc>
+      <image:title>Ancient Siridhanya Unpolished Millets</image:title>
+      <image:caption>Foxtail Korralu, Kodo Arikelu, Little Samalu, Barnyard Oodalu, Browntop Andukorralu.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/shop?category=Organic+Spices</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/categories/spices.webp</image:loc>
+      <image:title>Stone-Ground Pure Farm Spices</image:title>
+      <image:caption>High-Curcumin Turmeric and Pure Sun-Pounded Guntur Red Chilli Powder.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Product Detail Pages: Oils & Ghee -->
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_oil_groundnut</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/oils/groundnut_oil.webp</image:loc>
+      <image:title>Cold Pressed Groundnut Oil - Godavari Organic Foods</image:title>
+      <image:caption>100% pure unrefined cold pressed peanut oil extracted at low temperature.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_oil_sesame</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/oils/sesame_oil.webp</image:loc>
+      <image:title>Cold Pressed Sesame Oil (Gingelly / Til Oil)</image:title>
+      <image:caption>Traditional slow-extracted sesame oil with organic seeds and palm jaggery.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_oil_coconut</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/oils/coconut_oil.webp</image:loc>
+      <image:title>Cold Pressed Virgin Coconut Oil</image:title>
+      <image:caption>Prepared from mature naturally sun-dried Konaseema organic coconuts.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_oil_black_sesame</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/oils/black_sesame_oil.webp</image:loc>
+      <image:title>Cold Pressed Black Sesame Oil</image:title>
+      <image:caption>Indigenous high-calcium Ayurvedic cold pressed black sesame oil.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_oil_sunflower</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/oils/sunflower_oil.webp</image:loc>
+      <image:title>Cold Pressed Sunflower Oil</image:title>
+      <image:caption>Light and unrefined non-GMO cold pressed sunflower cooking oil.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_oil_safflower</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/oils/safflower_oil.webp</image:loc>
+      <image:title>Cold Pressed Safflower Oil (Kusuma Oil)</image:title>
+      <image:caption>High smoke point cold pressed safflower oil for healthy cooking.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_oil_mustard</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/oils/mustard_oil.webp</image:loc>
+      <image:title>Cold Pressed Mustard Oil (Sarson)</image:title>
+      <image:caption>Sharp natural pungency cold pressed mustard seed cooking oil.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_oil_almond</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/oils/almond_oil.webp</image:loc>
+      <image:title>Cold Pressed Pure Sweet Almond Oil (Badam Rogan)</image:title>
+      <image:caption>100% pure edible grade sweet badam oil for nourishment and skin.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_oil_niger</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/oils/niger_oil.webp</image:loc>
+      <image:title>Cold Pressed Niger Oil (Valisalu / Gurellu)</image:title>
+      <image:caption>Indigenous Niger seed oil packed with essential fatty acids.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_ghee_cow</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/categories/desi_cow_ghee.webp</image:loc>
+      <image:title>Desi Gir Cow A2 Vedic Bilona Ghee</image:title>
+      <image:caption>Cultured curd churned golden Danedar A2 ghee from grass-fed Gir cows.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Product Detail Pages: Organic Rice -->
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_rice_red</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/rice/red_rice.webp</image:loc>
+      <image:title>Organic Red Rice (Unpolished Heirloom Rice)</image:title>
+      <image:caption>High anthocyanin antioxidants and low glycemic index unpolished rice.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_rice_black</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/rice/black_rice.webp</image:loc>
+      <image:title>Organic Black Rice (Chak-Hao Forbidden Superfood)</image:title>
+      <image:caption>Ancient nutrient-dense superfood rice rich in natural purple anthocyanins.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_rice_sona</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/rice/sona_masoori_rice.webp</image:loc>
+      <image:title>Naturally Aged Sona Masoori Rice (12 Months Aged)</image:title>
+      <image:caption>Premium lightweight aromatic Sona Masoori rice from Krishna-Godavari delta.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Product Detail Pages: Organic Millets -->
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_millet_foxtail</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/millets/foxtail_millet.webp</image:loc>
+      <image:title>Organic Foxtail Millet (Korralu Siridhanya)</image:title>
+      <image:caption>Unpolished Foxtail millet rich in dietary fiber and diabetic friendly.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_millet_kodo</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/millets/kodo_millet.webp</image:loc>
+      <image:title>Organic Kodo Millet (Arikelu Detox Grain)</image:title>
+      <image:caption>Traditional unpolished Kodo millet for blood purification and gut health.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_millet_little</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/millets/little_millet.webp</image:loc>
+      <image:title>Organic Little Millet (Samalu Quick-Cook Grain)</image:title>
+      <image:caption>Fine-grained unpolished Little millet easy on digestion, rich in minerals.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_millet_barnyard</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/millets/barnyard_millet.webp</image:loc>
+      <image:title>Organic Barnyard Millet (Oodalu High Iron)</image:title>
+      <image:caption>Unpolished Barnyard millet with high bioavailable iron and low GI.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_millet_browntop</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/millets/browntop_millet.webp</image:loc>
+      <image:title>Organic Browntop Millet (Andukorralu 12.5% Fiber Supergrain)</image:title>
+      <image:caption>Rare Siridhanya supergrain with 12.5% dietary fiber for metabolic health.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Product Detail Pages: Spices -->
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_spice_turmeric</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/spices/turmeric_powder.webp</image:loc>
+      <image:title>High-Curcumin Turmeric Powder (5%+ Curcumin Stone Ground)</image:title>
+      <image:caption>Wild harvest tribal turmeric stone ground without chemicals or artificial yellow dyes.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.armafarms.com/#/product?id=p_spice_chilli</loc>
+    <lastmod>2026-11-12T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.armafarms.com/products/spices/chilli_powder.webp</image:loc>
+      <image:title>Guntur Pure Red Chilli Powder (Sun-Pounded Mirchi)</image:title>
+      <image:caption>Authentic sun-dried pounded Guntur chillies with zero artificial red color.</image:caption>
+    </image:image>
+  </url>
+
+</urlset>

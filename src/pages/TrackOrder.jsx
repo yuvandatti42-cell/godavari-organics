@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
 import { getOrderForTracking } from '../services/firebaseService';
+import SEO from '../components/SEO';
 import {
   Package,
   Search,
@@ -144,6 +145,15 @@ export default function TrackOrder() {
 
   return (
     <div className="w-full min-h-screen bg-[#faf5ea] font-sans text-[#1d271c] py-6 sm:py-10 px-3.5 sm:px-6 lg:px-8">
+      <SEO 
+        title={order ? `Tracking Order #${order.id}` : 'Track Your Package Live'}
+        description="Track your Godavari Organic Foods package live with real-time Shiprocket dispatch updates, courier AWB tracking, and milestone stages."
+        url="/#/track-order"
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Track Order', url: '/#/track-order' }
+        ]}
+      />
       <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
 
         {/* Back Link */}

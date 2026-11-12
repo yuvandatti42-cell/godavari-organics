@@ -1,0 +1,45 @@
+# Robots.txt for Godavari Organic Foods (armafarms.com)
+# https://www.armafarms.com
+
+User-agent: *
+Allow: /
+Allow: /shop
+Allow: /track-order
+Allow: /products/
+Allow: /categories/
+Allow: /banners/
+Disallow: /api/
+Disallow: /checkout
+Disallow: /order-success
+Disallow: /profile
+
+# Search Engine Crawlers
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+
+User-agent: Googlebot-Image
+Allow: /
+Allow: /products/
+Allow: /categories/
+Allow: /banners/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+
+User-agent: Applebot
+Allow: /
+Disallow: /api/
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /api/
+
+User-agent: Yandex
+Allow: /
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://www.armafarms.com/sitemap.xml
+Host: https://www.armafarms.com

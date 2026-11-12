@@ -5,6 +5,14 @@
       "destination": "/api/shiprocket?endpoint=/$1"
     },
     {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/api/:path*"
     },

@@ -4,6 +4,7 @@ import Breadcrumb from '../components/Breadcrumb';
 import ProductCard from '../components/ProductCard';
 import FilterSidebar from '../components/FilterSidebar';
 import MobileFilterModal from '../components/MobileFilterModal';
+import SEO from '../components/SEO';
 import { SlidersHorizontal, ArrowUpDown, ChevronLeft, ChevronRight, X, Search, Sparkles } from 'lucide-react';
 
 export default function Shop() {
@@ -233,6 +234,16 @@ export default function Shop() {
 
   return (
     <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-12 xl:px-16 py-3 md:py-6 space-y-4 sm:space-y-6 font-sans">
+      <SEO 
+        title={selectedCategories.length > 0 ? `${selectedCategories[0]} - Organic Harvest Collection` : 'All Organic Farm Harvest Products'}
+        description="Explore our full collection of certified organic rice, wood ghani cold-pressed oils, unpolished Siridhanya millets, and stone-ground spices direct from Andhra farmers."
+        url="/#/shop"
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Shop All', url: '/#/shop' },
+          ...(selectedCategories.length > 0 ? [{ name: selectedCategories[0], url: `/#/shop?category=${encodeURIComponent(selectedCategories[0])}` }] : [])
+        ]}
+      />
       
       {/* 1. Control Bar: Filter, Quick Search & Sort */}
       <div className="flex flex-wrap items-center justify-between gap-2.5 py-2 border-b border-[#d9ca9d] text-xs">
