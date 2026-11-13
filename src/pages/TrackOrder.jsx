@@ -16,7 +16,6 @@ import {
   AlertCircle,
   ExternalLink,
   ChevronRight,
-  Phone,
   MessageCircle,
   ShieldCheck,
   RefreshCw,
@@ -562,23 +561,15 @@ export default function TrackOrder() {
                 Our farm customer care team in East Godavari is available Monday through Saturday (9:00 AM - 7:00 PM).
               </p>
 
-              <div className="pt-2 flex flex-wrap justify-center gap-3">
+              <div className="pt-2 flex justify-center">
                 <a
-                  href={`https://wa.me/919010088063?text=Hi%20Godavari%20Organics,%20I%20would%20like%20an%20update%20on%20my%20order%20%23${order.id}`}
+                  href={`https://wa.me/917032966667?text=Hi%20Godavari%20Organics,%20I%20would%20like%20an%20update%20on%20my%20order%20%23${order.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>Chat on WhatsApp (+91 90100 88063)</span>
-                </a>
-
-                <a
-                  href="tel:+919010088063"
-                  className="px-5 py-2.5 bg-white hover:bg-[#f3e8cc] text-[#103b1d] font-bold text-xs rounded-xl border border-[#d9ca9d] shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Phone className="w-4 h-4 text-[#18542a]" />
-                  <span>Call Support</span>
+                  <span>Chat on WhatsApp (+91 70329 66667)</span>
                 </a>
               </div>
             </div>
