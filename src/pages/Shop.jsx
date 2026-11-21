@@ -6,9 +6,19 @@ import FilterSidebar from '../components/FilterSidebar';
 import MobileFilterModal from '../components/MobileFilterModal';
 import SEO from '../components/SEO';
 import { SlidersHorizontal, ArrowUpDown, ChevronLeft, ChevronRight, X, Search, Sparkles } from 'lucide-react';
+import { HEALTH_CONCERNS, matchesHealthConcern, getConcernIcon } from '../data/concerns';
 
 export default function Shop() {
-  const { products, categories, showToast, goBack, selectedCategoryFilter, setSelectedCategoryFilter } = useCart();
+  const { 
+    products, 
+    categories, 
+    showToast, 
+    goBack, 
+    selectedCategoryFilter, 
+    setSelectedCategoryFilter,
+    selectedConcernFilter,
+    setSelectedConcernFilter
+  } = useCart();
   
   const [selectedCategories, setSelectedCategories] = useState(
     selectedCategoryFilter ? [selectedCategoryFilter] : []
@@ -194,9 +204,13 @@ export default function Shop() {
         const matchCraft = product.craftTag?.toLowerCase().includes(q);
         if (!matchName && !matchShort && !matchSub && !matchCraft) return false;
       }
+      // Health concern filter (Two Brothers style Shop by Concern)
+      if (selectedConcernFilter) {
+        if (!matchesHealthConcern(product, selectedConcernFilter)) return false;
+      }
       return true;
     });
-  }, [products, selectedCategories, isPriceFilterActive, priceRange, selectedRatings, inShopSearch]);
+  }, [products, selectedCategories, isPriceFilterActive, priceRange, selectedRatings, inShopSearch, selectedConcernFilter]);
 
   // Sorting
   const sortedProducts = useMemo(() => {
@@ -211,6 +225,7 @@ export default function Shop() {
   const handleReset = () => {
     setSelectedCategories([]);
     if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
+    if (setSelectedConcernFilter) setSelectedConcernFilter('');
     setPriceRange([0, 10000]);
     setIsPriceFilterActive(false);
     setSelectedRatings([]);
@@ -372,9 +387,24 @@ export default function Shop() {
       </div>
 
       {/* Active Filter Chips Strip (If Any Filter Applied) */}
-      {(selectedCategories.length > 0 || inShopSearch) && (
+      {(selectedCategories.length > 0 || inShopSearch || selectedConcernFilter) && (
         <div className="flex items-center flex-wrap gap-1.5 text-xs">
           <span className="text-stone-500 text-[11px] font-medium">Active:</span>
+          {selectedConcernFilter && (
+            <span 
+              className="inline-flex items-center space-x-1.5 px-3 py-1 bg-[#18542a] text-white rounded-full text-[11px] font-bold shadow-2xs"
+            >
+              <Sparkles className="w-3 h-3 text-[#ffc926]" />
+              <span>Concern: {selectedConcernFilter}</span>
+              <button 
+                onClick={() => setSelectedConcernFilter('')}
+                className="hover:text-[#ffc926] cursor-pointer ml-1"
+                aria-label="Remove concern filter"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          )}
           {selectedCategories.map((c) => (
             <span 
               key={c}
@@ -448,6 +478,39 @@ export default function Shop() {
 
         {/* Products Grid Area */}
         <div className="lg:col-span-9 space-y-6">
+
+          {/* Active Health Concern Curated Banner */}
+          {selectedConcernFilter && (
+            <div className="bg-[#FAF5EA] border border-[#d9ca9d] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 shadow-xs animate-fadeIn">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-[#18542a] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  {getConcernIcon(selectedConcernFilter, { className: 'w-6 h-6 text-white' })}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-[#9abc05] bg-[#18542a] px-2.5 py-0.5 rounded-full">
+                      Shop By Concern
+                    </span>
+                    <h3 className="font-urbanist font-black text-sm sm:text-base text-[#103b1d]">
+                      {selectedConcernFilter}
+                    </h3>
+                  </div>
+                  <p className="text-xs text-[#556b54] mt-1 leading-relaxed max-w-xl">
+                    {HEALTH_CONCERNS.find(c => c.name.toLowerCase() === selectedConcernFilter.toLowerCase())?.description || 
+                     'Showing authentic organic farm harvest curated specifically for this health concern.'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedConcernFilter('')}
+                className="self-end sm:self-center px-3.5 py-1.5 bg-white hover:bg-[#f3e8cc] text-[#18542a] border border-[#d9ca9d] rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow-2xs"
+              >
+                <X className="w-3.5 h-3.5 text-[#18542a]" />
+                <span>Show All Harvest</span>
+              </button>
+            </div>
+          )}
           {sortedProducts.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4.5">
               {sortedProducts.map((product) => (

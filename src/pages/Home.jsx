@@ -8,8 +8,9 @@ import WhyChooseArma from '../components/WhyChooseArma';
 import CustomerReviews from '../components/CustomerReviews';
 import StoreLocation from '../components/StoreLocation';
 import SEO from '../components/SEO';
-import { ArrowRight, PhoneCall } from 'lucide-react';
+import { ArrowRight, PhoneCall, Sparkles } from 'lucide-react';
 import { addCallbackRequest } from '../services/firebaseService';
+import { HEALTH_CONCERNS, matchesHealthConcern } from '../data/concerns';
 
 export default function Home() {
   const { 
@@ -17,7 +18,8 @@ export default function Home() {
     products, 
     categories, 
     showToast, 
-    setSelectedCategoryFilter 
+    setSelectedCategoryFilter,
+    setSelectedConcernFilter
   } = useCart();
 
   const [isSubmittingCallback, setIsSubmittingCallback] = useState(false);
@@ -110,6 +112,84 @@ export default function Home() {
             />
           </div>
         </div>
+
+        {/* 3. SHOP BY HEALTH CONCERN SECTION (Two Brothers reference style) */}
+        <section className="space-y-4 sm:space-y-6 pt-3 sm:pt-6 pb-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#f96015] flex items-center gap-1.5 font-urbanist">
+                <Sparkles className="w-3.5 h-3.5 text-[#9abc05]" />
+                Targeted Wellness & Nutrition
+              </div>
+              <h2 className="font-urbanist font-extrabold text-xl sm:text-2xl md:text-3xl text-[#103b1d] tracking-tight mt-0.5">
+                Shop By Health Concern
+              </h2>
+            </div>
+            <button
+              onClick={() => {
+                if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
+                if (setSelectedConcernFilter) setSelectedConcernFilter('');
+                setCurrentPage('shop');
+              }}
+              className="text-xs font-extrabold text-[#18542a] hover:text-[#9abc05] flex items-center gap-1 cursor-pointer transition-colors"
+            >
+              <span>Explore All</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+            {HEALTH_CONCERNS.map((item) => {
+              const Icon = item.icon;
+              const count = products.filter(p => matchesHealthConcern(p, item.name)).length;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
+                    if (setSelectedConcernFilter) setSelectedConcernFilter(item.name);
+                    setCurrentPage('shop');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="group relative bg-[#FAF5EA] hover:bg-[#FAF5EA]/80 border border-[#d9ca9d] rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-left transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between space-y-4"
+                >
+                  <div className="space-y-3">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#e8dec5] text-[#18542a] flex items-center justify-center transition-transform group-hover:scale-110 shadow-2xs">
+                      <Icon className="w-6 h-6 sm:w-7 sm:h-7" />
+                    </div>
+                    <div>
+                      <h3 className="font-urbanist font-extrabold text-base sm:text-lg text-[#103b1d] group-hover:text-[#18542a] tracking-tight leading-snug">
+                        {item.name}
+                      </h3>
+                      <p className="text-xs text-[#556b54] mt-1 line-clamp-2 leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-[#e5d8b8]/60 text-xs font-bold">
+                    <span className="text-[11px] text-[#18542a] bg-[#e8dec5] px-2 py-0.5 rounded-full font-extrabold">
+                      {count} Products
+                    </span>
+                    <span className="text-[#18542a] group-hover:text-[#9abc05] group-hover:translate-x-1 transition-all flex items-center gap-1">
+                      Shop →
+                    </span>
+                  </div>
+
+                  {/* Subtle bottom wave accent matching reference design */}
+                  <svg 
+                    className="absolute -bottom-1 left-0 right-0 w-full h-4 pointer-events-none opacity-25 text-[#89af6e]" 
+                    viewBox="0 0 300 24" 
+                    fill="currentColor" 
+                    preserveAspectRatio="none"
+                  >
+                    <path d="M0,16 C60,4 120,22 180,10 C240,-2 270,18 300,12 L300,24 L0,24 Z" />
+                  </svg>
+                </button>
+              );
+            })}
+          </div>
+        </section>
 
       </div>
 

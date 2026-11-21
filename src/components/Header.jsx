@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import { Search, ShoppingBag, User, Menu, X, Leaf, Sparkles, ChevronRight, CheckCircle2, Truck, Phone, Home, Package, CreditCard, MapPin, ArrowLeft } from 'lucide-react';
+import ShopByConcernDropdown from './ShopByConcernDropdown';
+import { HEALTH_CONCERNS } from '../data/concerns';
 
 export default function Header() {
   const headerRef = useRef(null);
@@ -29,6 +31,8 @@ export default function Header() {
     navigateToProduct,
     selectedCategoryFilter,
     setSelectedCategoryFilter,
+    selectedConcernFilter,
+    setSelectedConcernFilter,
     products,
     freeShippingThreshold
   } = useCart();
@@ -91,58 +95,76 @@ export default function Header() {
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
-            <nav className="hidden lg:flex items-center space-x-5 text-xs font-bold text-[#18542a] tracking-wider uppercase">
+            <nav className="hidden lg:flex items-center space-x-3.5 xl:space-x-5 text-xs font-bold text-[#18542a] tracking-wider uppercase">
+              <button
+                onClick={() => setCurrentPage('home')}
+                className={`transition-all duration-200 cursor-pointer flex items-center gap-1 ${
+                  currentPage === 'home'
+                    ? 'font-extrabold text-[#18542a] underline underline-offset-4 decoration-[#9abc05] decoration-3'
+                    : 'hover:text-[#9abc05]'
+                }`}
+              >
+                <span>Home</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
+                  if (setSelectedConcernFilter) setSelectedConcernFilter('');
+                  setCurrentPage('shop');
+                }}
+                className={`transition-all duration-200 cursor-pointer flex items-center gap-1 ${
+                  currentPage === 'shop' && (!selectedCategoryFilter || selectedCategoryFilter === '') && !selectedConcernFilter
+                    ? 'font-extrabold text-[#18542a] underline underline-offset-4 decoration-[#9abc05] decoration-3'
+                    : 'hover:text-[#9abc05]'
+                }`}
+              >
+                <span>All Shop</span>
+              </button>
+
+              {/* Shop By Concern Dropdown (Two Brothers reference style) */}
+              <ShopByConcernDropdown />
+
               {[
-                {
-                  id: 'home',
-                  label: 'Home',
-                  action: () => setCurrentPage('home'),
-                  isActive: currentPage === 'home',
-                },
-                {
-                  id: 'all',
-                  label: 'All Shop',
-                  action: () => {
-                    if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
-                    setCurrentPage('shop');
-                  },
-                  isActive: currentPage === 'shop' && (!selectedCategoryFilter || selectedCategoryFilter === ''),
-                },
                 {
                   id: 'oils',
                   label: 'Oils',
                   action: () => {
                     if (setSelectedCategoryFilter) setSelectedCategoryFilter('Oils');
+                    if (setSelectedConcernFilter) setSelectedConcernFilter('');
                     setCurrentPage('shop');
                   },
-                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Oils',
+                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Oils' && !selectedConcernFilter,
                 },
                 {
                   id: 'rice',
                   label: 'Rice',
                   action: () => {
                     if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Rice');
+                    if (setSelectedConcernFilter) setSelectedConcernFilter('');
                     setCurrentPage('shop');
                   },
-                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Organic Rice',
+                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Organic Rice' && !selectedConcernFilter,
                 },
                 {
                   id: 'millets',
                   label: 'Millets',
                   action: () => {
                     if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Millets');
+                    if (setSelectedConcernFilter) setSelectedConcernFilter('');
                     setCurrentPage('shop');
                   },
-                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Organic Millets',
+                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Organic Millets' && !selectedConcernFilter,
                 },
                 {
                   id: 'spices',
                   label: 'Spices',
                   action: () => {
                     if (setSelectedCategoryFilter) setSelectedCategoryFilter('Organic Spices');
+                    if (setSelectedConcernFilter) setSelectedConcernFilter('');
                     setCurrentPage('shop');
                   },
-                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Organic Spices',
+                  isActive: currentPage === 'shop' && selectedCategoryFilter === 'Organic Spices' && !selectedConcernFilter,
                 },
                 {
                   id: 'track-order',
@@ -298,6 +320,55 @@ export default function Header() {
             />
             <Search className="w-4 h-4 absolute left-3 text-[#18542a]/60 pointer-events-none" />
           </form>
+
+          {/* Mobile Shop by Health Concern Section */}
+          <div className="bg-[#FAF5EA] border border-[#d9ca9d] rounded-2xl p-3.5 space-y-2.5">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#8c7355] flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#9abc05]" />
+                Shop By Health Concern
+              </span>
+              <span className="text-[9px] font-bold text-[#18542a] bg-[#e8dec5] px-2 py-0.5 rounded-full">
+                4 Concerns
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              {HEALTH_CONCERNS.map((item) => {
+                const Icon = item.icon;
+                const isSelected = selectedConcernFilter === item.name;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
+                      if (setSelectedConcernFilter) setSelectedConcernFilter(item.name);
+                      setCurrentPage('shop');
+                      setMobileMenuOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className={`p-2.5 rounded-xl border text-left flex items-center gap-2.5 transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#18542a] text-white border-[#18542a] shadow-xs'
+                        : 'bg-white text-[#103b1d] border-[#e2d5b5] hover:bg-[#efe4cc]'
+                    }`}
+                  >
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                      isSelected ? 'bg-white/20 text-white' : 'bg-[#FAF5EA] text-[#18542a]'
+                    }`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold leading-tight truncate">{item.name}</div>
+                      <div className={`text-[9px] truncate ${isSelected ? 'text-[#f3e8cc]' : 'text-[#556b54]'}`}>
+                        {item.subtitle}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <div className="grid grid-cols-2 gap-2 text-center">
             <button 

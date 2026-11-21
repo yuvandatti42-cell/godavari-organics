@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
-import { Filter, RotateCcw, Check, Star } from 'lucide-react';
+import { Filter, RotateCcw, Check, Star, Sparkles } from 'lucide-react';
+import { HEALTH_CONCERNS, matchesHealthConcern } from '../data/concerns';
 
 export default function FilterSidebar({ 
   selectedCategories, 
@@ -12,7 +13,7 @@ export default function FilterSidebar({
   setSelectedRatings, 
   onReset
 }) {
-  const { categories } = useCart();
+  const { categories, products, selectedConcernFilter, setSelectedConcernFilter } = useCart();
 
   const handleCategoryToggle = (catName) => {
     if (selectedCategories.includes(catName)) {
@@ -68,6 +69,58 @@ export default function FilterSidebar({
                 />
                 <span className={`flex-1 ${isChecked ? 'font-extrabold text-[#18542a]' : ''}`}>{cat.name}</span>
                 <span className="text-[10px] font-extrabold text-[#9abc05]">({cat.count})</span>
+              </label>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Health Concern Filter (Two Brothers reference style) */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between border-b border-[#f3e8cc] pb-1.5">
+          <h4 className="font-extrabold text-xs uppercase tracking-wider text-[#18542a] font-urbanist flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-[#9abc05]" />
+            <span>Health Concern</span>
+          </h4>
+          {selectedConcernFilter && (
+            <button
+              type="button"
+              onClick={() => setSelectedConcernFilter && setSelectedConcernFilter('')}
+              className="text-[10px] text-[#f96015] font-bold hover:underline cursor-pointer"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        <div className="space-y-1.5 text-xs">
+          {HEALTH_CONCERNS.map((concern) => {
+            const isChecked = selectedConcernFilter === concern.name;
+            const count = (products || []).filter(p => matchesHealthConcern(p, concern.name)).length;
+            const Icon = concern.icon;
+            return (
+              <label 
+                key={concern.id} 
+                className={`flex items-center space-x-2.5 cursor-pointer p-2 rounded-xl transition-all select-none font-medium ${
+                  isChecked 
+                    ? 'bg-[#18542a] text-white shadow-xs font-bold' 
+                    : 'text-[#18542a]/85 hover:bg-[#FAF5EA]'
+                }`}
+              >
+                <input 
+                  type="checkbox" 
+                  checked={isChecked}
+                  onChange={() => {
+                    if (setSelectedConcernFilter) {
+                      setSelectedConcernFilter(isChecked ? '' : concern.name);
+                    }
+                  }}
+                  className="w-4 h-4 rounded border-gray-300 text-[#18542a] focus:ring-[#9abc05] accent-[#18542a]"
+                />
+                <Icon className={`w-4 h-4 shrink-0 ${isChecked ? 'text-white' : 'text-[#18542a]'}`} />
+                <span className="flex-1 truncate">{concern.name}</span>
+                <span className={`text-[10px] font-extrabold ${isChecked ? 'text-[#ffc926]' : 'text-[#9abc05]'}`}>
+                  ({count})
+                </span>
               </label>
             );
           })}

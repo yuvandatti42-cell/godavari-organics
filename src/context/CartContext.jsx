@@ -798,6 +798,7 @@ export function CartProvider({ children }) {
   });
   const [selectedProductId, setSelectedProductId] = useState('p_oil_groundnut');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
+  const [selectedConcernFilter, setSelectedConcernFilter] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -1203,6 +1204,8 @@ export function CartProvider({ children }) {
       navigateToProduct,
       selectedCategoryFilter,
       setSelectedCategoryFilter,
+      selectedConcernFilter,
+      setSelectedConcernFilter,
       mobileMenuOpen,
       setMobileMenuOpen,
       quickViewProduct,

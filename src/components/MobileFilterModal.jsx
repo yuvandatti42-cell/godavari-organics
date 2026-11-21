@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Check, Star } from 'lucide-react';
+import { X, Check, Star, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { HEALTH_CONCERNS, matchesHealthConcern } from '../data/concerns';
 
 export default function MobileFilterModal({
   isOpen,
@@ -20,13 +21,14 @@ export default function MobileFilterModal({
   setSelectedBrands = () => {},
   onReset
 }) {
-  const { categories } = useCart();
-  const [activeTab, setActiveTab] = useState('sort'); // 'sort' | 'tags' | 'type' | 'brand' | 'price' | 'ratings'
+  const { categories, products, selectedConcernFilter, setSelectedConcernFilter } = useCart();
+  const [activeTab, setActiveTab] = useState('sort'); // 'sort' | 'concern' | 'tags' | 'type' | 'brand' | 'price' | 'ratings'
 
   if (!isOpen) return null;
 
   const tabs = [
     { id: 'sort', label: 'Sort' },
+    { id: 'concern', label: 'Concern' },
     { id: 'tags', label: 'Tags' },
     { id: 'type', label: 'Type' },
     { id: 'brand', label: 'Brand' },
@@ -172,6 +174,67 @@ export default function MobileFilterModal({
                           {option.label}
                         </span>
                       </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 1.5 CONCERN TAB (Two Brothers reference style) */}
+            {activeTab === 'concern' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-extrabold text-[#18542a] tracking-wider uppercase block font-urbanist">
+                    SHOP BY CONCERN
+                  </span>
+                  {selectedConcernFilter && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedConcernFilter && setSelectedConcernFilter('')}
+                      className="text-[11px] text-[#f96015] font-bold hover:underline"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+                <div className="space-y-2.5">
+                  {HEALTH_CONCERNS.map((item) => {
+                    const isSelected = selectedConcernFilter === item.name;
+                    const count = (products || []).filter(p => matchesHealthConcern(p, item.name)).length;
+                    const Icon = item.icon;
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => {
+                          if (setSelectedConcernFilter) {
+                            setSelectedConcernFilter(isSelected ? '' : item.name);
+                          }
+                        }}
+                        className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
+                          isSelected 
+                            ? 'bg-[#18542a] text-white border-[#18542a] shadow-xs' 
+                            : 'bg-[#faf5ea] text-[#103b1d] border-[#e2d5b5] hover:bg-[#efe4cc]'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3 min-w-0">
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                            isSelected ? 'bg-white/20 text-white' : 'bg-[#e8dec5] text-[#18542a]'
+                          }`}>
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-urbanist font-extrabold text-xs sm:text-sm truncate">
+                              {item.name}
+                            </div>
+                            <div className={`text-[10px] truncate ${isSelected ? 'text-[#f3e8cc]' : 'text-[#556b54]'}`}>
+                              {item.subtitle}
+                            </div>
+                          </div>
+                        </div>
+                        <span className={`text-xs font-black shrink-0 ml-2 ${isSelected ? 'text-[#ffc926]' : 'text-[#18542a]'}`}>
+                          ({count})
+                        </span>
+                      </div>
                     );
                   })}
                 </div>
