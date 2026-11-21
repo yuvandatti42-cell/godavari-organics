@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
 import HeroSlider from '../components/HeroSlider';
 import CategoryCard from '../components/CategoryCard';
@@ -8,7 +8,7 @@ import WhyChooseArma from '../components/WhyChooseArma';
 import CustomerReviews from '../components/CustomerReviews';
 import StoreLocation from '../components/StoreLocation';
 import SEO from '../components/SEO';
-import { ArrowRight, PhoneCall, Sparkles } from 'lucide-react';
+import { ArrowRight, PhoneCall, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { addCallbackRequest } from '../services/firebaseService';
 import { HEALTH_CONCERNS, matchesHealthConcern } from '../data/concerns';
 
@@ -23,6 +23,75 @@ export default function Home() {
   } = useCart();
 
   const [isSubmittingCallback, setIsSubmittingCallback] = useState(false);
+
+  // Shop By Concern Smooth Carousel State & Logic
+  const concernsScrollRef = useRef(null);
+  const [activeConcernIndex, setActiveConcernIndex] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const isInteractingRef = useRef(false);
+
+  const updateScrollState = useCallback(() => {
+    const el = concernsScrollRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 10);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+
+    const cardWidth = el.firstElementChild ? el.firstElementChild.offsetWidth + 12 : 260;
+    const index = Math.round(scrollLeft / cardWidth);
+    setActiveConcernIndex(Math.min(Math.max(0, index), HEALTH_CONCERNS.length - 1));
+  }, []);
+
+  useEffect(() => {
+    const el = concernsScrollRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener('scroll', updateScrollState, { passive: true });
+    window.addEventListener('resize', updateScrollState);
+    return () => {
+      el.removeEventListener('scroll', updateScrollState);
+      window.removeEventListener('resize', updateScrollState);
+    };
+  }, [updateScrollState]);
+
+  const scrollToConcernCard = (index) => {
+    const el = concernsScrollRef.current;
+    if (!el) return;
+    const cards = el.children;
+    if (cards[index]) {
+      cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+      setActiveConcernIndex(index);
+    }
+  };
+
+  const handleScrollStep = (direction) => {
+    const el = concernsScrollRef.current;
+    if (!el) return;
+    const cardWidth = el.firstElementChild ? el.firstElementChild.offsetWidth + 12 : 260;
+    const amount = direction === 'left' ? -cardWidth : cardWidth;
+    el.scrollBy({ left: amount, behavior: 'smooth' });
+  };
+
+  // Auto-scroll loop on mobile that gently advances one after another
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isInteractingRef.current) return;
+      const el = concernsScrollRef.current;
+      if (!el || typeof window === 'undefined' || window.innerWidth >= 1024) return;
+      
+      const { scrollLeft, scrollWidth, clientWidth } = el;
+      const cardWidth = el.firstElementChild ? el.firstElementChild.offsetWidth + 12 : 260;
+      
+      if (scrollLeft + clientWidth >= scrollWidth - 20) {
+        el.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        el.scrollBy({ left: cardWidth, behavior: 'smooth' });
+      }
+    }, 3600);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const popularProducts = products.filter(p => p.isPopular);
 
@@ -125,20 +194,57 @@ export default function Home() {
                 Shop By Health Concern
               </h2>
             </div>
-            <button
-              onClick={() => {
-                if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
-                if (setSelectedConcernFilter) setSelectedConcernFilter('');
-                setCurrentPage('shop');
-              }}
-              className="text-xs font-extrabold text-[#18542a] hover:text-[#9abc05] flex items-center gap-1 cursor-pointer transition-colors"
-            >
-              <span>Explore All</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Mobile / Tablet Arrow Slider Controls */}
+              <div className="flex items-center gap-1 lg:hidden">
+                <button
+                  type="button"
+                  onClick={() => handleScrollStep('left')}
+                  disabled={!canScrollLeft}
+                  className={`w-7 h-7 rounded-full border border-[#d9ca9d] flex items-center justify-center transition-all cursor-pointer ${
+                    canScrollLeft ? 'bg-white text-[#18542a] shadow-2xs active:scale-90' : 'bg-white/40 text-stone-300 border-stone-200 cursor-not-allowed'
+                  }`}
+                  aria-label="Scroll to previous concern"
+                >
+                  <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleScrollStep('right')}
+                  disabled={!canScrollRight}
+                  className={`w-7 h-7 rounded-full border border-[#d9ca9d] flex items-center justify-center transition-all cursor-pointer ${
+                    canScrollRight ? 'bg-white text-[#18542a] shadow-2xs active:scale-90' : 'bg-white/40 text-stone-300 border-stone-200 cursor-not-allowed'
+                  }`}
+                  aria-label="Scroll to next concern"
+                >
+                  <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                </button>
+              </div>
+
+              <button
+                onClick={() => {
+                  if (setSelectedCategoryFilter) setSelectedCategoryFilter('');
+                  if (setSelectedConcernFilter) setSelectedConcernFilter('');
+                  setCurrentPage('shop');
+                }}
+                className="text-xs font-extrabold text-[#18542a] hover:text-[#9abc05] flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <span>Explore All</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 xs:gap-3 sm:gap-5">
+          {/* Horizontal Scrolling Track on Mobile, 4-Col Grid on Desktop */}
+          <div 
+            ref={concernsScrollRef}
+            onTouchStart={() => { isInteractingRef.current = true; }}
+            onTouchEnd={() => { setTimeout(() => { isInteractingRef.current = false; }, 4000); }}
+            onMouseEnter={() => { isInteractingRef.current = true; }}
+            onMouseLeave={() => { isInteractingRef.current = false; }}
+            className="flex lg:grid lg:grid-cols-4 gap-3 sm:gap-5 overflow-x-auto lg:overflow-visible pb-2 pt-1 px-1 scrollbar-none snap-x snap-mandatory scroll-smooth"
+          >
             {HEALTH_CONCERNS.map((item) => {
               const Icon = item.icon;
               const count = products.filter(p => matchesHealthConcern(p, item.name)).length;
@@ -151,7 +257,7 @@ export default function Home() {
                     setCurrentPage('shop');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="group relative bg-[#FAF5EA] hover:bg-[#FAF5EA]/80 active:scale-[0.98] border border-[#d9ca9d] rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 text-left transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between space-y-3 sm:space-y-4"
+                  className="w-[72vw] max-w-[270px] xs:w-[250px] sm:w-[280px] lg:w-auto shrink-0 snap-start group relative bg-[#FAF5EA] hover:bg-[#FAF5EA]/80 active:scale-[0.98] border border-[#d9ca9d] rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-left transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between space-y-3 sm:space-y-4"
                 >
                   <div className="space-y-2.5 sm:space-y-3">
                     <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-[#e8dec5] text-[#18542a] flex items-center justify-center transition-transform group-hover:scale-110 shadow-2xs">
@@ -189,6 +295,23 @@ export default function Home() {
                 </button>
               );
             })}
+          </div>
+
+          {/* Mobile Carousel Pagination Indicator Dots */}
+          <div className="flex lg:hidden justify-center items-center gap-1.5 pt-1">
+            {HEALTH_CONCERNS.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => scrollToConcernCard(idx)}
+                aria-label={`Go to concern ${idx + 1}`}
+                className={`transition-all duration-300 rounded-full cursor-pointer ${
+                  activeConcernIndex === idx
+                    ? 'w-6 h-1.5 bg-[#18542a]'
+                    : 'w-1.5 h-1.5 bg-[#d9ca9d] hover:bg-[#8c7355]'
+                }`}
+              />
+            ))}
           </div>
         </section>
 
