@@ -138,7 +138,7 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 xs:gap-3 sm:gap-5">
             {HEALTH_CONCERNS.map((item) => {
               const Icon = item.icon;
               const count = products.filter(p => matchesHealthConcern(p, item.name)).length;
@@ -151,39 +151,40 @@ export default function Home() {
                     setCurrentPage('shop');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="group relative bg-[#FAF5EA] hover:bg-[#FAF5EA]/80 border border-[#d9ca9d] rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-left transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between space-y-4"
+                  className="group relative bg-[#FAF5EA] hover:bg-[#FAF5EA]/80 active:scale-[0.98] border border-[#d9ca9d] rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 text-left transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between space-y-3 sm:space-y-4"
                 >
-                  <div className="space-y-3">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#e8dec5] text-[#18542a] flex items-center justify-center transition-transform group-hover:scale-110 shadow-2xs">
-                      <Icon className="w-6 h-6 sm:w-7 sm:h-7" />
+                  <div className="space-y-2.5 sm:space-y-3">
+                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-[#e8dec5] text-[#18542a] flex items-center justify-center transition-transform group-hover:scale-110 shadow-2xs">
+                      <Icon className="w-5 h-5 sm:w-7 sm:h-7" />
                     </div>
                     <div>
-                      <h3 className="font-urbanist font-extrabold text-base sm:text-lg text-[#103b1d] group-hover:text-[#18542a] tracking-tight leading-snug">
+                      <h3 className="font-urbanist font-extrabold text-sm sm:text-lg text-[#103b1d] group-hover:text-[#18542a] tracking-tight leading-snug">
                         {item.name}
                       </h3>
-                      <p className="text-xs text-[#556b54] mt-1 line-clamp-2 leading-relaxed">
+                      {/* Hidden on mobile, shown on tablet/desktop */}
+                      <p className="hidden sm:block text-xs text-[#556b54] mt-1 line-clamp-2 leading-relaxed">
                         {item.description}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between pt-2 border-t border-[#e5d8b8]/60 text-xs font-bold">
-                    <span className="text-[11px] text-[#18542a] bg-[#e8dec5] px-2 py-0.5 rounded-full font-extrabold">
+                    <span className="text-[10px] sm:text-[11px] text-[#18542a] bg-[#e8dec5] px-2 sm:px-2.5 py-0.5 rounded-full font-black">
                       {count} Products
                     </span>
-                    <span className="text-[#18542a] group-hover:text-[#9abc05] group-hover:translate-x-1 transition-all flex items-center gap-1">
+                    <span className="text-[#18542a] group-hover:text-[#9abc05] group-hover:translate-x-1 transition-all flex items-center gap-0.5 sm:gap-1 text-[11px] sm:text-xs font-black">
                       Shop →
                     </span>
                   </div>
 
                   {/* Subtle bottom wave accent matching reference design */}
                   <svg 
-                    className="absolute -bottom-1 left-0 right-0 w-full h-4 pointer-events-none opacity-25 text-[#89af6e]" 
+                    className="absolute -bottom-1 left-0 right-0 w-full h-3 sm:h-4 pointer-events-none opacity-25 text-[#89af6e]" 
                     viewBox="0 0 300 24" 
                     fill="currentColor" 
                     preserveAspectRatio="none"
                   >
-                    <path d="M0,16 C60,4 120,22 180,10 C240,-2 270,18 300,12 L300,24 L0,24 Z" />
+                    <path d="M0,16 C60,4 120,22 180,10 C240,-2 270,18 300,12 L300,24 Z" />
                   </svg>
                 </button>
               );

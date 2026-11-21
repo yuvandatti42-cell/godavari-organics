@@ -495,7 +495,7 @@ export default function Shop() {
                       {selectedConcernFilter}
                     </h3>
                   </div>
-                  <p className="text-xs text-[#556b54] mt-1 leading-relaxed max-w-xl">
+                  <p className="hidden sm:block text-xs text-[#556b54] mt-1 leading-relaxed max-w-xl">
                     {HEALTH_CONCERNS.find(c => c.name.toLowerCase() === selectedConcernFilter.toLowerCase())?.description || 
                      'Showing authentic organic farm harvest curated specifically for this health concern.'}
                   </p>
